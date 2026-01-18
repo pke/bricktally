@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="brickGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0055BF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#003d8f;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="50" cy="50" r="48" fill="url(#brickGrad)"/>
+
+  <!-- LEGO brick (side view) -->
+  <g transform="translate(20, 30)">
+    <!-- Studs on top (rectangular from side) -->
+    <rect x="5" y="0" width="12" height="8" fill="#fff" rx="1"/>
+    <rect x="23" y="0" width="12" height="8" fill="#fff" rx="1"/>
+    <rect x="41" y="0" width="12" height="8" fill="#fff" rx="1"/>
+
+    <!-- Main brick body -->
+    <rect x="0" y="8" width="60" height="30" fill="#fff" rx="2"/>
+  </g>
+
+  <!-- Checkmark for counting/tally -->
+  <circle cx="75" cy="70" r="12" fill="#4CAF50"/>
+  <path d="M 69 70 L 73 74 L 81 66" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

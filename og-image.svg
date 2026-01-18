@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="ogBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0055BF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#003d8f;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#ogBg)"/>
+
+  <!-- LEGO brick illustration (left side) - proper side view -->
+  <g transform="translate(80, 160)">
+    <!-- Studs on top (rectangular from side) -->
+    <rect x="20" y="0" width="50" height="35" fill="#fff" rx="4" opacity="0.95"/>
+    <rect x="85" y="0" width="50" height="35" fill="#fff" rx="4" opacity="0.95"/>
+    <rect x="150" y="0" width="50" height="35" fill="#fff" rx="4" opacity="0.95"/>
+    <rect x="215" y="0" width="50" height="35" fill="#fff" rx="4" opacity="0.95"/>
+
+    <!-- Main brick body -->
+    <rect x="0" y="35" width="280" height="130" fill="#fff" rx="8" opacity="0.95"/>
+
+    <!-- Bottom detail -->
+    <rect x="0" y="155" width="280" height="10" fill="#e8e8e8" rx="4" opacity="0.7"/>
+
+    <!-- Checkmark badge -->
+    <circle cx="260" cy="200" r="45" fill="#4CAF50"/>
+    <path d="M 242 200 L 255 213 L 280 188" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Title and description (right side) -->
+  <text x="450" y="240" font-family="Arial, sans-serif" font-size="80" font-weight="bold" fill="#fff">
+    BrickTally
+  </text>
+
+  <text x="450" y="320" font-family="Arial, sans-serif" font-size="40" fill="#FFD54F" font-weight="bold">
+    Every Brick Counts
+  </text>
+
+  <text x="450" y="380" font-family="Arial, sans-serif" font-size="24" fill="#b0d4ff">
+    Verify your LEGO® sets are 100% complete
+  </text>
+
+  <!-- Feature list with icons -->
+  <g transform="translate(450, 420)">
+    <!-- Check icon 1 -->
+    <circle cx="15" cy="15" r="15" fill="#4CAF50"/>
+    <path d="M 9 15 L 13 19 L 21 11" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="40" y="23" font-family="Arial, sans-serif" font-size="20" fill="#b0d4ff">Count every brick in your set</text>
+  </g>
+
+  <g transform="translate(450, 470)">
+    <!-- Check icon 2 -->
+    <circle cx="15" cy="15" r="15" fill="#4CAF50"/>
+    <path d="M 9 15 L 13 19 L 21 11" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="40" y="23" font-family="Arial, sans-serif" font-size="20" fill="#b0d4ff">Track progress with visual feedback</text>
+  </g>
+
+  <g transform="translate(450, 520)">
+    <!-- Check icon 3 -->
+    <circle cx="15" cy="15" r="15" fill="#4CAF50"/>
+    <path d="M 9 15 L 13 19 L 21 11" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="40" y="23" font-family="Arial, sans-serif" font-size="20" fill="#b0d4ff">Export missing pieces for reordering</text>
+  </g>
+</svg>

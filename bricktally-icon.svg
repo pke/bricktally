@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0055BF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#003d8f;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background with rounded corners for iOS -->
+  <rect width="180" height="180" rx="40" fill="url(#bgGrad)"/>
+
+  <!-- LEGO brick (side view) -->
+  <g transform="translate(25, 45)">
+    <!-- Studs on top (rectangular from side) -->
+    <rect x="10" y="0" width="24" height="16" fill="#fff" rx="2"/>
+    <rect x="44" y="0" width="24" height="16" fill="#fff" rx="2"/>
+    <rect x="78" y="0" width="24" height="16" fill="#fff" rx="2"/>
+    <rect x="112" y="0" width="24" height="16" fill="#fff" rx="2"/>
+
+    <!-- Main brick body -->
+    <rect x="0" y="16" width="130" height="60" fill="#fff" rx="4"/>
+
+    <!-- Bottom detail -->
+    <rect x="0" y="70" width="130" height="6" fill="#e8e8e8" rx="2"/>
+  </g>
+
+  <!-- Checkmark badge for counting/tallying -->
+  <circle cx="140" cy="130" r="25" fill="#4CAF50"/>
+  <path d="M 130 130 L 137 137 L 151 123" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

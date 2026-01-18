@@ -1,0 +1,2178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrickTally - Every Brick Counts</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="apple-touch-icon" sizes="180x180" href="/bricktally-icon.png">
+
+    <!-- OpenGraph Meta Tags -->
+    <meta property="og:title" content="BrickTally - Every Brick Counts">
+    <meta property="og:description"
+        content="Check if your LEGO® sets have all pieces before selling or storing. Count every brick to confirm 100% completeness.">
+    <meta property="og:image" content="https://bricktally.app/og-image.png">
+    <meta property="og:url" content="https://bricktally.app">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="BrickTally - Every Brick Counts">
+    <meta name="twitter:description"
+        content="Check if your LEGO® sets have all pieces before selling or storing. Count every brick to confirm 100% completeness.">
+    <meta name="twitter:image" content="https://bricktally.app/og-image.png">
+
+    <!-- General Meta -->
+    <meta name="description"
+        content="Verify your LEGO® sets are complete before selling or storing. Count every piece and track multiple sets with BrickTally.">
+    <meta name="keywords"
+        content="LEGO®, set verification, brick counting, complete set checker, LEGO® inventory, sell LEGO®, used LEGO® sets">
+    <meta name="theme-color" content="#0055BF">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #f5f5f5;
+            --bg-secondary: white;
+            --bg-tertiary: #f9f9f9;
+            --text-primary: #333;
+            --text-secondary: #666;
+            --border-color: #ddd;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --blue: #0055BF;
+            --blue-dark: #003d8f;
+            --red: #d32f2f;
+            --red-dark: #b71c1c;
+            --green: #4CAF50;
+            --orange: #FF9800;
+            --error-bg: #ffebee;
+            --error-text: #d32f2f;
+            --hover-bg: #f5f5f5;
+        }
+
+        body.dark-mode {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --bg-tertiary: #3a3a3a;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --border-color: #444;
+            --shadow: rgba(0, 0, 0, 0.5);
+            --blue: #4a9eff;
+            --blue-dark: #357abd;
+            --red: #ff6b6b;
+            --red-dark: #cc5555;
+            --green: #66bb6a;
+            --error-bg: #4a1a1a;
+            --error-text: #ff6b6b;
+            --hover-bg: #3a3a3a;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .flex-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gap-10 {
+            gap: 10px;
+        }
+
+        .gap-20 {
+            gap: 20px;
+        }
+
+        .p-10 {
+            padding: 10px;
+        }
+
+        .p-15 {
+            padding: 15px;
+        }
+
+        .p-20 {
+            padding: 20px;
+        }
+
+        .m-20 {
+            margin: 20px 0;
+        }
+
+        .hide {
+            display: none;
+        }
+
+        .full-header {
+            background: var(--bg-secondary);
+            box-shadow: 0 2px 10px var(--shadow);
+        }
+
+        .header-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .collapsed-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            box-shadow: 0 2px 10px var(--shadow);
+            z-index: 1000;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease-in-out;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .collapsed-header.visible {
+            transform: translateY(0);
+        }
+
+        .collapsed-header .header-wrapper {
+            padding: 10px 20px;
+        }
+
+        .collapsed-header .collapsed-row {
+            margin-bottom: 8px;
+        }
+
+        .collapsed-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .collapsed-app-name {
+            color: var(--blue);
+            font-size: 16px;
+            font-weight: bold;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .collapsed-set-name {
+            color: var(--text-primary);
+            font-size: 16px;
+            margin: 0;
+            text-align: right;
+            flex: 1;
+        }
+
+        .collapsed-progress {
+            width: 100%;
+        }
+
+        .collapsed-progress .progress-bar {
+            height: 20px;
+            margin: 0;
+        }
+
+        .collapsed-progress .progress-bar::before {
+            content: attr(data-pieces);
+            display: block;
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            color: #000;
+            font-weight: bold;
+            font-size: 14px;
+            z-index: 1;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.8);
+        }
+
+        body.dark-mode .collapsed-progress .progress-bar::before {
+            color: #fff;
+            text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+        }
+
+        .collapsed-filters {
+            width: 100%;
+            overflow: visible;
+        }
+
+        .collapsed-filters details {
+            width: 100%;
+            overflow: hidden;
+            display: none;
+        }
+
+        .collapsed-filters details:not(.hide) {
+            display: block;
+            opacity: 0;
+            transform: translateY(-15px);
+            max-height: 0;
+            margin-top: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out, max-height 0.5s ease-in-out, margin-top 0.5s ease-in-out;
+        }
+
+        .collapsed-filters details.visible {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+            max-height: 300px;
+            margin-top: 8px;
+            pointer-events: auto;
+        }
+
+        .collapsed-filters details summary {
+            font-size: 14px;
+            padding: 8px 10px;
+        }
+
+        .collapsed-filters .filters {
+            margin-top: 10px;
+            padding-bottom: 5px;
+        }
+
+        .collapsed-filters .column-toggles {
+            gap: 8px;
+            padding-bottom: 5px;
+        }
+
+        .collapsed-filters .column-toggle {
+            font-size: 13px;
+            padding: 6px 10px;
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--bg-secondary);
+            min-height: 100vh;
+        }
+
+        .content-area {
+            padding: 20px;
+        }
+
+        details summary {
+            cursor: pointer;
+            padding: 10px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            font-weight: bold;
+            color: var(--text-primary);
+            user-select: none;
+        }
+
+        details summary:hover {
+            background: var(--hover-bg);
+        }
+
+        details[open] summary {
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            color: var(--text-primary);
+        }
+
+        h2 {
+            color: var(--blue);
+            margin-bottom: 5px;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            padding-right: 90px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .header-left h1 {
+            margin: 0;
+            padding: 0;
+            font-size: 24px;
+            white-space: nowrap;
+        }
+
+        .header-left .input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 8px;
+            line-height: 1;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.2);
+        }
+
+        .fullscreen-toggle {
+            position: absolute;
+            top: 20px;
+            right: 60px;
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 8px;
+            line-height: 1;
+            transition: transform 0.3s ease;
+            color: var(--text-primary);
+        }
+
+        .fullscreen-toggle:hover {
+            transform: scale(1.2);
+        }
+
+        .reset-button-container {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        input {
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            width: 200px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: -100px;
+            width: 450px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 4px 12px var(--shadow);
+            display: none;
+        }
+
+        .autocomplete-dropdown.visible {
+            display: block;
+        }
+
+        .autocomplete-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+
+        .autocomplete-item:hover {
+            background: var(--hover-bg);
+        }
+
+        .autocomplete-item img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+
+        .autocomplete-item-info {
+            flex: 1;
+        }
+
+        .autocomplete-item-name {
+            font-weight: bold;
+            color: var(--text-primary);
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .autocomplete-item-number {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        button {
+            padding: 12px 20px;
+            font-size: 16px;
+            background: var(--blue);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+            touch-action: manipulation;
+        }
+
+        button:hover {
+            background: var(--blue-dark);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        #loadButton {
+            font-size: 20px;
+            padding: 12px 16px;
+        }
+
+        button.reset {
+            background: var(--red);
+        }
+
+        button.reset:hover {
+            background: var(--red-dark);
+        }
+
+        button.filter {
+            padding: 8px 14px;
+            border: 2px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        button.filter:hover {
+            border-color: var(--blue);
+        }
+
+        button.filter.active {
+            background: var(--blue);
+            color: white;
+            border-color: var(--blue);
+        }
+
+
+        .error {
+            color: var(--error-text);
+            background: var(--error-bg);
+            border-radius: 4px;
+            font-size: 18px;
+        }
+
+        .info-box {
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+        }
+
+        .info-box p {
+            color: var(--text-secondary);
+        }
+
+        .stats {
+            font-size: 18px;
+            color: var(--text-secondary);
+        }
+
+        .stats.small {
+            font-size: 14px;
+        }
+
+        .progress-bar {
+            margin: 20px 0;
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            overflow: hidden;
+            height: 30px;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--green);
+            transition: width 0.3s ease;
+        }
+
+        .progress-bar::after {
+            content: attr(data-percentage);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #000;
+            font-weight: bold;
+            font-size: 14px;
+            z-index: 1;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.8);
+        }
+
+        body.dark-mode .progress-bar::after {
+            color: #fff;
+            text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+        }
+
+        .progress-bar::before {
+            content: '';
+            display: none;
+        }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .column-toggles {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .column-toggle {
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .column-toggle.active {
+            background: var(--blue);
+            color: white;
+            border-color: var(--blue);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 15px 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .col-check.hidden,
+        td.col-check.hidden {
+            display: none;
+        }
+
+        tr:hover {
+            background: var(--hover-bg);
+        }
+
+        tr.hidden {
+            display: none;
+        }
+
+        .col-check {
+            width: 50px;
+            text-align: center;
+        }
+
+        .col-img {
+            width: 120px;
+            text-align: center;
+        }
+
+        .col-img img {
+            max-width: 100px;
+            max-height: 100px;
+            object-fit: contain;
+        }
+
+        .col-info {
+            padding: 15px 10px;
+            vertical-align: middle;
+            line-height: 1.5;
+        }
+
+        .col-controls {
+            width: 200px;
+            text-align: right;
+            padding-right: 10px;
+        }
+
+
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                gap: 15px;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .controls {
+                gap: 25px;
+            }
+        }
+
+        .controls button {
+            min-width: 60px;
+            min-height: 60px;
+            font-size: 28px;
+            border: 2px solid var(--border-color);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            padding: 0;
+            margin: 0;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .controls .count-display {
+            min-width: 90px;
+            font-weight: bold;
+            font-size: 20px;
+            text-align: center;
+            color: var(--text-primary);
+        }
+
+        /* Mobile - keep current size */
+        @media (max-width: 768px) {
+            .controls button {
+                min-width: 50px;
+                min-height: 50px;
+                font-size: 24px;
+            }
+
+            .controls .count-display {
+                min-width: 70px;
+                font-size: 18px;
+            }
+        }
+
+        /* Tablet - even bigger for easier tapping */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .controls button {
+                min-width: 70px;
+                min-height: 70px;
+                font-size: 32px;
+            }
+
+            .controls .count-display {
+                min-width: 100px;
+                font-size: 22px;
+            }
+        }
+
+        .controls button:hover:not(:disabled) {
+            background: var(--blue);
+            color: white;
+            border-color: var(--blue);
+        }
+
+        .controls button:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+
+        .controls .count-display {
+            min-width: 80px;
+            font-weight: bold;
+            font-size: 18px;
+            text-align: center;
+            color: var(--text-primary);
+        }
+
+        .checkmark {
+            color: var(--green);
+            font-size: 24px;
+        }
+
+        .count {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-left: 4px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .content-area {
+                padding: 10px;
+            }
+
+            input {
+                width: 100%;
+            }
+
+            .autocomplete-dropdown {
+                left: 0;
+                width: calc(100vw - 40px);
+                max-width: 450px;
+            }
+
+            .controls button {
+                min-width: 45px;
+                min-height: 45px;
+                font-size: 20px;
+            }
+
+            .controls .count-display {
+                min-width: 60px;
+                font-size: 16px;
+            }
+
+            .collapsed-app-name {
+                font-size: 14px;
+            }
+
+            .collapsed-set-name {
+                font-size: 12px;
+            }
+
+            .header-left {
+                min-width: 100%;
+            }
+
+            .header-left h1 {
+                font-size: 20px;
+            }
+
+            .collapsed-filters .filters button {
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+
+            .collapsed-filters .column-toggle {
+                font-size: 12px;
+                padding: 6px 8px;
+            }
+
+            .theme-toggle {
+                top: 15px;
+                right: 15px;
+                font-size: 20px;
+            }
+
+            .fullscreen-toggle {
+                top: 15px;
+                right: 50px;
+                font-size: 20px;
+            }
+
+            .header-top {
+                padding-right: 80px;
+            }
+
+            .col-img {
+                width: 80px;
+            }
+
+            .col-img img {
+                max-width: 60px;
+                max-height: 60px;
+            }
+
+            th,
+            td {
+                padding: 10px 5px;
+                font-size: 14px;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+
+            /* Tablet optimizations */
+            .controls button {
+                min-width: 60px;
+                min-height: 60px;
+                font-size: 26px;
+            }
+
+            .controls .count-display {
+                min-width: 90px;
+                font-size: 20px;
+            }
+
+            th,
+            td {
+                padding: 18px 12px;
+            }
+        }
+
+        #fireworksContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Full header that scrolls normally -->
+    <div class="full-header">
+        <div class="header-wrapper" style="position: relative;">
+            <button class="fullscreen-toggle" id="fullscreenToggle" onclick="toggleFullscreen()">
+                <span id="fullscreenIcon">⛶</span>
+            </button>
+            <button class="theme-toggle" id="themeToggle" onclick="toggleDarkMode()">
+                <span id="themeIcon">🌙</span>
+            </button>
+
+            <div class="header-top">
+                <div class="header-left">
+                    <h1>🧱 BrickTally</h1>
+                    <div class="input-group">
+                        <input type="number" id="setNumber" placeholder="Enter set number (e.g., 10294)" autocomplete="off" />
+                        <div id="autocompleteDropdown" class="autocomplete-dropdown"></div>
+                        <button id="loadButton" onclick="loadSet()">🔍</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="setInfo" class="info-box p-15 text-center m-20 hide">
+                <h2 id="setName"></h2>
+                <p id="setDetails"></p>
+            </div>
+
+            <div id="statsSection" class="hide">
+                <div class="stats text-center">
+                    <span id="completedPieces">0</span> / <span id="totalPieces">0</span> pieces checked
+                </div>
+                <div class="progress-bar" id="progressBar" data-percentage="0%" data-pieces="0/0">
+                    <div id="progressFill" class="progress-fill" style="width: 0%;"></div>
+                </div>
+                <div class="reset-button-container">
+                    <button id="resetButton" class="reset hide" onclick="resetSet()">Reset</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Collapsed header that appears when scrolling -->
+    <div id="collapsedHeader" class="collapsed-header">
+        <div class="header-wrapper">
+            <div class="collapsed-row">
+                <div class="collapsed-app-name">🧱 BrickTally</div>
+                <div class="collapsed-set-name" id="collapsedSetName"></div>
+            </div>
+            <div class="collapsed-progress">
+                <div class="progress-bar" id="progressBarCollapsed" data-percentage="0%" data-pieces="0/0">
+                    <div id="progressFillCollapsed" class="progress-fill" style="width: 0%;"></div>
+                </div>
+            </div>
+            <div class="collapsed-filters">
+                <details id="colorFilterCollapsed" class="hide">
+                    <summary>Filter by Color</summary>
+                    <div id="colorFiltersCollapsed" class="filters"></div>
+                </details>
+                <details id="infoFilterCollapsed" class="hide">
+                    <summary>Show Information</summary>
+                    <div class="column-toggles" style="margin: 10px 0 0 0;">
+                        <button class="column-toggle" onclick="toggleColumn('color', event)">Color</button>
+                        <button class="column-toggle" onclick="toggleColumn('name', event)">Name</button>
+                        <button class="column-toggle" onclick="toggleColumn('partNum', event)">Part Number</button>
+                        <button class="column-toggle toggle-complete-parts" onclick="toggleCompleteParts(event)">Show Complete Parts</button>
+                    </div>
+                </details>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="content-area">
+            <div id="loading" class="text-center p-20 hide">Loading set data...</div>
+            <div id="error" class="error text-center p-20 hide"></div>
+
+            <div id="filterSection" class="info-box p-15 m-20 hide">
+                <details id="colorFilterSection" open>
+                    <summary>Filter by Color</summary>
+                    <div id="colorFilters" class="filters" style="margin-top: 10px;"></div>
+                </details>
+
+                <details id="showInformationSection" open style="margin-top: 15px;">
+                    <summary>Show Information</summary>
+                    <div class="column-toggles" style="margin-top: 10px;">
+                        <button class="column-toggle" onclick="toggleColumn('color', event)">Color</button>
+                        <button class="column-toggle" onclick="toggleColumn('name', event)">Name</button>
+                        <button class="column-toggle" onclick="toggleColumn('partNum', event)">Part Number</button>
+                        <button class="column-toggle toggle-complete-parts" onclick="toggleCompleteParts(event)">Show Complete Parts</button>
+                    </div>
+                </details>
+
+                <details style="margin-top: 15px;">
+                    <summary>Export Missing Pieces</summary>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px;">
+                        <button onclick="generateBadge()" style="flex: 1; min-width: 200px; background: var(--green);">🏷️
+                            Generate Badge</button>
+                        <button onclick="exportToBrickLink()"
+                            style="flex: 1; min-width: 200px; background: var(--orange);">📦 BrickLink XML</button>
+                        <button onclick="exportToPickABrick()" style="flex: 1; min-width: 200px; background: var(--red);">🧱
+                            Pick a Brick CSV</button>
+                        <button onclick="exportMissingPartsText()"
+                            style="flex: 1; min-width: 200px; background: var(--blue);">📄 Text List</button>
+                    </div>
+                </details>
+            </div>
+
+            <div id="tableContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        var partsData = [];
+        var userCounts = {};
+        var currentSetNumber = '';
+        var activeColorFilters = [];
+        var showCompleteParts = false;
+        var visibleColumns = {
+            partNum: false,
+            name: false,
+            color: false
+        };
+
+        function getPartKey(part) {
+            var color = part.color || 'Unknown';
+            var key = part.partNum + '_' + color;
+            if (part.isSpare) {
+                key += '_s';
+            }
+            return key;
+        }
+
+        function saveSetInfo(setNumber, setData) {
+            // Save set metadata for autocomplete
+            var setInfo = {
+                number: setNumber.split('-')[0],
+                fullNumber: setNumber,
+                name: setData.name,
+                year: setData.year,
+                imageUrl: setData.set_img_url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="50" height="50"%3E%3Crect width="50" height="50" fill="%23ddd"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="10" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E',
+                lastAccessed: Date.now()
+            };
+            localStorage.setItem('setInfo_' + setNumber, JSON.stringify(setInfo));
+        }
+
+        function getSetHistory() {
+            var sets = [];
+
+            // Scan localStorage for saved set info
+            for (var i = 0; i < localStorage.length; i++) {
+                var key = localStorage.key(i);
+                if (key && key.startsWith('setInfo_')) {
+                    try {
+                        var setInfo = JSON.parse(localStorage.getItem(key));
+                        sets.push(setInfo);
+                    } catch (e) {
+                        // Skip invalid entries
+                    }
+                }
+            }
+
+            // Sort by last accessed (most recent first)
+            sets.sort(function(a, b) {
+                return b.lastAccessed - a.lastAccessed;
+            });
+
+            return sets;
+        }
+
+        function showAutocomplete() {
+            var dropdown = document.getElementById('autocompleteDropdown');
+            var sets = getSetHistory();
+
+            if (sets.length === 0) {
+                dropdown.classList.remove('visible');
+                return;
+            }
+
+            dropdown.innerHTML = '';
+
+            sets.forEach(function(setInfo) {
+                var item = document.createElement('div');
+                item.className = 'autocomplete-item';
+                item.innerHTML = '<img src="' + setInfo.imageUrl + '" alt="' + setInfo.name + '">' +
+                    '<div class="autocomplete-item-info">' +
+                    '<div class="autocomplete-item-name">' + setInfo.name + '</div>' +
+                    '<div class="autocomplete-item-number">Set ' + setInfo.number + ' (' + setInfo.year + ')</div>' +
+                    '</div>';
+
+                item.onclick = function() {
+                    document.getElementById('setNumber').value = setInfo.number;
+                    dropdown.classList.remove('visible');
+                    loadSetDirect(setInfo.fullNumber);
+                };
+
+                dropdown.appendChild(item);
+            });
+
+            dropdown.classList.add('visible');
+        }
+
+        function hideAutocomplete() {
+            setTimeout(function() {
+                document.getElementById('autocompleteDropdown').classList.remove('visible');
+            }, 200); // Delay to allow click events to fire
+        }
+
+        function setupAutocomplete() {
+            var input = document.getElementById('setNumber');
+
+            input.addEventListener('focus', showAutocomplete);
+            input.addEventListener('blur', hideAutocomplete);
+
+            // Hide dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                var dropdown = document.getElementById('autocompleteDropdown');
+                var inputGroup = e.target.closest('.input-group');
+                if (!inputGroup) {
+                    dropdown.classList.remove('visible');
+                }
+            });
+        }
+
+        window.onload = function () {
+            // Load dark mode preference
+            var darkMode = localStorage.getItem('darkMode');
+            if (darkMode === 'true') {
+                document.body.classList.add('dark-mode');
+                updateThemeIcon();
+            }
+
+            // Load show complete parts preference
+            var savedShowComplete = localStorage.getItem('showCompleteParts');
+            if (savedShowComplete === 'true') {
+                showCompleteParts = true;
+            }
+
+            // Load column preferences
+            var savedColumns = localStorage.getItem('visibleColumns');
+            if (savedColumns) {
+                visibleColumns = JSON.parse(savedColumns);
+                updateColumnToggles();
+            }
+
+            // Setup autocomplete
+            setupAutocomplete();
+
+            // Setup sticky header scroll behavior
+            setupStickyHeader();
+
+            var savedSetNumber = localStorage.getItem('currentSetNumber');
+            if (savedSetNumber) {
+                // Extract base number without version suffix for display
+                var baseNumber = savedSetNumber.split('-')[0];
+                document.getElementById('setNumber').value = baseNumber;
+
+                // Load the set directly with the full version number
+                loadSetDirect(savedSetNumber);
+            }
+        };
+
+        var headerScrollSetup = false; // Track if scroll listener is already set up
+
+        function setupStickyHeader() {
+            if (headerScrollSetup) return; // Prevent multiple listeners
+            headerScrollSetup = true;
+
+            window.addEventListener('scroll', function () {
+                var currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+                var collapsedHeader = document.getElementById('collapsedHeader');
+                var progressBar = document.getElementById('progressBar');
+                var filterSection = document.getElementById('filterSection');
+
+                // Prevent negative scroll values
+                if (currentScroll < 0) {
+                    currentScroll = 0;
+                }
+
+                // Calculate if progress bar is scrolled out of view
+                if (progressBar) {
+                    var progressBarRect = progressBar.getBoundingClientRect();
+                    var progressBarBottom = progressBarRect.bottom;
+
+                    // Show collapsed header when progress bar is scrolled past top
+                    if (progressBarBottom < 0) {
+                        collapsedHeader.classList.add('visible');
+                        document.body.classList.add('collapsed-visible');
+                    } else {
+                        collapsedHeader.classList.remove('visible');
+                        document.body.classList.remove('collapsed-visible');
+                    }
+                }
+
+                // Show/hide collapsed color filter when the whole color filter section is about to scroll out
+                var colorFilterSection = document.getElementById('colorFilterSection');
+                if (colorFilterSection && collapsedHeader) {
+                    var colorFilterRect = colorFilterSection.getBoundingClientRect();
+                    var colorFilterBottom = colorFilterRect.bottom;
+                    var collapsedHeaderRect = collapsedHeader.getBoundingClientRect();
+                    var collapsedHeaderBottom = collapsedHeaderRect.bottom;
+
+                    var colorFilterCollapsed = document.getElementById('colorFilterCollapsed');
+
+                    // Show collapsed color filter when bottom of color filter section scrolls under collapsed header
+                    if (collapsedHeader.classList.contains('visible') && colorFilterBottom < collapsedHeaderBottom) {
+                        if (colorFilterCollapsed && !colorFilterCollapsed.classList.contains('visible')) {
+                            colorFilterCollapsed.classList.remove('hide');
+                            // Force reflow to ensure display:block is applied before transition
+                            colorFilterCollapsed.offsetHeight;
+                            requestAnimationFrame(function() {
+                                colorFilterCollapsed.classList.add('visible');
+                            });
+                        }
+                    } else {
+                        if (colorFilterCollapsed && colorFilterCollapsed.classList.contains('visible')) {
+                            colorFilterCollapsed.classList.remove('visible');
+                            // Delay adding hide class to allow animation to complete
+                            setTimeout(function() {
+                                colorFilterCollapsed.classList.add('hide');
+                            }, 500);
+                        }
+                    }
+                }
+
+                // Show/hide collapsed info filter when the whole show information section is about to scroll out
+                var showInformationSection = document.getElementById('showInformationSection');
+                if (showInformationSection && collapsedHeader) {
+                    var showInfoRect = showInformationSection.getBoundingClientRect();
+                    var showInfoBottom = showInfoRect.bottom;
+                    var collapsedHeaderRect = collapsedHeader.getBoundingClientRect();
+                    var collapsedHeaderBottom = collapsedHeaderRect.bottom;
+
+                    var infoFilterCollapsed = document.getElementById('infoFilterCollapsed');
+
+                    // Show collapsed info filter when bottom of show information section scrolls under collapsed header
+                    if (collapsedHeader.classList.contains('visible') && showInfoBottom < collapsedHeaderBottom) {
+                        if (infoFilterCollapsed && !infoFilterCollapsed.classList.contains('visible')) {
+                            infoFilterCollapsed.classList.remove('hide');
+                            // Force reflow to ensure display:block is applied before transition
+                            infoFilterCollapsed.offsetHeight;
+                            requestAnimationFrame(function() {
+                                infoFilterCollapsed.classList.add('visible');
+                            });
+                        }
+                    } else {
+                        if (infoFilterCollapsed && infoFilterCollapsed.classList.contains('visible')) {
+                            infoFilterCollapsed.classList.remove('visible');
+                            // Delay adding hide class to allow animation to complete
+                            setTimeout(function() {
+                                infoFilterCollapsed.classList.add('hide');
+                            }, 500);
+                        }
+                    }
+                }
+            }, { passive: true });
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            var isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDark);
+            updateThemeIcon();
+        }
+
+        function updateThemeIcon() {
+            var isDark = document.body.classList.contains('dark-mode');
+            var themeIcon = document.getElementById('themeIcon');
+            // When dark mode is active, show sun (to switch to light)
+            // When light mode is active, show moon (to switch to dark)
+            themeIcon.textContent = isDark ? '☀️' : '🌙';
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
+                // Enter fullscreen
+                var elem = document.documentElement;
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.webkitRequestFullscreen) {
+                    elem.webkitRequestFullscreen();
+                } else if (elem.mozRequestFullScreen) {
+                    elem.mozRequestFullScreen();
+                } else if (elem.msRequestFullscreen) {
+                    elem.msRequestFullscreen();
+                }
+            } else {
+                // Exit fullscreen
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+        }
+
+        // Update fullscreen icon when fullscreen state changes
+        document.addEventListener('fullscreenchange', updateFullscreenIcon);
+        document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
+        document.addEventListener('mozfullscreenchange', updateFullscreenIcon);
+        document.addEventListener('msfullscreenchange', updateFullscreenIcon);
+
+        function updateFullscreenIcon() {
+            var isFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+            var fullscreenIcon = document.getElementById('fullscreenIcon');
+            // When in fullscreen, show X to exit
+            // When not in fullscreen, show expand icon to enter
+            fullscreenIcon.textContent = isFullscreen ? '✕' : '⛶';
+        }
+
+        function toggleColumn(column, event) {
+            if (event) {
+                event.stopPropagation();
+            }
+            visibleColumns[column] = !visibleColumns[column];
+            localStorage.setItem('visibleColumns', JSON.stringify(visibleColumns));
+            renderTable();
+        }
+
+        function updateColumnToggles() {
+            var toggles = document.querySelectorAll('.column-toggle');
+            toggles.forEach(function (toggle) {
+                var text = toggle.textContent.toLowerCase().trim();
+                var column = '';
+
+                if (text.includes('part number')) {
+                    column = 'partNum';
+                } else if (text.includes('name')) {
+                    column = 'name';
+                } else if (text.includes('color')) {
+                    column = 'color';
+                } else if (text.includes('complete')) {
+                    // Handle "Show Complete Parts" toggle
+                    // Active when showing complete parts (showCompleteParts = true)
+                    if (showCompleteParts) {
+                        toggle.classList.add('active');
+                    } else {
+                        toggle.classList.remove('active');
+                    }
+                    return;
+                }
+
+                if (column && visibleColumns[column]) {
+                    toggle.classList.add('active');
+                } else if (column) {
+                    toggle.classList.remove('active');
+                }
+            });
+        }
+
+
+        function toggleCompleteParts(event) {
+            if (event) {
+                event.stopPropagation();
+            }
+            showCompleteParts = !showCompleteParts;
+            localStorage.setItem('showCompleteParts', showCompleteParts);
+
+            // Re-render table to update checkmark column visibility
+            renderTable();
+            updateTableVisibility();
+        }
+
+        function updateTableVisibility() {
+            partsData.forEach(function (part) {
+                var row = document.getElementById('row-' + part.id);
+                if (!row) return;
+
+                var key = getPartKey(part);
+                var isComplete = userCounts[key] === part.quantity;
+                var colorMatch = activeColorFilters.length === 0 || activeColorFilters.indexOf(part.color) > -1;
+
+                // Hide if: (complete AND not showing complete) OR (color doesn't match filter)
+                if ((isComplete && !showCompleteParts) || !colorMatch) {
+                    row.classList.add('hidden');
+                } else {
+                    row.classList.remove('hidden');
+                }
+            });
+        }
+
+        function loadSetVersions(setNumberBase) {
+            // Remove any existing suffix to get base number
+            var baseNumber = setNumberBase.split('-')[0];
+
+            return fetch('/api/rebrickable?endpoint=/lego/sets/&search=' + encodeURIComponent(baseNumber))
+                .then(function (response) {
+                    if (!response.ok) throw new Error('Error fetching set versions');
+                    return response.json();
+                })
+                .then(function (data) {
+                    // Filter results to only exact matches with this base number
+                    var versions = data.results.filter(function (set) {
+                        return set.set_num.startsWith(baseNumber + '-');
+                    });
+                    return versions;
+                });
+        }
+
+        function loadSetDirect(setNumber) {
+            show('loading');
+            hide('error', 'tableContainer', 'statsSection', 'setInfo', 'filterSection', 'resetButton');
+            document.getElementById('tableContainer').innerHTML = '';
+            document.getElementById('loadButton').disabled = true;
+
+            continueLoadSet(setNumber);
+        }
+
+        function loadSet() {
+            var setNumber = document.getElementById('setNumber').value.trim();
+
+            if (!setNumber) {
+                showError('Please enter a set number');
+                return;
+            }
+
+            show('loading');
+            hide('error', 'tableContainer', 'statsSection', 'setInfo', 'filterSection', 'resetButton');
+            document.getElementById('tableContainer').innerHTML = '';
+            document.getElementById('loadButton').disabled = true;
+
+            var baseNumber = setNumber.split('-')[0];
+
+            // First check for multiple versions
+            loadSetVersions(baseNumber)
+                .then(function (versions) {
+                    if (versions.length > 1) {
+                        // Multiple versions exist - show selector
+                        showVersionSelector(versions);
+                        hide('loading');
+                        document.getElementById('loadButton').disabled = false;
+                    } else {
+                        // Single version - proceed normally
+                        var finalSetNumber = setNumber.includes('-') ? setNumber : setNumber + '-1';
+                        continueLoadSet(finalSetNumber);
+                    }
+                })
+                .catch(function (error) {
+                    // If version check fails, try with -1 suffix
+                    var finalSetNumber = setNumber.includes('-') ? setNumber : setNumber + '-1';
+                    continueLoadSet(finalSetNumber);
+                });
+        }
+
+        function continueLoadSet(setNumber) {
+            fetch('/api/rebrickable?endpoint=/lego/sets/' + encodeURIComponent(setNumber) + '/')
+                .then(function (response) {
+                    if (!response.ok) throw new Error('Set not found. Please check the set number');
+                    return response.json();
+                })
+                .then(function (setData) {
+                    currentSetNumber = setNumber;
+                    localStorage.setItem('currentSetNumber', setNumber);
+                    displaySetInfo(setData);
+                    return loadAllParts(setNumber);
+                })
+                .then(function (allParts) {
+                    if (!allParts || allParts.length === 0) {
+                        throw new Error('No parts found for this set');
+                    }
+                    processParts(allParts);
+                })
+                .catch(function (error) {
+                    console.error('Error:', error);
+                    showError(error.message || 'Error loading set data. Please try again.');
+                })
+                .finally(function () {
+                    hide('loading');
+                    document.getElementById('loadButton').disabled = false;
+                });
+        }
+
+        function showVersionSelector(versions) {
+            var modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px;';
+
+            var content = document.createElement('div');
+            content.style.cssText = 'background: var(--bg-secondary); padding: 30px; border-radius: 8px; max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto;';
+
+            var html = '<h2 style="margin-bottom: 20px; color: var(--text-primary);">Multiple Set Versions Found</h2>' +
+                '<p style="margin-bottom: 20px; color: var(--text-secondary);">This set has ' + versions.length + ' versions. Please select one:</p>' +
+                '<div style="display: flex; flex-direction: column; gap: 15px;">';
+
+            versions.forEach(function (version) {
+                var imgUrl = version.set_img_url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="80"%3E%3Crect width="100" height="80" fill="%23ddd"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="12" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E';
+                html += '<button onclick="selectVersion(\'' + version.set_num + '\')" style="' +
+                    'display: flex; align-items: center; gap: 15px; padding: 15px; ' +
+                    'background: var(--bg-tertiary); border: 2px solid var(--border-color); ' +
+                    'border-radius: 8px; cursor: pointer; text-align: left; width: 100%;">' +
+                    '<img src="' + imgUrl + '" style="width: 100px; height: 80px; object-fit: contain; border-radius: 4px;">' +
+                    '<div style="flex: 1;">' +
+                    '<div style="font-weight: bold; color: var(--text-primary); margin-bottom: 5px;">' + version.name + '</div>' +
+                    '<div style="color: var(--text-secondary); font-size: 14px;">Set: ' + version.set_num + ' | Year: ' + version.year + ' | Parts: ' + version.num_parts + '</div>' +
+                    '</div>' +
+                    '</button>';
+            });
+
+            html += '</div>' +
+                '<button onclick="this.parentElement.parentElement.remove()" style="margin-top: 20px; width: 100%; background: var(--text-secondary);">Cancel</button>';
+
+            content.innerHTML = html;
+            modal.appendChild(content);
+            document.body.appendChild(modal);
+
+            modal.onclick = function (e) {
+                if (e.target === modal) modal.remove();
+            };
+        }
+
+        function selectVersion(setNumber) {
+            // Close modal
+            var modals = document.querySelectorAll('body > div');
+            modals.forEach(function (modal) {
+                if (modal.style.position === 'fixed') {
+                    modal.remove();
+                }
+            });
+
+            // Update input field to show selected version
+            document.getElementById('setNumber').value = setNumber.split('-')[0];
+
+            // Load the selected version
+            show('loading');
+            continueLoadSet(setNumber);
+        }
+
+        function loadAllParts(setNumber) {
+            var allParts = [];
+
+            function fetchPage(page) {
+                return fetch('/api/rebrickable?endpoint=/lego/sets/' + encodeURIComponent(setNumber) + '/parts/&page_size=1000&page=' + page)
+                    .then(function (response) {
+                        if (!response.ok) throw new Error('Error fetching parts data');
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        if (data.results && data.results.length > 0) {
+                            allParts = allParts.concat(data.results);
+                        }
+
+                        if (data.next) {
+                            return fetchPage(page + 1);
+                        } else {
+                            return allParts;
+                        }
+                    });
+            }
+
+            return fetchPage(1);
+        }
+
+        function displaySetInfo(setData) {
+            var setImageUrl = setData.set_img_url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="300" height="200"%3E%3Crect width="300" height="200" fill="%23ddd"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="16" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E';
+            var versionParts = currentSetNumber.split('-');
+            var versionNumber = versionParts[1];
+            var displaySetNumber = versionParts[0]; // Show without suffix
+            var versionInfo = versionNumber !== '1' ?
+                ' <span style="color: var(--orange);">(Version ' + versionNumber + ')</span>' : '';
+
+            document.getElementById('setName').textContent = setData.name;
+            document.getElementById('setDetails').innerHTML =
+                '<img src="' + setImageUrl + '" alt="' + setData.name + '" style="max-width: 300px; max-height: 200px; object-fit: contain; margin: 15px 0; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">' +
+                '<br>Set Number: ' + displaySetNumber + versionInfo + ' | Year: ' + setData.year + ' | Parts: ' + setData.num_parts;
+
+            // Update collapsed header set name
+            var collapsedVersionInfo = versionNumber !== '1' ? ' (v' + versionNumber + ')' : '';
+            document.getElementById('collapsedSetName').textContent = displaySetNumber + ': ' + setData.name + collapsedVersionInfo;
+
+            // Save set info for autocomplete
+            saveSetInfo(currentSetNumber, setData);
+
+            show('setInfo');
+        }
+
+        function processParts(results) {
+            partsData = results.map(function (item, index) {
+                return {
+                    id: index,
+                    partNum: item.part.part_num || 'unknown',
+                    name: item.part.name || 'Unknown Part',
+                    color: (item.color && item.color.name) ? item.color.name : 'Unknown',
+                    quantity: item.quantity || 0,
+                    imageUrl: item.part.part_img_url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="80" height="80"%3E%3Crect width="80" height="80" fill="%23ddd"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="10" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E',
+                    isSpare: item.is_spare || false
+                };
+            });
+
+            userCounts = {};
+            partsData.forEach(function (part) {
+                var key = getPartKey(part);
+                userCounts[key] = 0;
+            });
+
+            loadState();
+            renderColorFilters();
+            renderTable();
+            show('statsSection', 'filterSection', 'resetButton');
+            document.body.classList.add('has-set');
+
+            updateStats();
+            wasComplete = false;
+        }
+
+        function renderColorFilters() {
+            var colorCounts = {};
+
+            partsData.forEach(function (part) {
+                // Skip spare parts in filter counts
+                if (part.isSpare) return;
+
+                if (!colorCounts[part.color]) {
+                    colorCounts[part.color] = 0;
+                }
+                colorCounts[part.color] += part.quantity;
+            });
+
+            var totalPieces = 0;
+            for (var color in colorCounts) {
+                totalPieces += colorCounts[color];
+            }
+
+            var html = '<button class="filter active" onclick="toggleColorFilter(\'all\')">All <span class="count">(' + totalPieces + ')</span></button>';
+
+            Object.keys(colorCounts).sort().forEach(function (color) {
+                html += '<button class="filter" onclick="toggleColorFilter(\'' + color.replace(/'/g, "\\'") + '\')">' +
+                    color + ' <span class="count">(' + colorCounts[color] + ')</span></button>';
+            });
+
+            // Render in both locations
+            document.getElementById('colorFilters').innerHTML = html;
+            document.getElementById('colorFiltersCollapsed').innerHTML = html;
+            activeColorFilters = [];
+        }
+
+        function toggleColorFilter(color) {
+            var buttons = document.querySelectorAll('.filter');
+
+            if (color === 'all') {
+                activeColorFilters = [];
+                buttons.forEach(function (btn) { btn.classList.remove('active'); });
+                buttons[0].classList.add('active');
+            } else {
+                buttons[0].classList.remove('active');
+
+                var index = activeColorFilters.indexOf(color);
+                if (index > -1) {
+                    activeColorFilters.splice(index, 1);
+                    event.target.classList.remove('active');
+                } else {
+                    activeColorFilters.push(color);
+                    event.target.classList.add('active');
+                }
+
+                if (activeColorFilters.length === 0) {
+                    buttons[0].classList.add('active');
+                }
+            }
+
+            filterTable();
+        }
+
+        function filterTable() {
+            updateTableVisibility();
+        }
+
+        function renderTable() {
+            // showCompleteParts = true means column is VISIBLE
+            var checkmarkHidden = showCompleteParts ? '' : ' hidden';
+
+            var html = '<table><tbody>';
+
+            partsData.forEach(function (part) {
+                // Skip spare parts
+                if (part.isSpare) return;
+
+                var key = getPartKey(part);
+                var currentCount = userCounts[key] || 0;
+                var checkmark = currentCount === part.quantity ? '<span class="checkmark">✓</span>' : '';
+
+                // Build combined info column content based on visible columns
+                var infoContent = [];
+
+                if (visibleColumns.color) {
+                    infoContent.push(part.color);
+                }
+
+                if (visibleColumns.name) {
+                    infoContent.push(part.name);
+                }
+
+                // Build the info text
+                var infoText = infoContent.join(' ');
+
+                // Add part number on a new line if enabled (only add <br> if there's content before it)
+                if (visibleColumns.partNum) {
+                    if (infoText) {
+                        infoText += '<br>' + part.partNum;
+                    } else {
+                        infoText = part.partNum;
+                    }
+                }
+
+                // If nothing is selected, show at least the image
+                if (!visibleColumns.color && !visibleColumns.name && !visibleColumns.partNum) {
+                    infoText = '&nbsp;';
+                }
+
+                html += '<tr id="row-' + part.id + '">' +
+                    '<td class="col-check' + checkmarkHidden + '">' + checkmark + '</td>' +
+                    '<td class="col-img"><img src="' + part.imageUrl + '" alt="' + part.name + '"></td>' +
+                    '<td class="col-info">' + infoText + '</td>' +
+                    '<td class="col-controls"><div class="controls">' +
+                    '<button onclick="decrementPart(' + part.id + ')">-</button>' +
+                    '<span class="count-display" id="count-' + part.id + '">' + currentCount + '/' + part.quantity + '</span>' +
+                    '<button onclick="incrementPart(' + part.id + ')">+</button>' +
+                    '</div></td></tr>';
+            });
+
+            html += '</tbody></table>';
+            document.getElementById('tableContainer').innerHTML = html;
+            document.getElementById('tableContainer').style.display = 'block';
+
+            // Update column toggle states
+            updateColumnToggles();
+        }
+
+        function incrementPart(partId) {
+            var part = partsData[partId];
+            if (!part) return;
+
+            var key = getPartKey(part);
+            if (userCounts[key] >= part.quantity) return;
+
+            userCounts[key]++;
+            updateRow(partId);
+            updateStats();
+            checkAndCelebrate();
+            saveState();
+        }
+
+        function decrementPart(partId) {
+            var part = partsData[partId];
+            if (!part) return;
+
+            var key = getPartKey(part);
+            if (userCounts[key] <= 0) return;
+
+            userCounts[key]--;
+            updateRow(partId);
+            updateStats();
+            checkAndCelebrate();
+            saveState();
+        }
+
+        function updateRow(partId) {
+            var part = partsData[partId];
+            if (!part) return; // Add safety check
+            var key = getPartKey(part);
+            var countElement = document.getElementById('count-' + partId);
+            var row = document.getElementById('row-' + partId);
+            if (!row) return;
+
+            var checkElement = row.querySelector('.col-check');
+
+            countElement.textContent = userCounts[key] + '/' + part.quantity;
+
+            var isComplete = userCounts[key] === part.quantity;
+            if (checkElement) {
+                checkElement.innerHTML = isComplete ? '<span class="checkmark">✓</span>' : '';
+            }
+
+            // Update row visibility
+            updateTableVisibility();
+        }
+
+        function updateStats() {
+            var completedPieces = 0;
+            var totalPieces = 0;
+
+            partsData.forEach(function (part) {
+                // Skip spare parts in completion calculation
+                if (part.isSpare) return;
+
+                var key = getPartKey(part);
+                totalPieces += part.quantity;
+                completedPieces += userCounts[key];
+            });
+
+            var percentage = totalPieces > 0 ? Math.round((completedPieces / totalPieces) * 100) : 0;
+            var percentText = percentage + '%';
+            var piecesText = completedPieces + '/' + totalPieces;
+
+            document.getElementById('completedPieces').textContent = completedPieces;
+            document.getElementById('totalPieces').textContent = totalPieces;
+
+            document.getElementById('progressFill').style.width = percentText;
+            document.getElementById('progressBar').setAttribute('data-percentage', percentText);
+            document.getElementById('progressBar').setAttribute('data-pieces', piecesText);
+
+            // Update collapsed header progress bar
+            document.getElementById('progressFillCollapsed').style.width = percentText;
+            document.getElementById('progressBarCollapsed').setAttribute('data-percentage', percentText);
+            document.getElementById('progressBarCollapsed').setAttribute('data-pieces', piecesText);
+        }
+
+        function saveState() {
+            if (!currentSetNumber) return;
+            var compressed = [];
+            for (var key in userCounts) {
+                if (userCounts[key] > 0) {
+                    compressed.push(key + ':' + userCounts[key]);
+                }
+            }
+            localStorage.setItem('set_' + currentSetNumber, compressed.join(','));
+        }
+
+        function loadState() {
+            if (!currentSetNumber) return;
+            var saved = localStorage.getItem('set_' + currentSetNumber);
+            if (!saved) return;
+
+            saved.split(',').forEach(function (part) {
+                if (!part) return;
+                var split = part.split(':');
+                var key = split[0];
+                var count = parseInt(split[1]);
+                if (userCounts.hasOwnProperty(key)) {
+                    userCounts[key] = count;
+                }
+            });
+        }
+
+        function resetSet() {
+            if (!currentSetNumber || !confirm('Are you sure you want to reset all progress for this set?')) return;
+
+            localStorage.removeItem('set_' + currentSetNumber);
+
+            // Reset all counts to 0
+            partsData.forEach(function (part) {
+                var key = getPartKey(part);
+                userCounts[key] = 0;
+            });
+
+            // Re-render everything
+            renderTable();
+            updateStats();
+            wasComplete = false;
+        }
+        function showError(message) {
+            document.getElementById('error').textContent = message;
+            show('error');
+        }
+
+        function show() {
+            for (var i = 0; i < arguments.length; i++) {
+                var el = document.getElementById(arguments[i]);
+                if (el) el.classList.remove('hide');
+            }
+        }
+
+        function hide() {
+            for (var i = 0; i < arguments.length; i++) {
+                var el = document.getElementById(arguments[i]);
+                if (el) el.classList.add('hide');
+            }
+        }
+
+        document.getElementById('setNumber').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') loadSet();
+        });
+
+        function generateBadge() {
+            if (!currentSetNumber) {
+                alert('Please load a set first');
+                return;
+            }
+
+            var completedPieces = 0;
+            var totalPieces = 0;
+            var missingParts = [];
+
+            partsData.forEach(function (part) {
+                if (part.isSpare) return;
+
+                var key = getPartKey(part);
+                totalPieces += part.quantity;
+                completedPieces += userCounts[key];
+
+                var missing = part.quantity - (userCounts[key] || 0);
+                if (missing > 0) {
+                    missingParts.push(key + ':' + missing);
+                }
+            });
+
+            var percentage = totalPieces > 0 ? Math.round((completedPieces / totalPieces) * 100) : 0;
+            var missingData = missingParts.join(',');
+
+            // Get set info
+            var setImageUrl = document.querySelector('#setDetails img') ?
+                document.querySelector('#setDetails img').src :
+                'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="80" height="80"%3E%3Crect width="80" height="80" fill="%23ddd"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="10" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E';
+
+            var setName = document.getElementById('setName').textContent;
+
+            var versionParts = currentSetNumber.split('-');
+            var versionNumber = versionParts[1];
+            var displaySetNumber = versionParts[0];
+            var versionLabel = versionNumber !== '1' ? ' v' + versionNumber : '';
+
+            // Truncate set name if too long
+            var displayName = setName.length > 30 ? setName.substring(0, 27) + '...' : setName;
+
+            // Create badge URL - handle both local files and deployed sites
+            var baseUrl = window.location.origin;
+            var currentPath = window.location.pathname;
+            var verifyUrl;
+
+            if (baseUrl === 'file://' || baseUrl === 'null' || window.location.protocol === 'file:') {
+                var directory = currentPath.substring(0, currentPath.lastIndexOf('/'));
+                verifyUrl = directory + '/verify.html?set=' + currentSetNumber + '&missing=' + encodeURIComponent(missingData);
+            } else {
+                verifyUrl = baseUrl + '/verify.html?set=' + currentSetNumber + '&missing=' + encodeURIComponent(missingData);
+            }
+
+            // Badge HTML with new layout
+            var badgeColor = percentage === 100 ? '#4CAF50' : (percentage >= 80 ? '#FF9800' : '#FF6B6B');
+            var badgeHtml = '<a href="' + verifyUrl + '" target="_blank" style="text-decoration: none;">' +
+                '<svg width="360" height="100" xmlns="http://www.w3.org/2000/svg">' +
+                '<defs>' +
+                '<linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">' +
+                '<stop offset="0%" style="stop-color:' + badgeColor + ';stop-opacity:1" />' +
+                '<stop offset="100%" style="stop-color:' + badgeColor + 'dd;stop-opacity:1" />' +
+                '</linearGradient>' +
+                '<clipPath id="imgClip"><rect x="10" y="10" width="80" height="80" rx="6"/></clipPath>' +
+                '</defs>' +
+                '<rect width="360" height="100" rx="8" fill="url(#bg)"/>' +
+                '<image href="' + setImageUrl + '" x="10" y="10" width="80" height="80" clip-path="url(#imgClip)" preserveAspectRatio="xMidYMid slice"/>' +
+                '<rect x="10" y="10" width="80" height="80" rx="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>' +
+                '<text x="105" y="25" font-family="Arial" font-size="16" font-weight="bold" fill="white">' + displayName + '</text>' +
+                '<text x="105" y="43" font-family="Arial" font-size="12" fill="white" opacity="0.85">Set ' + displaySetNumber + versionLabel + '</text>' +
+                '<text x="105" y="78" font-family="Arial" font-size="32" font-weight="bold" fill="white">' + percentage + '%</text>' +
+                '<text x="180" y="78" font-family="Arial" font-size="13" fill="white" opacity="0.9">' + completedPieces + '/' + totalPieces + ' pieces</text>' +
+                '</svg></a>';
+
+            showBadgeModal(badgeHtml, verifyUrl);
+        }
+
+        function showBadgeModal(badgeHtml, verifyUrl) {
+            var modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px;';
+
+            var content = document.createElement('div');
+            content.style.cssText = 'background: var(--bg-secondary); padding: 30px; border-radius: 8px; max-width: 750px; width: 100%;';
+            content.innerHTML = '<h2 style="margin-bottom: 20px; color: var(--text-primary);">Set Completeness Badge</h2>' +
+                '<div style="text-align: center; margin: 20px 0;">' + badgeHtml + '</div>' +
+                '<h3 style="margin: 20px 0 10px 0; color: var(--text-primary);">Badge HTML Code:</h3>' +
+                '<textarea id="badgeCode" readonly style="width: 100%; height: 150px; padding: 10px; font-family: monospace; font-size: 12px; background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 4px;">' +
+                badgeHtml.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</textarea>' +
+                '<div style="margin-top: 15px; display: flex; gap: 10px;">' +
+                '<button onclick="copyBadgeCode()" style="flex: 1;">Copy Badge Code</button>' +
+                '<button onclick="window.open(\'' + verifyUrl + '\', \'_blank\')" style="flex: 1; background: var(--green);">View Verification Page</button>' +
+                '</div>' +
+                '<button onclick="this.parentElement.parentElement.remove()" style="margin-top: 15px; width: 100%; background: var(--text-secondary);">Close</button>';
+
+            modal.appendChild(content);
+            document.body.appendChild(modal);
+
+            modal.onclick = function (e) {
+                if (e.target === modal) modal.remove();
+            };
+        }
+
+        function copyBadgeCode() {
+            var textarea = document.getElementById('badgeCode');
+            textarea.select();
+            document.execCommand('copy');
+            alert('Badge code copied to clipboard!');
+        }
+
+        function exportToBrickLink() {
+            if (!currentSetNumber) {
+                alert('Please load a set first');
+                return;
+            }
+
+            var missingParts = [];
+
+            partsData.forEach(function (part) {
+                if (part.isSpare) return;
+
+                var key = getPartKey(part);
+                var missing = part.quantity - (userCounts[key] || 0);
+
+                if (missing > 0) {
+                    missingParts.push({
+                        partNum: part.partNum,
+                        color: part.color,
+                        quantity: missing,
+                        name: part.name
+                    });
+                }
+            });
+
+            if (missingParts.length === 0) {
+                alert('No missing pieces! Your set is complete.');
+                return;
+            }
+
+            // Generate BrickLink XML
+            var xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+            xml += '<INVENTORY>\n';
+
+            missingParts.forEach(function (part) {
+                xml += '  <ITEM>\n';
+                xml += '    <ITEMTYPE>P</ITEMTYPE>\n';
+                xml += '    <ITEMID>' + part.partNum + '</ITEMID>\n';
+                xml += '    <COLORNAME>' + part.color + '</COLORNAME>\n';
+                xml += '    <MINQTY>' + part.quantity + '</MINQTY>\n';
+                xml += '  </ITEM>\n';
+            });
+
+            xml += '</INVENTORY>';
+
+            var blob = new Blob([xml], { type: 'text/xml' });
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'bricklink-wanted-list-' + currentSetNumber.replace('-', '_') + '.xml';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+
+            alert('BrickLink XML file downloaded!\n\nTo use:\n1. Go to BrickLink.com\n2. Navigate to "Want" > "Upload"\n3. Select "BrickLink XML" format\n4. Upload the downloaded file');
+        }
+
+        function exportToPickABrick() {
+            if (!currentSetNumber) {
+                alert('Please load a set first');
+                return;
+            }
+
+            var missingParts = [];
+
+            partsData.forEach(function (part) {
+                if (part.isSpare) return;
+
+                var key = getPartKey(part);
+                var missing = part.quantity - (userCounts[key] || 0);
+
+                if (missing > 0) {
+                    missingParts.push({
+                        partNum: part.partNum,
+                        name: part.name,
+                        color: part.color,
+                        colorId: part.colorId,
+                        quantity: missing
+                    });
+                }
+            });
+
+            if (missingParts.length === 0) {
+                alert('No missing pieces! Your set is complete.');
+                return;
+            }
+
+            // Generate CSV for Pick a Brick
+            var csv = 'Element ID,Design ID,Colour,Quantity,Name\n';
+
+            missingParts.forEach(function (part) {
+                // Pick a Brick uses Design ID (same as part number) and Element ID (part+color combination)
+                // Since we don't have Element IDs from Rebrickable, we'll use the part number
+                csv += ',' + part.partNum + ',' + part.color + ',' + part.quantity + ',"' + part.name + '"\n';
+            });
+
+            // Create download
+            var blob = new Blob([csv], { type: 'text/csv' });
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'pick-a-brick-list-' + currentSetNumber.replace('-', '_') + '.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+
+            alert('Pick a Brick CSV file downloaded!\n\nNote: This is a reference list. You\'ll need to manually search and add items on LEGO.com/pick-a-brick as they don\'t support bulk import.');
+        }
+
+        function exportMissingPartsText() {
+            if (!currentSetNumber) {
+                alert('Please load a set first');
+                return;
+            }
+
+            var missingParts = [];
+
+            partsData.forEach(function (part) {
+                if (part.isSpare) return;
+
+                var key = getPartKey(part);
+                var missing = part.quantity - (userCounts[key] || 0);
+
+                if (missing > 0) {
+                    missingParts.push({
+                        partNum: part.partNum,
+                        name: part.name,
+                        color: part.color,
+                        quantity: missing
+                    });
+                }
+            });
+
+            if (missingParts.length === 0) {
+                alert('No missing pieces! Your set is complete.');
+                return;
+            }
+
+            // Generate readable text list
+            var text = 'Missing Pieces for Set ' + currentSetNumber.split('-')[0] + '\n';
+            text += '='.repeat(50) + '\n\n';
+
+            missingParts.forEach(function (part) {
+                text += part.quantity + 'x ' + part.partNum + ' - ' + part.name + ' (' + part.color + ')\n';
+            });
+
+            text += '\n' + '='.repeat(50) + '\n';
+            text += 'Total unique parts missing: ' + missingParts.length + '\n';
+
+            var totalPieces = 0;
+            missingParts.forEach(function (p) { totalPieces += p.quantity; });
+            text += 'Total pieces missing: ' + totalPieces + '\n';
+
+            // Create download
+            var blob = new Blob([text], { type: 'text/plain' });
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'missing-parts-' + currentSetNumber.replace('-', '_') + '.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        var wasComplete = false; // Add with global variables
+
+        function checkAndCelebrate() {
+            var completedPieces = 0;
+            var totalPieces = 0;
+
+            partsData.forEach(function (part) {
+                if (part.isSpare) return;
+
+                var key = getPartKey(part);
+                totalPieces += part.quantity;
+                completedPieces += userCounts[key];
+            });
+
+            var isNowComplete = completedPieces === totalPieces && totalPieces > 0;
+
+            if (isNowComplete && !wasComplete) {
+                triggerFireworks();
+            }
+
+            wasComplete = isNowComplete;
+        }
+
+        function triggerFireworks() {
+            var container = document.getElementById('fireworksContainer');
+            container.style.display = 'block';
+            container.innerHTML = '';
+
+            // Create Lottie animation
+            var animation = lottie.loadAnimation({
+                container: container,
+                renderer: 'svg',
+                loop: false,
+                autoplay: true,
+                path: 'https://lottie.host/dd2b30a7-1d3d-42c5-903b-5dfd2e8dda2f/lf5PQ2A6cJ.json' // Fireworks animation
+            });
+
+            // Hide after animation completes
+            animation.addEventListener('complete', function () {
+                setTimeout(function () {
+                    container.style.display = 'none';
+                    container.innerHTML = '';
+                }, 500);
+            });
+
+            // Show congratulations message
+            setTimeout(function () {
+                var congrats = document.createElement('div');
+                congrats.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--bg-secondary); padding: 40px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); z-index: 10001; text-align: center; animation: scaleIn 0.3s ease;';
+                congrats.innerHTML = '<h2 style="color: var(--green); font-size: 36px; margin-bottom: 15px;">🎉 Complete!</h2>' +
+                    '<p style="color: var(--text-primary); font-size: 18px; margin-bottom: 20px;">All pieces accounted for!</p>' +
+                    '<button onclick="this.parentElement.remove()" style="padding: 12px 30px; font-size: 16px;">Awesome!</button>';
+                document.body.appendChild(congrats);
+
+                // Add scale-in animation
+                var style = document.createElement('style');
+                style.textContent = '@keyframes scaleIn { from { transform: translate(-50%, -50%) scale(0.5); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }';
+                document.head.appendChild(style);
+            }, 1000);
+        }
+    </script>
+
+    <div id="fireworksContainer"></div>
+</body>
+
+</html>
