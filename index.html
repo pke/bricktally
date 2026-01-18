@@ -1873,6 +1873,9 @@
                     infoText = '&nbsp;';
                 }
 
+                // Use checkmark for single-quantity items
+                const incrementButtonText = part.quantity === 1 ? '✓' : '+';
+
                 html += '<tr id="row-' + part.id + '">' +
                     '<td class="col-check' + checkmarkHidden + '">' + checkmark + '</td>' +
                     '<td class="col-img"><img src="' + part.imageUrl + '" alt="' + part.name + '"></td>' +
@@ -1880,7 +1883,7 @@
                     '<td class="col-controls"><div class="controls">' +
                     '<button onclick="decrementPart(' + part.id + ')">-</button>' +
                     '<span class="count-display" id="count-' + part.id + '"><span class="counted">' + currentCount + '</span>/<span class="qty-click" onclick="fillQuantity(' + part.id + ')" title="Click to mark all as counted">' + part.quantity + '</span></span>' +
-                    '<button onclick="incrementPart(' + part.id + ')">+</button>' +
+                    '<button onclick="incrementPart(' + part.id + ')">' + incrementButtonText + '</button>' +
                     '</div></td></tr>';
             });
 
