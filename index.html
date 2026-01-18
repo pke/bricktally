@@ -175,6 +175,12 @@
             font-weight: bold;
             margin: 0;
             white-space: nowrap;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .collapsed-app-name:hover {
+            color: var(--text-primary);
         }
 
         .collapsed-set-name {
@@ -294,6 +300,12 @@
 
         h1 {
             color: var(--text-primary);
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        h1:hover {
+            color: var(--blue);
         }
 
         h2 {
@@ -381,70 +393,6 @@
             width: 200px;
             background: var(--bg-secondary);
             color: var(--text-primary);
-        }
-
-        .input-group {
-            position: relative;
-        }
-
-        .autocomplete-dropdown {
-            position: absolute;
-            top: 100%;
-            left: -100px;
-            width: 450px;
-            background: var(--bg-secondary);
-            border: 2px solid var(--border-color);
-            border-top: none;
-            border-radius: 0 0 4px 4px;
-            max-height: 300px;
-            overflow-y: auto;
-            z-index: 1000;
-            box-shadow: 0 4px 12px var(--shadow);
-            display: none;
-        }
-
-        .autocomplete-dropdown.visible {
-            display: block;
-        }
-
-        .autocomplete-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px;
-            cursor: pointer;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .autocomplete-item:last-child {
-            border-bottom: none;
-        }
-
-        .autocomplete-item:hover {
-            background: var(--hover-bg);
-        }
-
-        .autocomplete-item img {
-            width: 50px;
-            height: 50px;
-            object-fit: contain;
-            border-radius: 4px;
-        }
-
-        .autocomplete-item-info {
-            flex: 1;
-        }
-
-        .autocomplete-item-name {
-            font-weight: bold;
-            color: var(--text-primary);
-            font-size: 14px;
-            margin-bottom: 2px;
-        }
-
-        .autocomplete-item-number {
-            font-size: 12px;
-            color: var(--text-secondary);
         }
 
         button {
@@ -754,12 +702,6 @@
                 width: 100%;
             }
 
-            .autocomplete-dropdown {
-                left: 0;
-                width: calc(100vw - 40px);
-                max-width: 450px;
-            }
-
             .controls button {
                 min-width: 45px;
                 min-height: 45px;
@@ -859,6 +801,129 @@
             z-index: 9999;
             display: none;
         }
+
+        .set-history {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .set-history h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--text-primary);
+        }
+
+        .set-history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .set-history-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .set-history-item:hover {
+            border-color: var(--blue);
+            box-shadow: 0 4px 12px var(--shadow);
+            transform: translateY(-2px);
+        }
+
+        .set-history-item-image {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            flex-shrink: 0;
+            border-radius: 4px;
+        }
+
+        .set-history-item-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .set-history-item-title {
+            font-weight: bold;
+            font-size: 16px;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .set-history-item-number {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .set-history-item-stats {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .set-history-item .progress-bar {
+            height: 20px;
+            margin: 0;
+        }
+
+        .set-history-item-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .set-history-item-actions button {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            font-size: 20px;
+            border-radius: 6px;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .set-history-item-actions button:hover {
+            background: var(--blue);
+            color: white;
+            border-color: var(--blue);
+        }
+
+        .set-history-item-actions button.delete:hover {
+            background: var(--red);
+            border-color: var(--red);
+        }
+
+        .set-history-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .set-history-empty p {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .set-history-item {
+                flex-wrap: wrap;
+            }
+
+            .set-history-item-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
     </style>
 </head>
 
@@ -875,10 +940,9 @@
 
             <div class="header-top">
                 <div class="header-left">
-                    <h1>🧱 BrickTally</h1>
+                    <h1 onclick="goToSetHistory()">🧱 BrickTally</h1>
                     <div class="input-group">
                         <input type="number" id="setNumber" placeholder="Enter set number (e.g., 10294)" autocomplete="off" />
-                        <div id="autocompleteDropdown" class="autocomplete-dropdown"></div>
                         <button id="loadButton" onclick="loadSet()">🔍</button>
                     </div>
                 </div>
@@ -907,7 +971,7 @@
     <div id="collapsedHeader" class="collapsed-header">
         <div class="header-wrapper">
             <div class="collapsed-row">
-                <div class="collapsed-app-name">🧱 BrickTally</div>
+                <div class="collapsed-app-name" onclick="goToSetHistory()">🧱 BrickTally</div>
                 <div class="collapsed-set-name" id="collapsedSetName"></div>
             </div>
             <div class="collapsed-progress">
@@ -937,6 +1001,15 @@
         <div class="content-area">
             <div id="loading" class="text-center p-20 hide">Loading set data...</div>
             <div id="error" class="error text-center p-20 hide"></div>
+
+            <!-- Set History Section -->
+            <div id="setHistorySection" class="set-history hide">
+                <div id="setHistoryList" class="set-history-list"></div>
+                <div id="setHistoryEmpty" class="set-history-empty hide">
+                    <p>No sets worked on yet</p>
+                    <p style="font-size: 14px;">Enter a set number above to get started</p>
+                </div>
+            </div>
 
             <div id="filterSection" class="info-box p-15 m-20 hide">
                 <details id="colorFilterSection" open>
@@ -995,12 +1068,13 @@
         }
 
         function saveSetInfo(setNumber, setData) {
-            // Save set metadata for autocomplete
+            // Save set metadata for set history
             var setInfo = {
                 number: setNumber.split('-')[0],
                 fullNumber: setNumber,
                 name: setData.name,
                 year: setData.year,
+                numParts: setData.num_parts || 0,
                 imageUrl: setData.set_img_url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="50" height="50"%3E%3Crect width="50" height="50" fill="%23ddd"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="10" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E',
                 lastAccessed: Date.now()
             };
@@ -1031,58 +1105,128 @@
             return sets;
         }
 
-        function showAutocomplete() {
-            var dropdown = document.getElementById('autocompleteDropdown');
+        function displaySetHistory() {
             var sets = getSetHistory();
+            var historySection = document.getElementById('setHistorySection');
+            var historyList = document.getElementById('setHistoryList');
+            var historyEmpty = document.getElementById('setHistoryEmpty');
 
             if (sets.length === 0) {
-                dropdown.classList.remove('visible');
+                historyList.innerHTML = '';
+                historyEmpty.classList.remove('hide');
                 return;
             }
 
-            dropdown.innerHTML = '';
+            historyEmpty.classList.add('hide');
+            historyList.innerHTML = '';
 
             sets.forEach(function(setInfo) {
+                // Calculate progress for this set
+                var savedState = localStorage.getItem('set_' + setInfo.fullNumber);
+                var completedCount = 0;
+                var totalCount = setInfo.numParts || 0;
+
+                if (savedState) {
+                    savedState.split(',').forEach(function(part) {
+                        if (!part) return;
+                        var split = part.split(':');
+                        completedCount += parseInt(split[1]) || 0;
+                    });
+                }
+
+                var percentage = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
                 var item = document.createElement('div');
-                item.className = 'autocomplete-item';
-                item.innerHTML = '<img src="' + setInfo.imageUrl + '" alt="' + setInfo.name + '">' +
-                    '<div class="autocomplete-item-info">' +
-                    '<div class="autocomplete-item-name">' + setInfo.name + '</div>' +
-                    '<div class="autocomplete-item-number">Set ' + setInfo.number + ' (' + setInfo.year + ')</div>' +
+                item.className = 'set-history-item';
+                item.setAttribute('data-set-number', setInfo.fullNumber);
+
+                item.innerHTML =
+                    '<img src="' + setInfo.imageUrl + '" alt="' + setInfo.name + '" class="set-history-item-image">' +
+                    '<div class="set-history-item-content">' +
+                        '<div class="set-history-item-title">' + setInfo.name + '</div>' +
+                        '<div class="set-history-item-number">Set ' + setInfo.number + ' (' + setInfo.year + ')</div>' +
+                        '<div class="set-history-item-stats">' + completedCount + ' / ' + totalCount + ' pieces</div>' +
+                        '<div class="progress-bar" data-percentage="' + percentage + '%">' +
+                            '<div class="progress-fill" style="width: ' + percentage + '%;"></div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="set-history-item-actions">' +
+                        '<button class="reset" onclick="resetSetHistory(event, \'' + setInfo.fullNumber + '\')" title="Reset progress">↻</button>' +
+                        '<button class="delete" onclick="deleteSetHistory(event, \'' + setInfo.fullNumber + '\')" title="Delete set">🗑</button>' +
                     '</div>';
 
-                item.onclick = function() {
+                // Click on row to load set
+                item.addEventListener('click', function(e) {
+                    // Don't trigger if clicking buttons
+                    if (e.target.tagName === 'BUTTON') return;
+
                     document.getElementById('setNumber').value = setInfo.number;
-                    dropdown.classList.remove('visible');
                     loadSetDirect(setInfo.fullNumber);
-                };
+                });
 
-                dropdown.appendChild(item);
+                historyList.appendChild(item);
             });
-
-            dropdown.classList.add('visible');
         }
 
-        function hideAutocomplete() {
-            setTimeout(function() {
-                document.getElementById('autocompleteDropdown').classList.remove('visible');
-            }, 200); // Delay to allow click events to fire
+        function deleteSetHistory(event, setNumber) {
+            event.stopPropagation();
+
+            if (!confirm('Are you sure you want to delete this set and all its progress?')) {
+                return;
+            }
+
+            // Remove all data for this set
+            localStorage.removeItem('setInfo_' + setNumber);
+            localStorage.removeItem('set_' + setNumber);
+            localStorage.removeItem('setData_' + setNumber);
+
+            // Refresh the display
+            displaySetHistory();
         }
 
-        function setupAutocomplete() {
-            var input = document.getElementById('setNumber');
+        function resetSetHistory(event, setNumber) {
+            event.stopPropagation();
 
-            input.addEventListener('focus', showAutocomplete);
-            input.addEventListener('blur', hideAutocomplete);
+            if (!confirm('Are you sure you want to reset all progress for this set?')) {
+                return;
+            }
 
-            // Hide dropdown when clicking outside
-            document.addEventListener('click', function(e) {
-                var dropdown = document.getElementById('autocompleteDropdown');
-                var inputGroup = e.target.closest('.input-group');
-                if (!inputGroup) {
-                    dropdown.classList.remove('visible');
-                }
-            });
+            // Remove only the progress data
+            localStorage.removeItem('set_' + setNumber);
+
+            // Refresh the display
+            displaySetHistory();
+        }
+
+        function showSetHistory() {
+            hide('setInfo', 'statsSection', 'filterSection', 'tableContainer', 'resetButton');
+            // Clear table content and inline styles
+            var tableContainer = document.getElementById('tableContainer');
+            if (tableContainer) {
+                tableContainer.innerHTML = '';
+                tableContainer.style.display = 'none';
+            }
+            show('setHistorySection');
+            displaySetHistory();
+        }
+
+        function hideSetHistory() {
+            hide('setHistorySection');
+        }
+
+        function goToSetHistory() {
+            // Clear current set
+            currentSetNumber = '';
+            localStorage.removeItem('currentSetNumber');
+            document.getElementById('setNumber').value = '';
+
+            // Reset all data
+            partsData = [];
+            userCounts = {};
+            activeColorFilters = [];
+
+            // Show set history
+            showSetHistory();
         }
 
         window.onload = function () {
@@ -1106,9 +1250,6 @@
                 updateColumnToggles();
             }
 
-            // Setup autocomplete
-            setupAutocomplete();
-
             // Setup sticky header scroll behavior
             setupStickyHeader();
 
@@ -1120,6 +1261,9 @@
 
                 // Load the set directly with the full version number
                 loadSetDirect(savedSetNumber);
+            } else {
+                // Show set history if no current set
+                showSetHistory();
             }
         };
 
@@ -1410,6 +1554,8 @@
         }
 
         function continueLoadSet(setNumber) {
+            hideSetHistory();
+
             fetch('/api/rebrickable?endpoint=/lego/sets/' + encodeURIComponent(setNumber) + '/')
                 .then(function (response) {
                     if (!response.ok) throw new Error('Set not found. Please check the set number');
@@ -1533,7 +1679,7 @@
             var collapsedVersionInfo = versionNumber !== '1' ? ' (v' + versionNumber + ')' : '';
             document.getElementById('collapsedSetName').textContent = displaySetNumber + ': ' + setData.name + collapsedVersionInfo;
 
-            // Save set info for autocomplete
+            // Save set info for set history
             saveSetInfo(currentSetNumber, setData);
 
             show('setInfo');
