@@ -604,7 +604,7 @@
 
         @media (max-width: 768px) {
             .controls {
-                gap: 15px;
+                gap: 10px;
             }
         }
 
@@ -635,6 +635,36 @@
             color: var(--text-primary);
         }
 
+        .qty-click {
+            cursor: pointer;
+            color: var(--blue);
+            padding: 6px 8px;
+            margin-left: 2px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            display: inline-block;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .qty-click:hover {
+            background: var(--blue);
+            color: white;
+            text-decoration: underline;
+        }
+
+        .qty-click:active {
+            transform: scale(0.95);
+        }
+
+        .count-display .counted {
+            margin-right: 2px;
+            padding: 6px 8px;
+            display: inline-block;
+            min-width: 30px;
+            text-align: center;
+        }
+
         /* Mobile - keep current size */
         @media (max-width: 768px) {
             .controls button {
@@ -644,7 +674,19 @@
             }
 
             .controls .count-display {
-                min-width: 70px;
+                min-width: 110px;
+                font-size: 18px;
+            }
+
+            .qty-click {
+                padding: 4px 6px;
+                min-width: 30px;
+                font-size: 18px;
+            }
+
+            .count-display .counted {
+                padding: 4px 6px;
+                min-width: 30px;
                 font-size: 18px;
             }
         }
@@ -658,7 +700,19 @@
             }
 
             .controls .count-display {
-                min-width: 100px;
+                min-width: 130px;
+                font-size: 22px;
+            }
+
+            .qty-click {
+                padding: 6px 8px;
+                min-width: 35px;
+                font-size: 22px;
+            }
+
+            .count-display .counted {
+                padding: 6px 8px;
+                min-width: 35px;
                 font-size: 22px;
             }
         }
@@ -1824,7 +1878,7 @@
                     '<td class="col-info">' + infoText + '</td>' +
                     '<td class="col-controls"><div class="controls">' +
                     '<button onclick="decrementPart(' + part.id + ')">-</button>' +
-                    '<span class="count-display" id="count-' + part.id + '">' + currentCount + '/' + part.quantity + '</span>' +
+                    '<span class="count-display" id="count-' + part.id + '"><span class="counted">' + currentCount + '</span>/<span class="qty-click" onclick="fillQuantity(' + part.id + ')" title="Click to mark all as counted">' + part.quantity + '</span></span>' +
                     '<button onclick="incrementPart(' + part.id + ')">+</button>' +
                     '</div></td></tr>';
             });
@@ -1865,6 +1919,19 @@
             saveState();
         }
 
+        function fillQuantity(partId) {
+            var part = partsData[partId];
+            if (!part) return;
+
+            var key = getPartKey(part);
+            // Set the count to the full quantity
+            userCounts[key] = part.quantity;
+            updateRow(partId);
+            updateStats();
+            checkAndCelebrate();
+            saveState();
+        }
+
         function updateRow(partId) {
             var part = partsData[partId];
             if (!part) return; // Add safety check
@@ -1875,7 +1942,8 @@
 
             var checkElement = row.querySelector('.col-check');
 
-            countElement.textContent = userCounts[key] + '/' + part.quantity;
+            // Update count display with clickable quantity
+            countElement.innerHTML = '<span class="counted">' + userCounts[key] + '</span>/<span class="qty-click" onclick="fillQuantity(' + partId + ')" title="Click to mark all as counted">' + part.quantity + '</span>';
 
             var isComplete = userCounts[key] === part.quantity;
             if (checkElement) {
