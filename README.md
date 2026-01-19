@@ -47,18 +47,29 @@ Visit [bricktally.app](https://bricktally.app) to try it out!
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/yourusername/bricktally.git
    cd bricktally
    ```
 
-2. **Set up environment variables**
+2. **Run setup script**
+
+   ```bash
+   ./setup.sh
+   ```
+   
+   This installs git hooks for automatic cache version management.
+
+3. **Set up environment variables**
+
    ```bash
    # Create .env file
    echo "REBRICKABLE_API_KEY=your_api_key_here" > .env
    ```
 
-3. **Run locally with Vercel Dev**
+4. **Run locally with Vercel Dev**
+
    ```bash
    # Install Vercel CLI globally
    npm i -g vercel
@@ -67,7 +78,8 @@ Visit [bricktally.app](https://bricktally.app) to try it out!
    vercel dev
    ```
 
-4. **Open in browser**
+5. **Open in browser**
+
    ```
    http://localhost:3000
    ```
