@@ -6,14 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BrickTally - Every Brick Counts</title>
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <link rel="apple-touch-icon" sizes="180x180" href="/bricktally-icon.png">
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/bricktally-icon.png">
 
     <!-- OpenGraph Meta Tags -->
     <meta property="og:title" content="BrickTally - Every Brick Counts">
     <meta property="og:description"
         content="Check if your LEGO® sets have all pieces before selling or storing. Count every brick to confirm 100% completeness.">
-    <meta property="og:image" content="https://bricktally.app/og-image.png">
+    <meta property="og:image" content="https://bricktally.app/assets/og-image.png">
     <meta property="og:url" content="https://bricktally.app">
     <meta property="og:type" content="website">
 
@@ -22,7 +22,7 @@
     <meta name="twitter:title" content="BrickTally - Every Brick Counts">
     <meta name="twitter:description"
         content="Check if your LEGO® sets have all pieces before selling or storing. Count every brick to confirm 100% completeness.">
-    <meta name="twitter:image" content="https://bricktally.app/og-image.png">
+    <meta name="twitter:image" content="https://bricktally.app/assets/og-image.png">
 
     <!-- General Meta -->
     <meta name="description"
@@ -30,7 +30,21 @@
     <meta name="keywords"
         content="LEGO®, set verification, brick counting, complete set checker, LEGO® inventory, sell LEGO®, used LEGO® sets">
     <meta name="theme-color" content="#0055BF">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- Mobile Web App Meta Tags -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="BrickTally">
+
+    <!-- Windows Meta Tags -->
+    <meta name="msapplication-TileColor" content="#0055BF">
+    <meta name="msapplication-TileImage" content="/assets/bricktally-icon-512.png">
+
+    <script src="/js/lottie.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -1101,6 +1115,31 @@
     </div>
 
     <script>
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                        console.log('[BrickTally:ServiceWorker] ServiceWorker registered');
+
+                        // Handle updates
+                        registration.addEventListener('updatefound', function() {
+                            var newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', function() {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    if (confirm('New version available. Reload to update?')) {
+                                        window.location.reload();
+                                    }
+                                }
+                            });
+                        });
+                    })
+                    .catch(function(error) {
+                        console.log('[BrickTally:ServiceWorker] ServiceWorker registration failed:', error);
+                    });
+            });
+        }
+
         var partsData = [];
         var userCounts = {};
         var currentSetNumber = '';
@@ -1120,6 +1159,15 @@
             }
             return key;
         }
+
+        // Placeholder functions for image handling (currently disabled)
+        window.handleImageError = function(img) {
+            // Currently disabled - just use browser default broken image
+        };
+
+        window.handleImageLoad = function(img) {
+            // Currently disabled
+        };
 
         function saveSetInfo(setNumber, setData) {
             // Save set metadata for set history
@@ -1195,7 +1243,7 @@
                 item.setAttribute('data-set-number', setInfo.fullNumber);
 
                 item.innerHTML =
-                    '<img src="' + setInfo.imageUrl + '" alt="' + setInfo.name + '" class="set-history-item-image">' +
+                    '<img src="' + setInfo.imageUrl + '" alt="' + setInfo.name + '" class="set-history-item-image" onerror="handleImageError(this)" onclick="retryImageLoad(this)">' +
                     '<div class="set-history-item-content">' +
                         '<div class="set-history-item-title">' + setInfo.name + '</div>' +
                         '<div class="set-history-item-number">Set ' + setInfo.number + ' (' + setInfo.year + ')</div>' +
@@ -1628,7 +1676,7 @@
                     processParts(allParts);
                 })
                 .catch(function (error) {
-                    console.error('Error:', error);
+                    console.error('[BrickTally:API] Error:', error);
                     showError(error.message || 'Error loading set data. Please try again.');
                 })
                 .finally(function () {
@@ -1654,7 +1702,7 @@
                     'display: flex; align-items: center; gap: 15px; padding: 15px; ' +
                     'background: var(--bg-tertiary); border: 2px solid var(--border-color); ' +
                     'border-radius: 8px; cursor: pointer; text-align: left; width: 100%;">' +
-                    '<img src="' + imgUrl + '" style="width: 100px; height: 80px; object-fit: contain; border-radius: 4px;">' +
+                    '<img src="' + imgUrl + '" style="width: 100px; height: 80px; object-fit: contain; border-radius: 4px;" class="version-selector-image" onerror="handleImageError(this)" onclick="event.stopPropagation(); retryImageLoad(this);">' +
                     '<div style="flex: 1;">' +
                     '<div style="font-weight: bold; color: var(--text-primary); margin-bottom: 5px;">' + version.name + '</div>' +
                     '<div style="color: var(--text-secondary); font-size: 14px;">Set: ' + version.set_num + ' | Year: ' + version.year + ' | Parts: ' + version.num_parts + '</div>' +
@@ -1726,7 +1774,7 @@
 
             document.getElementById('setName').textContent = setData.name;
             document.getElementById('setDetails').innerHTML =
-                '<img src="' + setImageUrl + '" alt="' + setData.name + '" style="max-width: 300px; max-height: 200px; object-fit: contain; margin: 15px 0; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">' +
+                '<img src="' + setImageUrl + '" alt="' + setData.name + '" style="max-width: 300px; max-height: 200px; object-fit: contain; margin: 15px 0; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" class="set-detail-image" onerror="handleImageError(this)" onclick="retryImageLoad(this)">' +
                 '<br>Set Number: ' + displaySetNumber + versionInfo + ' | Year: ' + setData.year + ' | Parts: ' + setData.num_parts;
 
             // Update collapsed header set name
@@ -1876,10 +1924,12 @@
                 // Use checkmark for single-quantity items
                 const incrementButtonText = part.quantity === 1 ? '✓' : '+';
 
-                html += '<tr id="row-' + part.id + '">' +
+                var altText = (part.color + ' ' + part.name + ' (' + part.partNum + ')').replace(/"/g, '&quot;');
+                var fallbackInfo = part.color + ' ' + part.name + '<br>' + part.partNum;
+                html += '<tr id="row-' + part.id + '" data-fallback-info="' + fallbackInfo.replace(/"/g, '&quot;') + '">' +
                     '<td class="col-check' + checkmarkHidden + '">' + checkmark + '</td>' +
-                    '<td class="col-img"><img src="' + part.imageUrl + '" alt="' + part.name + '"></td>' +
-                    '<td class="col-info">' + infoText + '</td>' +
+                    '<td class="col-img"><img src="' + part.imageUrl + '" alt="' + altText + '" class="part-image" data-part-id="' + part.id + '" onerror="handleImageError(this)" onload="handleImageLoad(this)"></td>' +
+                    '<td class="col-info" id="info-' + part.id + '">' + infoText + '</td>' +
                     '<td class="col-controls"><div class="controls">' +
                     '<button onclick="decrementPart(' + part.id + ')">-</button>' +
                     '<span class="count-display" id="count-' + part.id + '"><span class="counted">' + currentCount + '</span>/<span class="qty-click" onclick="fillQuantity(' + part.id + ')" title="Click to mark all as counted">' + part.quantity + '</span></span>' +
@@ -2362,7 +2412,7 @@
                 renderer: 'svg',
                 loop: false,
                 autoplay: true,
-                path: 'https://lottie.host/dd2b30a7-1d3d-42c5-903b-5dfd2e8dda2f/lf5PQ2A6cJ.json' // Fireworks animation
+                path: '/assets/fireworks.json' // Fireworks animation
             });
 
             // Hide after animation completes
