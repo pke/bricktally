@@ -60,6 +60,24 @@
       position: relative;
     }
 
+    /* Preview environment banner */
+    .preview-banner {
+      position: fixed;
+      top: 25px;
+      left: -35px;
+      width: 150px;
+      background: #FF9500;
+      color: white;
+      text-align: center;
+      font-weight: bold;
+      font-size: 14px;
+      padding: 5px 0;
+      transform: rotate(-45deg);
+      z-index: 10000;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      pointer-events: none;
+    }
+
     .container {
       max-width: 1200px;
       margin: 0 auto;
@@ -368,6 +386,17 @@
 
     // Initialize dark mode on page load
     loadDarkMode();
+
+    // Detect preview environment and add banner
+    if (window.location.hostname === 'preview.bricktally.app') {
+      document.title = 'BrickTally Preview - Verify Parts';
+
+      // Create preview banner
+      var banner = document.createElement('div');
+      banner.className = 'preview-banner';
+      banner.textContent = 'PREVIEW';
+      document.body.appendChild(banner);
+    }
 
     function getPartKey(part) {
       var color = part.color || 'Unknown';

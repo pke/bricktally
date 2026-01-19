@@ -12,9 +12,9 @@
   <!-- LEGO brick (side view) -->
   <g transform="translate(20, 30)">
     <!-- Studs on top (rectangular from side) -->
-    <rect x="5" y="0" width="12" height="8" fill="#fff" rx="1"/>
-    <rect x="23" y="0" width="12" height="8" fill="#fff" rx="1"/>
-    <rect x="41" y="0" width="12" height="8" fill="#fff" rx="1"/>
+    <rect x="5" y="2" width="12" height="8" fill="#fff" rx="1"/>
+    <rect x="23" y="2" width="12" height="8" fill="#fff" rx="1"/>
+    <rect x="41" y="2" width="12" height="8" fill="#fff" rx="1"/>
 
     <!-- Main brick body -->
     <rect x="0" y="8" width="60" height="30" fill="#fff" rx="2"/>

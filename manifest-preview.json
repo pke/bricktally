@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json.schemastore.org/web-manifest",
+  "name": "BrickTally Preview",
+  "short_name": "BT Preview",
+  "description": "Track your LEGO building progress with BrickTally. Count parts, filter by color, and monitor completion for any LEGO set.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#FF9500",
+  "background_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/assets/bricktally-icon-preview-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/bricktally-icon-preview-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/bricktally-icon-maskable-preview-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/assets/bricktally-icon-maskable-preview-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
