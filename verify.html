@@ -263,6 +263,52 @@
       width: 60px;
       height: 60px;
       object-fit: contain;
+      cursor: pointer;
+    }
+
+    /* Lightbox */
+    .lightbox {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0);
+      z-index: 10001;
+      justify-content: center;
+      align-items: center;
+      transition: background 0.3s ease;
+    }
+
+    .lightbox.active {
+      display: flex;
+      background: rgba(0, 0, 0, 0.9);
+    }
+
+    .lightbox img {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+      transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+      position: absolute;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 40px;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+      z-index: 10002;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .lightbox.active .lightbox-close {
+      opacity: 1;
     }
 
     .missing-count {
@@ -344,6 +390,12 @@
 </head>
 
 <body>
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <span class="lightbox-close" id="lightboxClose">&times;</span>
+    <img id="lightboxImage" src="" alt="">
+  </div>
+
   <div class="container">
     <button class="theme-toggle" id="themeToggle" onclick="toggleDarkMode()">
       <span id="themeIcon">🌙</span>
@@ -397,6 +449,96 @@
       banner.textContent = 'PREVIEW';
       document.body.appendChild(banner);
     }
+
+    // Setup lightbox event listeners
+    var lightbox = document.getElementById('lightbox');
+    var lightboxImage = document.getElementById('lightboxImage');
+    var lightboxClose = document.getElementById('lightboxClose');
+    var lightboxOriginRect = null;
+
+    // Event delegation for part images
+    document.addEventListener('click', function(e) {
+      if (e.target.classList.contains('part-image')) {
+        var clickedImage = e.target;
+        var rect = clickedImage.getBoundingClientRect();
+
+        // Store origin for close animation
+        lightboxOriginRect = rect;
+
+        // Set the lightbox image source
+        lightboxImage.src = clickedImage.src;
+        lightboxImage.alt = clickedImage.alt;
+
+        // Position the image at the clicked image's location and size
+        lightboxImage.style.top = rect.top + 'px';
+        lightboxImage.style.left = rect.left + 'px';
+        lightboxImage.style.width = rect.width + 'px';
+        lightboxImage.style.height = rect.height + 'px';
+        lightboxImage.style.maxWidth = rect.width + 'px';
+        lightboxImage.style.maxHeight = rect.height + 'px';
+        lightboxImage.style.transform = 'translate(0, 0)';
+
+        // Show lightbox
+        lightbox.style.display = 'flex';
+
+        // Force reflow
+        lightboxImage.offsetHeight;
+
+        // Animate to center
+        requestAnimationFrame(function() {
+          lightbox.classList.add('active');
+          lightboxImage.style.top = '50%';
+          lightboxImage.style.left = '50%';
+          lightboxImage.style.width = '';
+          lightboxImage.style.height = '';
+          lightboxImage.style.maxWidth = '90%';
+          lightboxImage.style.maxHeight = '90%';
+          lightboxImage.style.transform = 'translate(-50%, -50%)';
+        });
+      }
+    });
+
+    // Function to close lightbox
+    function closeLightbox() {
+      if (lightboxOriginRect) {
+        // Animate back to origin
+        lightbox.classList.remove('active');
+        lightboxImage.style.top = lightboxOriginRect.top + 'px';
+        lightboxImage.style.left = lightboxOriginRect.left + 'px';
+        lightboxImage.style.width = lightboxOriginRect.width + 'px';
+        lightboxImage.style.height = lightboxOriginRect.height + 'px';
+        lightboxImage.style.maxWidth = lightboxOriginRect.width + 'px';
+        lightboxImage.style.maxHeight = lightboxOriginRect.height + 'px';
+        lightboxImage.style.transform = 'translate(0, 0)';
+
+        setTimeout(function() {
+          lightbox.style.display = 'none';
+          lightboxOriginRect = null;
+        }, 400);
+      } else {
+        lightbox.classList.remove('active');
+        setTimeout(function() {
+          lightbox.style.display = 'none';
+        }, 300);
+      }
+    }
+
+    // Close on X button
+    lightboxClose.addEventListener('click', closeLightbox);
+
+    // Close on background click
+    lightbox.addEventListener('click', function(e) {
+      if (e.target === lightbox) {
+        closeLightbox();
+      }
+    });
+
+    // Close on ESC key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+        closeLightbox();
+      }
+    });
 
     function getPartKey(part) {
       var color = part.color || 'Unknown';
