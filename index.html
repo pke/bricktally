@@ -1707,6 +1707,20 @@
             userCounts = {};
             activeColorFilters = [];
 
+            // Hide all set-related UI sections
+            hide('setInfo', 'statsSection', 'filterSection', 'tableContainer', 'resetButton',
+                 'partsSection', 'minifigSection', 'sparePartsSection');
+
+            // Clear and hide spare table container
+            var spareTableContainer = document.getElementById('spareTableContainer');
+            if (spareTableContainer) {
+                spareTableContainer.innerHTML = '';
+                spareTableContainer.style.display = 'none';
+            }
+
+            // Remove has-set class from body
+            document.body.classList.remove('has-set');
+
             // Show set history
             showSetHistory();
         }
