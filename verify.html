@@ -294,6 +294,10 @@
       position: absolute;
     }
 
+    .part-image.lightbox-active {
+      visibility: hidden;
+    }
+
     .lightbox-close {
       position: absolute;
       top: 20px;
@@ -455,6 +459,7 @@
     var lightboxImage = document.getElementById('lightboxImage');
     var lightboxClose = document.getElementById('lightboxClose');
     var lightboxOriginRect = null;
+    var lightboxOriginImage = null;
 
     // Event delegation for part images
     document.addEventListener('click', function(e) {
@@ -464,6 +469,10 @@
 
         // Store origin for close animation
         lightboxOriginRect = rect;
+        lightboxOriginImage = clickedImage;
+
+        // Hide the original image (keep its space)
+        clickedImage.classList.add('lightbox-active');
 
         // Set the lightbox image source
         lightboxImage.src = clickedImage.src;
@@ -513,6 +522,11 @@
 
         setTimeout(function() {
           lightbox.style.display = 'none';
+          // Restore original image visibility
+          if (lightboxOriginImage) {
+            lightboxOriginImage.classList.remove('lightbox-active');
+            lightboxOriginImage = null;
+          }
           lightboxOriginRect = null;
         }, 400);
       } else {
