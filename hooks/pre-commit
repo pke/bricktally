@@ -10,7 +10,6 @@ STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
 CACHED_PATTERNS=(
   "index.html"
   "verify.html"
-  "manifest.json"
   "assets/"
   "js/"
 )
