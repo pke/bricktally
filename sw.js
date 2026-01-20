@@ -1,6 +1,6 @@
 // BrickTally Service Worker
 // Version: 1
-const CACHE_VERSION = 'v20260120-163142';
+const CACHE_VERSION = 'v20260120-165057';
 const STATIC_CACHE = `bricktally-static-${CACHE_VERSION}`;
 const API_CACHE = `bricktally-api-${CACHE_VERSION}`;
 const IMAGE_CACHE = `bricktally-images-${CACHE_VERSION}`;
@@ -10,6 +10,7 @@ const STATIC_ASSETS = [
     '/',
     '/index.html',
     '/verify.html',
+    '/styles.css',
     // Note: manifest.json excluded to allow Vercel rewrites for preview/prod
     '/assets/favicon.svg',
     '/assets/bricktally-icon.png',
@@ -106,6 +107,11 @@ function isStaticAsset(url) {
     // Local HTML files
     if (url.origin === self.location.origin &&
         (url.pathname === '/' || url.pathname.endsWith('.html'))) {
+        return true;
+    }
+
+    // CSS files
+    if (url.pathname.endsWith('.css')) {
         return true;
     }
 
