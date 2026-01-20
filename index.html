@@ -676,8 +676,42 @@
         }
 
         .progress-bar::before {
-            content: '';
-            display: none;
+            content: attr(data-pieces);
+            display: block;
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            color: #000;
+            font-weight: bold;
+            font-size: 14px;
+            z-index: 1;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.8);
+        }
+
+        body.dark-mode .progress-bar::before {
+            color: #fff;
+            text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+        }
+
+        .spare-progress-container {
+            margin-top: 15px;
+        }
+
+        .spare-progress-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .spare-progress-bar {
+            margin: 0;
+            height: 20px;
+        }
+
+        .spare-progress-fill {
+            background: linear-gradient(90deg, #ff9800, #ff6f00);
         }
 
         .filters {
@@ -1339,6 +1373,12 @@
                 <div class="progress-bar" id="progressBar" data-percentage="0%" data-pieces="0/0">
                     <div id="progressFill" class="progress-fill" style="width: 0%;"></div>
                 </div>
+                <div id="spareProgressContainer" class="spare-progress-container hide">
+                    <div class="spare-progress-label">Extra Spare Parts</div>
+                    <div class="progress-bar spare-progress-bar" id="spareProgressBar" data-percentage="0%">
+                        <div id="spareProgressFill" class="progress-fill spare-progress-fill" style="width: 0%;"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1436,10 +1476,16 @@
             </div>
 
             <div id="partsSection" class="hide m-20">
-                <h3 style="margin-bottom: 15px;">Parts</h3>
+                <h3 id="partsHeader" style="margin-bottom: 15px;">Parts</h3>
             </div>
 
             <div id="tableContainer"></div>
+
+            <div id="sparePartsSection" class="hide m-20">
+                <h3 id="sparePartsHeader" style="margin-bottom: 15px;">Spare Parts</h3>
+            </div>
+
+            <div id="spareTableContainer"></div>
         </div>
     </div>
 
@@ -1769,6 +1815,13 @@
                 }
             });
 
+            // Event delegation for spare parts images in table
+            document.getElementById('spareTableContainer').addEventListener('click', function(e) {
+                if (e.target.classList.contains('part-image')) {
+                    openLightbox(e.target);
+                }
+            });
+
             // Function to close lightbox
             function closeLightbox() {
                 if (lightboxOriginRect) {
@@ -2015,6 +2068,7 @@
             visibleColumns[column] = !visibleColumns[column];
             localStorage.setItem('visibleColumns', JSON.stringify(visibleColumns));
             renderTable();
+            renderSparePartsTable();
         }
 
         function updateColumnToggles() {
@@ -2067,6 +2121,64 @@
             }
         }
 
+        function updatePartsHeader() {
+            var header = document.getElementById('partsHeader');
+            if (!header) return;
+
+            // Check if all regular parts are complete
+            var regularParts = partsData.filter(function(item) {
+                return !item.isSpare && item.type !== 'minifig';
+            });
+
+            if (regularParts.length === 0) {
+                header.textContent = 'Parts';
+                return;
+            }
+
+            var allComplete = regularParts.every(function(part) {
+                var regularKey = getPartKey(part);
+                var spareKey = regularKey + '_s';
+                var regularCount = userCounts[regularKey] || 0;
+                var spareCount = userCounts[spareKey] || 0;
+                var combinedCount = regularCount + spareCount;
+                return combinedCount >= part.quantity;
+            });
+
+            // Show checkmark only when hide complete is ON and all parts are complete
+            if (!showCompleteParts && allComplete) {
+                header.innerHTML = 'Parts <span style="color: var(--green);">✓</span>';
+            } else {
+                header.textContent = 'Parts';
+            }
+        }
+
+        function updateSparePartsHeader() {
+            var header = document.getElementById('sparePartsHeader');
+            if (!header) return;
+
+            // Check if all spare parts are complete
+            var spareParts = partsData.filter(function(item) {
+                return item.isSpare;
+            });
+
+            if (spareParts.length === 0) {
+                header.textContent = 'Spare Parts';
+                return;
+            }
+
+            var allComplete = spareParts.every(function(spare) {
+                var key = getPartKey(spare);
+                return (userCounts[key] || 0) === spare.quantity;
+            });
+
+            // Show checkmark only when hide complete is ON and all spare parts are complete
+            if (!showCompleteParts && allComplete) {
+                header.innerHTML = 'Spare Parts <span style="color: var(--green);">✓</span>';
+            } else {
+                header.textContent = 'Spare Parts';
+            }
+        }
+
         function toggleCompleteParts() {
             showCompleteParts = !showCompleteParts;
             localStorage.setItem('showCompleteParts', showCompleteParts);
@@ -2084,8 +2196,11 @@
 
             // Re-render table to update checkmark column visibility
             renderTable();
+            renderSparePartsTable();
             updateTableVisibility();
             updateMinifigHeader();
+            updatePartsHeader();
+            updateSparePartsHeader();
         }
 
         function updateTableVisibility() {
@@ -2378,8 +2493,11 @@
             renderColorFilters();
             renderMinifigures();
             renderTable();
+            renderSparePartsTable();
             updateTableVisibility();
             updateMinifigHeader();
+            updatePartsHeader();
+            updateSparePartsHeader();
             show('statsSection', 'filterSection', 'resetButton', 'partsSection');
             document.body.classList.add('has-set');
 
@@ -2500,11 +2618,12 @@
 
                 var altText = (part.color + ' ' + part.name + ' (' + part.partNum + ')').replace(/"/g, '&quot;');
                 var fallbackInfo = part.color + ' ' + part.name + '<br>' + part.partNum;
+                var decrementStyle = currentCount === 0 ? ' style="display: none;"' : '';
                 html += '<tr id="row-' + part.id + '" data-fallback-info="' + fallbackInfo.replace(/"/g, '&quot;') + '">' +
                     '<td class="col-img"><img src="' + part.imageUrl + '" alt="' + altText + '" class="part-image" data-part-id="' + part.id + '" onerror="handleImageError(this)" onload="handleImageLoad(this)"></td>' +
                     '<td class="col-info" id="info-' + part.id + '">' + infoText + '</td>' +
                     '<td class="col-controls"><div class="controls">' +
-                    '<button onclick="decrementPart(' + part.id + ')">-</button>' +
+                    '<button id="dec-' + part.id + '" onclick="decrementPart(' + part.id + ')"' + decrementStyle + '>-</button>' +
                     '<span class="count-display" id="count-' + part.id + '"><span class="counted">' + currentCount + '</span>/<span class="qty-click" onclick="fillQuantity(' + part.id + ')" title="Click to mark all as counted">' + part.quantity + '</span></span>' +
                     '<button id="inc-' + part.id + '" class="increment-btn' + incrementBtnClass + '" onclick="incrementPart(' + part.id + ')"' + incrementBtnDisabled + '>' + incrementButtonText + '</button>' +
                     '</div></td></tr>';
@@ -2516,6 +2635,81 @@
 
             // Update column toggle states
             updateColumnToggles();
+        }
+
+        function renderSparePartsTable() {
+            var spareParts = partsData.filter(function(part) {
+                return part.isSpare;
+            });
+
+            if (spareParts.length === 0) {
+                hide('sparePartsSection');
+                document.getElementById('spareTableContainer').style.display = 'none';
+                return;
+            }
+
+            var html = '<table><tbody>';
+
+            spareParts.forEach(function (part) {
+                var key = getPartKey(part);
+                var currentCount = userCounts[key] || 0;
+                var isComplete = currentCount === part.quantity;
+
+                // Build combined info column content based on visible columns
+                var infoContent = [];
+
+                if (visibleColumns.color) {
+                    infoContent.push(part.color);
+                }
+
+                if (visibleColumns.name) {
+                    infoContent.push(part.name);
+                }
+
+                // Build the info text
+                var infoText = infoContent.join(' ');
+
+                // Add part number on a new line if enabled
+                if (visibleColumns.partNum) {
+                    if (infoText) {
+                        infoText += '<br>' + part.partNum;
+                    } else {
+                        infoText = part.partNum;
+                    }
+                }
+
+                // If nothing is selected, show at least the image
+                if (!visibleColumns.color && !visibleColumns.name && !visibleColumns.partNum) {
+                    infoText = '&nbsp;';
+                }
+
+                // Show checkmark when complete, or for single-quantity items, otherwise show +
+                var incrementButtonText;
+                if (isComplete) {
+                    incrementButtonText = '✓';
+                } else {
+                    incrementButtonText = part.quantity === 1 ? '✓' : '+';
+                }
+                var incrementBtnClass = isComplete ? ' complete' : '';
+                var incrementBtnDisabled = isComplete ? ' disabled' : '';
+
+                var altText = (part.color + ' ' + part.name + ' (' + part.partNum + ')').replace(/"/g, '&quot;');
+                var fallbackInfo = part.color + ' ' + part.name + '<br>' + part.partNum;
+                var decrementStyle = currentCount === 0 ? ' style="display: none;"' : '';
+                html += '<tr id="row-' + part.id + '" data-fallback-info="' + fallbackInfo.replace(/"/g, '&quot;') + '">' +
+                    '<td class="col-img"><img src="' + part.imageUrl + '" alt="' + altText + '" class="part-image" data-part-id="' + part.id + '" onerror="handleImageError(this)" onload="handleImageLoad(this)"></td>' +
+                    '<td class="col-info" id="info-' + part.id + '">' + infoText + '</td>' +
+                    '<td class="col-controls"><div class="controls">' +
+                    '<button id="dec-' + part.id + '" onclick="decrementPart(' + part.id + ')"' + decrementStyle + '>-</button>' +
+                    '<span class="count-display" id="count-' + part.id + '"><span class="counted">' + currentCount + '</span>/<span class="qty-click" onclick="fillQuantity(' + part.id + ')" title="Click to mark all as counted">' + part.quantity + '</span></span>' +
+                    '<button id="inc-' + part.id + '" class="increment-btn' + incrementBtnClass + '" onclick="incrementPart(' + part.id + ')"' + incrementBtnDisabled + '>' + incrementButtonText + '</button>' +
+                    '</div></td></tr>';
+            });
+
+            html += '</tbody></table>';
+            document.getElementById('spareTableContainer').innerHTML = html;
+            document.getElementById('spareTableContainer').style.display = 'block';
+            show('sparePartsSection');
         }
 
         function renderMinifigures() {
@@ -2596,6 +2790,8 @@
             userCounts[key]++;
             updateRow(partId);
             updateStats();
+            updatePartsHeader();
+            updateSparePartsHeader();
             checkAndCelebrate();
             saveState();
         }
@@ -2610,6 +2806,8 @@
             userCounts[key]--;
             updateRow(partId);
             updateStats();
+            updatePartsHeader();
+            updateSparePartsHeader();
             checkAndCelebrate();
             saveState();
         }
@@ -2623,6 +2821,8 @@
             userCounts[key] = part.quantity;
             updateRow(partId);
             updateStats();
+            updatePartsHeader();
+            updateSparePartsHeader();
             checkAndCelebrate();
             saveState();
         }
@@ -2663,6 +2863,7 @@
             if (!row) return;
 
             var incrementBtn = document.getElementById('inc-' + partId);
+            var decrementBtn = document.getElementById('dec-' + partId);
 
             // Update count display with clickable quantity
             countElement.innerHTML = '<span class="counted">' + userCounts[key] + '</span>/<span class="qty-click" onclick="fillQuantity(' + partId + ')" title="Click to mark all as counted">' + part.quantity + '</span>';
@@ -2680,6 +2881,15 @@
                 }
             }
 
+            // Show/hide decrement button based on count
+            if (decrementBtn) {
+                if (userCounts[key] === 0) {
+                    decrementBtn.style.display = 'none';
+                } else {
+                    decrementBtn.style.display = '';
+                }
+            }
+
             // Update row visibility
             updateTableVisibility();
         }
@@ -2687,31 +2897,82 @@
         function updateStats() {
             var completedPieces = 0;
             var totalPieces = 0;
+            var extraSparesCollected = 0;
 
+            // Calculate set completion using regular parts, spare parts, and minifigs
             partsData.forEach(function (part) {
-                // Skip spare parts in completion calculation
                 if (part.isSpare) return;
 
-                var key = getPartKey(part);
                 totalPieces += part.quantity;
-                completedPieces += (userCounts[key] || 0);
+
+                if (part.type === 'minifig') {
+                    // Minifigs don't have spares
+                    var key = getPartKey(part);
+                    completedPieces += (userCounts[key] || 0);
+                } else {
+                    // Regular parts can have spares
+                    var regularKey = getPartKey(part);
+                    var spareKey = regularKey + '_s';
+
+                    var regularCount = userCounts[regularKey] || 0;
+                    var spareCount = userCounts[spareKey] || 0;
+                    var combinedCount = regularCount + spareCount;
+
+                    // Count up to required quantity for completion
+                    completedPieces += Math.min(combinedCount, part.quantity);
+                }
             });
 
-            var percentage = totalPieces > 0 ? Math.round((completedPieces / totalPieces) * 100) : 0;
+            // Check if set is complete (100%)
+            var isComplete = completedPieces === totalPieces;
+
+            // Only count extras if set is complete
+            if (isComplete) {
+                partsData.forEach(function (part) {
+                    if (part.isSpare || part.type === 'minifig') return;
+
+                    var regularKey = getPartKey(part);
+                    var spareKey = regularKey + '_s';
+
+                    var regularCount = userCounts[regularKey] || 0;
+                    var spareCount = userCounts[spareKey] || 0;
+                    var combinedCount = regularCount + spareCount;
+
+                    // Count extras beyond required quantity
+                    if (combinedCount > part.quantity) {
+                        extraSparesCollected += (combinedCount - part.quantity);
+                    }
+                });
+            }
+
+            // Calculate percentage including extras (can exceed 100% only when complete)
+            var totalWithExtras = completedPieces + extraSparesCollected;
+            var percentage = totalPieces > 0 ? Math.floor((totalWithExtras / totalPieces) * 100) : 0;
+
+            // Cap progress bar width at 100% but show actual percentage in text
+            var progressBarWidth = Math.min(percentage, 100) + '%';
             var percentText = percentage + '%';
             var piecesText = completedPieces + '/' + totalPieces;
+
+            // Add extras to display if any
+            if (extraSparesCollected > 0) {
+                piecesText += ' +' + extraSparesCollected;
+            }
 
             document.getElementById('completedPieces').textContent = completedPieces;
             document.getElementById('totalPieces').textContent = totalPieces;
 
-            document.getElementById('progressFill').style.width = percentText;
+            document.getElementById('progressFill').style.width = progressBarWidth;
             document.getElementById('progressBar').setAttribute('data-percentage', percentText);
             document.getElementById('progressBar').setAttribute('data-pieces', piecesText);
 
             // Update collapsed header progress bar
-            document.getElementById('progressFillCollapsed').style.width = percentText;
+            document.getElementById('progressFillCollapsed').style.width = progressBarWidth;
             document.getElementById('progressBarCollapsed').setAttribute('data-percentage', percentText);
             document.getElementById('progressBarCollapsed').setAttribute('data-pieces', piecesText);
+
+            // Hide the separate spare parts progress bar since it's now integrated
+            hide('spareProgressContainer');
         }
 
         function saveState() {
@@ -2754,6 +3015,7 @@
 
             // Re-render everything
             renderTable();
+            renderSparePartsTable();
             updateStats();
             wasComplete = false;
         }
@@ -2901,16 +3163,25 @@
                 if (part.isSpare) return;
 
                 var key = getPartKey(part);
-                var missing = part.quantity - (userCounts[key] || 0);
 
-                if (missing > 0) {
-                    if (part.type === 'minifig') {
+                if (part.type === 'minifig') {
+                    var missing = part.quantity - (userCounts[key] || 0);
+                    if (missing > 0) {
                         missingMinifigs.push({
                             partNum: part.partNum,
                             name: part.name,
                             quantity: missing
                         });
-                    } else {
+                    }
+                } else {
+                    // For regular parts, include spare parts in completion calculation
+                    var regularCount = userCounts[key] || 0;
+                    var spareKey = key + '_s';
+                    var spareCount = userCounts[spareKey] || 0;
+                    var combinedCount = Math.min(regularCount + spareCount, part.quantity);
+                    var missing = part.quantity - combinedCount;
+
+                    if (missing > 0) {
                         missingParts.push({
                             partNum: part.partNum,
                             color: part.color,
@@ -2977,7 +3248,13 @@
                 if (part.type === 'minifig' || part.isSpare) return;
 
                 var key = getPartKey(part);
-                var missing = part.quantity - (userCounts[key] || 0);
+
+                // Include spare parts in completion calculation
+                var regularCount = userCounts[key] || 0;
+                var spareKey = key + '_s';
+                var spareCount = userCounts[spareKey] || 0;
+                var combinedCount = Math.min(regularCount + spareCount, part.quantity);
+                var missing = part.quantity - combinedCount;
 
                 if (missing > 0) {
                     missingParts.push({
@@ -3032,16 +3309,25 @@
                 if (part.isSpare) return;
 
                 var key = getPartKey(part);
-                var missing = part.quantity - (userCounts[key] || 0);
 
-                if (missing > 0) {
-                    if (part.type === 'minifig') {
+                if (part.type === 'minifig') {
+                    var missing = part.quantity - (userCounts[key] || 0);
+                    if (missing > 0) {
                         missingMinifigs.push({
                             partNum: part.partNum,
                             name: part.name,
                             quantity: missing
                         });
-                    } else {
+                    }
+                } else {
+                    // Include spare parts in completion calculation
+                    var regularCount = userCounts[key] || 0;
+                    var spareKey = key + '_s';
+                    var spareCount = userCounts[spareKey] || 0;
+                    var combinedCount = Math.min(regularCount + spareCount, part.quantity);
+                    var missing = part.quantity - combinedCount;
+
+                    if (missing > 0) {
                         missingParts.push({
                             partNum: part.partNum,
                             name: part.name,
@@ -3103,12 +3389,28 @@
             var completedPieces = 0;
             var totalPieces = 0;
 
+            // Calculate set completion using regular parts, spare parts, and minifigs
             partsData.forEach(function (part) {
                 if (part.isSpare) return;
 
-                var key = getPartKey(part);
                 totalPieces += part.quantity;
-                completedPieces += userCounts[key];
+
+                if (part.type === 'minifig') {
+                    // Minifigs don't have spares
+                    var key = getPartKey(part);
+                    completedPieces += (userCounts[key] || 0);
+                } else {
+                    // Regular parts can have spares
+                    var regularKey = getPartKey(part);
+                    var spareKey = regularKey + '_s';
+
+                    var regularCount = userCounts[regularKey] || 0;
+                    var spareCount = userCounts[spareKey] || 0;
+                    var combinedCount = regularCount + spareCount;
+
+                    // Count up to required quantity for completion
+                    completedPieces += Math.min(combinedCount, part.quantity);
+                }
             });
 
             var isNowComplete = completedPieces === totalPieces && totalPieces > 0;
