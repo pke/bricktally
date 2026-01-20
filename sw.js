@@ -10,7 +10,7 @@ const STATIC_ASSETS = [
     '/',
     '/index.html',
     '/verify.html',
-    '/manifest.json',
+    // Note: manifest.json excluded to allow Vercel rewrites for preview/prod
     '/assets/favicon.svg',
     '/assets/bricktally-icon.png',
     '/assets/bricktally-icon-192.png',
@@ -106,11 +106,6 @@ function isStaticAsset(url) {
     // Local HTML files
     if (url.origin === self.location.origin &&
         (url.pathname === '/' || url.pathname.endsWith('.html'))) {
-        return true;
-    }
-
-    // Manifest
-    if (url.pathname === '/manifest.json') {
         return true;
     }
 
