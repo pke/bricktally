@@ -210,6 +210,21 @@
       font-weight: bold;
       font-size: 18px;
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      z-index: 1;
+    }
+
+    .progress-bar::before {
+      content: attr(data-pieces);
+      display: block;
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+      z-index: 1;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
     }
 
     .export-btn {
@@ -783,6 +798,8 @@
       var missingPiecesCount = 0;
       var totalMinifigs = 0;
       var missingMinifigsCount = 0;
+      var totalSpares = 0;
+      var extraSparesCollected = 0;
       var missingPartsList = [];
       var missingMinifigsList = [];
 
@@ -799,7 +816,10 @@
           isSpare: item.is_spare || false
         };
 
-        if (part.isSpare) return;
+        if (part.isSpare) {
+          totalSpares += part.quantity;
+          return;
+        }
 
         totalPieces += part.quantity;
         var key = getPartKey(part);
@@ -845,8 +865,18 @@
       var allMissing = missingPiecesCount + missingMinifigsCount;
       var completedPieces = allPieces - allMissing;
 
-      var percentage = allPieces > 0 ? Math.round((completedPieces / allPieces) * 100) : 0;
-      var isComplete = percentage === 100;
+      // Calculate extras from spare parts (if set is complete and we have spare data from localStorage)
+      var isComplete = completedPieces === allPieces;
+      if (isComplete && totalSpares > 0) {
+        // This is a simplified calculation - in reality we'd need to check spare counts from localStorage
+        // For verify page, we just show that spares exist
+        extraSparesCollected = 0; // Can't calculate without spare part counts from localStorage
+      }
+
+      var percentage = allPieces > 0 ? Math.floor((completedPieces / allPieces) * 100) : 0;
+      if (isComplete && extraSparesCollected > 0) {
+        percentage = Math.floor(((completedPieces + extraSparesCollected) / allPieces) * 100);
+      }
 
       var setImageUrl = setData.set_img_url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect width="400" height="300" fill="%23ddd"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="20" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E';
 
@@ -857,6 +887,12 @@
       var displaySetNumber = versionParts[0];
       var versionInfo = versionNumber !== '1' ?
         ' <span style="color: var(--orange);">(Version ' + versionNumber + ')</span>' : '';
+
+      // Build pieces text for progress bar
+      var piecesText = completedPieces + '/' + allPieces;
+      if (extraSparesCollected > 0) {
+        piecesText += ' +' + extraSparesCollected;
+      }
 
       var html = '<div class="title-row">' +
         '<h1>🧱 BrickTally - Set Verification</h1>' +
@@ -870,15 +906,16 @@
         '<img src="' + setImageUrl + '" alt="' + setData.name + '" class="set-image">' +
         '</div>' +
         '<div class="stats">' +
-        '<h3>Completeness Overview</h3>' +
+        '<h3>Progress Overview</h3>' +
         '<div class="stats-grid">' +
         '<div class="stat-item"><div class="stat-value">' + percentage + '%</div><div class="stat-label">Complete</div></div>' +
         '<div class="stat-item"><div class="stat-value">' + completedPieces + '</div><div class="stat-label">Pieces Found</div></div>' +
         '<div class="stat-item"><div class="stat-value">' + allMissing + '</div><div class="stat-label">Pieces Missing</div></div>' +
         '<div class="stat-item"><div class="stat-value">' + allPieces + '</div><div class="stat-label">Total Pieces</div></div>' +
+        (totalSpares > 0 ? '<div class="stat-item"><div class="stat-value">' + totalSpares + '</div><div class="stat-label">Spare Parts</div></div>' : '') +
         '</div>' +
-        '<div class="progress-bar" data-percentage="' + percentage + '%">' +
-        '<div class="progress-fill ' + (isComplete ? '' : 'incomplete') + '" style="width: ' + percentage + '%;"></div>' +
+        '<div class="progress-bar" data-percentage="' + percentage + '%" data-pieces="' + piecesText + '">' +
+        '<div class="progress-fill ' + (isComplete ? '' : 'incomplete') + '" style="width: ' + Math.min(percentage, 100) + '%;"></div>' +
         '</div>' +
         '</div>';
 

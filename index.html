@@ -3052,20 +3052,42 @@
             var totalPieces = 0;
             var missingParts = [];
 
+            // Calculate set completion using regular parts, spare parts, and minifigs
             partsData.forEach(function (part) {
                 if (part.isSpare) return;
 
-                var key = getPartKey(part);
                 totalPieces += part.quantity;
-                completedPieces += userCounts[key];
 
-                var missing = part.quantity - (userCounts[key] || 0);
-                if (missing > 0) {
-                    missingParts.push(key + ':' + missing);
+                var key = getPartKey(part);
+
+                if (part.type === 'minifig') {
+                    // Minifigs don't have spares
+                    completedPieces += (userCounts[key] || 0);
+                    var missing = part.quantity - (userCounts[key] || 0);
+                    if (missing > 0) {
+                        missingParts.push(key + ':' + missing);
+                    }
+                } else {
+                    // Regular parts can have spares
+                    var regularKey = key;
+                    var spareKey = regularKey + '_s';
+
+                    var regularCount = userCounts[regularKey] || 0;
+                    var spareCount = userCounts[spareKey] || 0;
+                    var combinedCount = regularCount + spareCount;
+
+                    // Count up to required quantity for completion
+                    completedPieces += Math.min(combinedCount, part.quantity);
+
+                    // Calculate missing considering spares
+                    var missing = part.quantity - Math.min(combinedCount, part.quantity);
+                    if (missing > 0) {
+                        missingParts.push(key + ':' + missing);
+                    }
                 }
             });
 
-            var percentage = totalPieces > 0 ? Math.round((completedPieces / totalPieces) * 100) : 0;
+            var percentage = totalPieces > 0 ? Math.floor((completedPieces / totalPieces) * 100) : 0;
             var missingData = missingParts.join(',');
 
             // Get set info
@@ -3080,8 +3102,8 @@
             var displaySetNumber = versionParts[0];
             var versionLabel = versionNumber !== '1' ? ' v' + versionNumber : '';
 
-            // Truncate set name if too long
-            var displayName = setName.length > 30 ? setName.substring(0, 27) + '...' : setName;
+            // Truncate set name if too long - reduce to fit better
+            var displayName = setName.length > 50 ? setName.substring(0, 50-3) + '...' : setName;
 
             // Create badge URL - handle both local files and deployed sites
             var baseUrl = window.location.origin;
@@ -3095,25 +3117,22 @@
                 verifyUrl = baseUrl + '/verify.html?set=' + currentSetNumber + '&missing=' + encodeURIComponent(missingData);
             }
 
-            // Badge HTML with new layout
+            // Badge HTML with inline styles
             var badgeColor = percentage === 100 ? '#4CAF50' : (percentage >= 80 ? '#FF9800' : '#FF6B6B');
-            var badgeHtml = '<a href="' + verifyUrl + '" target="_blank" style="text-decoration: none;">' +
-                '<svg width="360" height="100" xmlns="http://www.w3.org/2000/svg">' +
-                '<defs>' +
-                '<linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">' +
-                '<stop offset="0%" style="stop-color:' + badgeColor + ';stop-opacity:1" />' +
-                '<stop offset="100%" style="stop-color:' + badgeColor + 'dd;stop-opacity:1" />' +
-                '</linearGradient>' +
-                '<clipPath id="imgClip"><rect x="10" y="10" width="80" height="80" rx="6"/></clipPath>' +
-                '</defs>' +
-                '<rect width="360" height="100" rx="8" fill="url(#bg)"/>' +
-                '<image href="' + setImageUrl + '" x="10" y="10" width="80" height="80" clip-path="url(#imgClip)" preserveAspectRatio="xMidYMid slice"/>' +
-                '<rect x="10" y="10" width="80" height="80" rx="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>' +
-                '<text x="105" y="25" font-family="Arial" font-size="16" font-weight="bold" fill="white">' + displayName + '</text>' +
-                '<text x="105" y="43" font-family="Arial" font-size="12" fill="white" opacity="0.85">Set ' + displaySetNumber + versionLabel + '</text>' +
-                '<text x="105" y="78" font-family="Arial" font-size="32" font-weight="bold" fill="white">' + percentage + '%</text>' +
-                '<text x="180" y="78" font-family="Arial" font-size="13" fill="white" opacity="0.9">' + completedPieces + '/' + totalPieces + ' pieces</text>' +
-                '</svg></a>';
+            var badgeHtml = '<a href="' + verifyUrl + '" target="_blank" style="text-decoration: none; display: inline-block;">' +
+                '<div style="background: linear-gradient(180deg, ' + badgeColor + ' 0%, ' + badgeColor + 'dd 100%); border-radius: 8px; padding: 10px; box-sizing: border-box; display: flex; gap: 15px; position: relative; font-family: Arial, sans-serif; color: white;">' +
+                '<img src="' + setImageUrl + '" style="width: 80px; height: 80px; object-fit: cover;">' +
+                '<div style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 5px;">' +
+                '<div style="font-size: 16px; font-weight: bold;">' + displayName + '</div>' +
+                '<div style="font-size: 12px; opacity: 0.85; margin-top: 2px;">Set ' + displaySetNumber + versionLabel + '</div>' +
+                '<div style="display: flex; align-items: baseline; gap: 8px;">' +
+                '<div style="font-size: 32px; font-weight: bold; line-height: 1;">' + percentage + '%</div>' +
+                '<div style="font-size: 13px; opacity: 0.9;">' + completedPieces + '/' + totalPieces + ' pieces</div>' +
+                '</div>' +
+                '<div style="font-size: 9px; opacity: 0.7; align-self: flex-end;">bricktally.app</div>' +
+                '</div>' +
+                '</div>' +
+                '</a>';
 
             showBadgeModal(badgeHtml, verifyUrl);
         }
@@ -3124,8 +3143,8 @@
 
             var content = document.createElement('div');
             content.style.cssText = 'background: var(--bg-secondary); padding: 30px; border-radius: 8px; max-width: 750px; width: 100%;';
-            content.innerHTML = '<h2 style="margin-bottom: 20px; color: var(--text-primary);">Set Completeness Badge</h2>' +
-                '<div style="text-align: center; margin: 20px 0;">' + badgeHtml + '</div>' +
+            content.innerHTML = '<h2 style="margin-bottom: 20px; color: var(--text-primary);">BrickTally Badge</h2>' +
+                '<div style="margin: 20px 0;">' + badgeHtml + '</div>' +
                 '<h3 style="margin: 20px 0 10px 0; color: var(--text-primary);">Badge HTML Code:</h3>' +
                 '<textarea id="badgeCode" readonly style="width: 100%; height: 150px; padding: 10px; font-family: monospace; font-size: 12px; background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 4px;">' +
                 badgeHtml.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</textarea>' +
