@@ -412,10 +412,125 @@
             transform: scale(1.2);
         }
 
-        .reset-button-container {
-            margin-top: 15px;
-            text-align: center;
+        .complete-toggle-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
         }
+
+        .complete-toggle-label {
+            font-size: 10px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .complete-toggle {
+            position: relative;
+            width: 45px;
+            height: 27px;
+            background-color: #e0e0e0;
+            border-radius: 27px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            padding: 0;
+            outline: none;
+        }
+
+        body.dark-mode .complete-toggle {
+            background-color: #4a4a4a;
+        }
+
+        .complete-toggle.active {
+            background-color: var(--blue);
+        }
+
+        .complete-toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 23px;
+            height: 23px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .complete-toggle.active::after {
+            transform: translateX(18px);
+        }
+
+        .filter-headers {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .filter-header {
+            flex: 1;
+            cursor: pointer;
+            font-weight: bold;
+            padding: 10px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            user-select: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .filter-header:hover {
+            background: var(--border-color);
+        }
+
+        .filter-header.active {
+            background: var(--blue);
+            color: white;
+        }
+
+        .filter-arrow {
+            font-size: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .filter-header.active .filter-arrow {
+            transform: rotate(-180deg);
+        }
+
+        .filter-content {
+            width: 100%;
+            padding-top: 10px;
+        }
+
+        .filter-content-flex {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .filter-content-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .export-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .export-btn:hover {
+            opacity: 0.9;
+        }
+
 
         input {
             padding: 12px 15px;
@@ -499,6 +614,28 @@
         .stats {
             font-size: 18px;
             color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .reset-inline {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 4px 8px;
+            line-height: 1;
+            transition: all 0.2s;
+            border-radius: 4px;
+        }
+
+        .reset-inline:hover {
+            background: var(--bg-secondary);
+            color: var(--red);
+            transform: rotate(-30deg);
         }
 
         .stats.small {
@@ -585,11 +722,6 @@
             border-bottom: 1px solid var(--border-color);
         }
 
-        .col-check.hidden,
-        td.col-check.hidden {
-            display: none;
-        }
-
         tr:hover {
             background: var(--hover-bg);
         }
@@ -598,9 +730,12 @@
             display: none;
         }
 
-        .col-check {
-            width: 50px;
-            text-align: center;
+        .increment-btn.complete {
+            background: transparent;
+            border: none;
+            color: var(--green);
+            pointer-events: none;
+            cursor: default;
         }
 
         .col-img {
@@ -643,10 +778,6 @@
             position: absolute;
         }
 
-        .part-image.lightbox-active {
-            visibility: hidden;
-        }
-
         .lightbox-close {
             position: absolute;
             top: 20px;
@@ -671,9 +802,10 @@
         }
 
         .col-controls {
-            width: 200px;
+            width: 220px;
             text-align: right;
             padding-right: 10px;
+            white-space: nowrap;
         }
 
 
@@ -686,7 +818,7 @@
 
         @media (max-width: 768px) {
             .controls {
-                gap: 10px;
+                gap: 8px;
             }
         }
 
@@ -756,7 +888,7 @@
             }
 
             .controls .count-display {
-                min-width: 110px;
+                min-width: 80px;
                 font-size: 18px;
             }
 
@@ -904,6 +1036,11 @@
             td {
                 padding: 10px 5px;
                 font-size: 14px;
+            }
+
+            .col-controls {
+                width: auto;
+                max-width: 180px;
             }
         }
 
@@ -1060,6 +1197,105 @@
                 justify-content: flex-end;
             }
         }
+
+        .minifig-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .minifig-card {
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.2s;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .minifig-card:hover {
+            border-color: var(--blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .minifig-card.complete {
+            border-color: var(--green);
+            background: rgba(76, 175, 80, 0.1);
+        }
+
+        body.dark-mode .minifig-card.complete {
+            background: rgba(76, 175, 80, 0.2);
+        }
+
+        .minifig-image {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            cursor: zoom-in;
+        }
+
+        .part-image.lightbox-active,
+        .minifig-image.lightbox-active {
+            visibility: hidden;
+        }
+
+        .minifig-name {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: var(--text-primary);
+        }
+
+        .minifig-id {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .minifig-checkmark {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 36px;
+            height: 36px;
+            font-size: 24px;
+            background: var(--green);
+            color: white;
+            border-radius: 50%;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .minifig-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 10px;
+            }
+
+            .minifig-card {
+                padding: 10px;
+            }
+
+            .minifig-image {
+                width: 90px;
+                height: 90px;
+            }
+
+            .minifig-checkmark {
+                width: 32px;
+                height: 32px;
+                font-size: 20px;
+            }
+        }
     </style>
 </head>
 
@@ -1090,7 +1326,7 @@
                 </div>
             </div>
 
-            <div id="setInfo" class="info-box p-15 text-center m-20 hide">
+            <div id="setInfo" class="text-center hide">
                 <h2 id="setName"></h2>
                 <p id="setDetails"></p>
             </div>
@@ -1098,12 +1334,10 @@
             <div id="statsSection" class="hide">
                 <div class="stats text-center">
                     <span id="completedPieces">0</span> / <span id="totalPieces">0</span> pieces checked
+                    <button id="resetButton" class="reset-inline hide" onclick="resetSet()" title="Reset progress">↻</button>
                 </div>
                 <div class="progress-bar" id="progressBar" data-percentage="0%" data-pieces="0/0">
                     <div id="progressFill" class="progress-fill" style="width: 0%;"></div>
-                </div>
-                <div class="reset-button-container">
-                    <button id="resetButton" class="reset hide" onclick="resetSet()">Reset</button>
                 </div>
             </div>
         </div>
@@ -1123,16 +1357,15 @@
             </div>
             <div class="collapsed-filters">
                 <details id="colorFilterCollapsed" class="hide">
-                    <summary>Filter by Color</summary>
+                    <summary>Colours</summary>
                     <div id="colorFiltersCollapsed" class="filters"></div>
                 </details>
                 <details id="infoFilterCollapsed" class="hide">
-                    <summary>Show Information</summary>
+                    <summary>Columns</summary>
                     <div class="column-toggles" style="margin: 10px 0 0 0;">
                         <button class="column-toggle" onclick="toggleColumn('color', event)">Color</button>
                         <button class="column-toggle" onclick="toggleColumn('name', event)">Name</button>
                         <button class="column-toggle" onclick="toggleColumn('partNum', event)">Part Number</button>
-                        <button class="column-toggle toggle-complete-parts" onclick="toggleCompleteParts(event)">Show Complete Parts</button>
                     </div>
                 </details>
             </div>
@@ -1153,35 +1386,57 @@
                 </div>
             </div>
 
-            <div id="filterSection" class="info-box p-15 m-20 hide">
-                <details id="colorFilterSection">
-                    <summary>Filter by Color</summary>
-                    <div id="colorFilters" class="filters" style="margin-top: 10px;"></div>
-                </details>
+            <div id="filterSection" class="hide">
+                <div class="filter-headers">
+                    <div class="filter-header" onclick="toggleFilterSection('colorFilterSection')" id="colorFilterHeader">
+                        <span>Colours</span>
+                        <span class="filter-arrow">▼</span>
+                    </div>
+                    <div class="filter-header" onclick="toggleFilterSection('columnsFilterSection')" id="columnsFilterHeader">
+                        <span>Columns</span>
+                        <span class="filter-arrow">▼</span>
+                    </div>
+                    <div class="filter-header" onclick="toggleFilterSection('exportFilterSection')" id="exportFilterHeader">
+                        <span>Export</span>
+                        <span class="filter-arrow">▼</span>
+                    </div>
+                </div>
 
-                <details id="showInformationSection" style="margin-top: 15px;">
-                    <summary>Show Information</summary>
-                    <div class="column-toggles" style="margin-top: 10px;">
+                <div class="filter-content" id="colorFilterSection" style="display: none;">
+                    <div id="colorFilters" class="filters filter-content-flex"></div>
+                </div>
+
+                <div class="filter-content" id="columnsFilterSection" style="display: none;">
+                    <div class="column-toggles filter-content-flex">
                         <button class="column-toggle" onclick="toggleColumn('color', event)">Color</button>
                         <button class="column-toggle" onclick="toggleColumn('name', event)">Name</button>
                         <button class="column-toggle" onclick="toggleColumn('partNum', event)">Part Number</button>
-                        <button class="column-toggle toggle-complete-parts" onclick="toggleCompleteParts(event)">Show Complete Parts</button>
                     </div>
-                </details>
+                </div>
 
-                <details style="margin-top: 15px;">
-                    <summary>Export Missing Pieces</summary>
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px;">
-                        <button onclick="generateBadge()" style="flex: 1; min-width: 200px; background: var(--green);">🏷️
-                            Generate Badge</button>
-                        <button onclick="exportToBrickLink()"
-                            style="flex: 1; min-width: 200px; background: var(--orange);">📦 BrickLink XML</button>
-                        <button onclick="exportToPickABrick()" style="flex: 1; min-width: 200px; background: var(--red);">🧱
-                            Pick a Brick CSV</button>
-                        <button onclick="exportMissingPartsText()"
-                            style="flex: 1; min-width: 200px; background: var(--blue);">📄 Text List</button>
+                <div class="filter-content" id="exportFilterSection" style="display: none;">
+                    <div class="filter-content-stack">
+                        <button onclick="generateBadge()" class="export-btn" style="background: var(--green);">🏷️ Generate Badge</button>
+                        <button onclick="exportToBrickLink()" class="export-btn" style="background: var(--orange);">📦 BrickLink XML</button>
+                        <button onclick="exportToPickABrick()" class="export-btn" style="background: var(--red);">🧱 Pick a Brick CSV</button>
+                        <button onclick="exportMissingPartsText()" class="export-btn" style="background: var(--blue);">📄 Text List</button>
                     </div>
-                </details>
+                </div>
+            </div>
+
+            <div id="minifigSection" class="hide m-20">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 id="minifigHeader" style="margin: 0;">Minifigures</h3>
+                    <div class="complete-toggle-container">
+                        <button class="complete-toggle" id="completeToggle" onclick="toggleCompleteParts()" title="Hide Complete Parts"></button>
+                        <span class="complete-toggle-label">Hide complete</span>
+                    </div>
+                </div>
+                <div id="minifigContainer"></div>
+            </div>
+
+            <div id="partsSection" class="hide m-20">
+                <h3 style="margin-bottom: 15px;">Parts</h3>
             </div>
 
             <div id="tableContainer"></div>
@@ -1226,6 +1481,11 @@
         };
 
         function getPartKey(part) {
+            if (part.type === 'minifig') {
+                // Use the API's unique ID for minifigs
+                return 'fig_' + part.id;
+            }
+
             var color = part.color || 'Unknown';
             var key = part.partNum + '_' + color;
             if (part.isSpare) {
@@ -1430,6 +1690,13 @@
                 showCompleteParts = true;
             }
 
+            // Update complete toggle button appearance
+            // Toggle is ON (active) when HIDING complete parts (showCompleteParts = false)
+            var completeToggle = document.getElementById('completeToggle');
+            if (completeToggle && !showCompleteParts) {
+                completeToggle.classList.add('active');
+            }
+
             // Load column preferences
             var savedColumns = localStorage.getItem('visibleColumns');
             if (savedColumns) {
@@ -1447,49 +1714,58 @@
             var lightboxOriginRect = null;
             var lightboxOriginImage = null;
 
-            // Event delegation for part images
+            // Function to open lightbox for an image
+            function openLightbox(clickedImage) {
+                var rect = clickedImage.getBoundingClientRect();
+
+                // Store origin for close animation
+                lightboxOriginRect = rect;
+                lightboxOriginImage = clickedImage;
+
+                // Hide the original image (keep its space)
+                clickedImage.classList.add('lightbox-active');
+
+                // Set the lightbox image source
+                lightboxImage.src = clickedImage.src;
+                lightboxImage.alt = clickedImage.alt;
+
+                // Position the image at the clicked image's location and size
+                lightboxImage.style.top = rect.top + 'px';
+                lightboxImage.style.left = rect.left + 'px';
+                lightboxImage.style.width = rect.width + 'px';
+                lightboxImage.style.height = rect.height + 'px';
+                lightboxImage.style.maxWidth = rect.width + 'px';
+                lightboxImage.style.maxHeight = rect.height + 'px';
+                lightboxImage.style.transform = 'translate(0, 0)';
+
+                // Show lightbox
+                lightbox.style.display = 'flex';
+
+                // Force reflow
+                lightboxImage.offsetHeight;
+
+                // Animate to center
+                requestAnimationFrame(function() {
+                    lightbox.classList.add('active');
+                    lightboxImage.style.top = '50%';
+                    lightboxImage.style.left = '50%';
+                    lightboxImage.style.width = '';
+                    lightboxImage.style.height = '';
+                    lightboxImage.style.maxWidth = '90%';
+                    lightboxImage.style.maxHeight = '90%';
+                    lightboxImage.style.transform = 'translate(-50%, -50%)';
+                });
+            }
+
+            // Global function to open minifig lightbox
+            window.openMinifigLightbox = function(img) {
+                openLightbox(img);
+            };
+
+            // Event delegation for part images in table
             document.getElementById('tableContainer').addEventListener('click', function(e) {
                 if (e.target.classList.contains('part-image')) {
-                    var clickedImage = e.target;
-                    var rect = clickedImage.getBoundingClientRect();
-
-                    // Store origin for close animation
-                    lightboxOriginRect = rect;
-                    lightboxOriginImage = clickedImage;
-
-                    // Hide the original image (keep its space)
-                    clickedImage.classList.add('lightbox-active');
-
-                    // Set the lightbox image source
-                    lightboxImage.src = clickedImage.src;
-                    lightboxImage.alt = clickedImage.alt;
-
-                    // Position the image at the clicked image's location and size
-                    lightboxImage.style.top = rect.top + 'px';
-                    lightboxImage.style.left = rect.left + 'px';
-                    lightboxImage.style.width = rect.width + 'px';
-                    lightboxImage.style.height = rect.height + 'px';
-                    lightboxImage.style.maxWidth = rect.width + 'px';
-                    lightboxImage.style.maxHeight = rect.height + 'px';
-                    lightboxImage.style.transform = 'translate(0, 0)';
-
-                    // Show lightbox
-                    lightbox.style.display = 'flex';
-
-                    // Force reflow
-                    lightboxImage.offsetHeight;
-
-                    // Animate to center
-                    requestAnimationFrame(function() {
-                        lightbox.classList.add('active');
-                        lightboxImage.style.top = '50%';
-                        lightboxImage.style.left = '50%';
-                        lightboxImage.style.width = '';
-                        lightboxImage.style.height = '';
-                        lightboxImage.style.maxWidth = '90%';
-                        lightboxImage.style.maxHeight = '90%';
-                        lightboxImage.style.transform = 'translate(-50%, -50%)';
-                    });
+                    openLightbox(e.target);
                 }
             });
 
@@ -1618,7 +1894,7 @@
                 }
 
                 // Show/hide collapsed info filter when the whole show information section is about to scroll out
-                var showInformationSection = document.getElementById('showInformationSection');
+                var showInformationSection = document.getElementById('columnsFilterSection');
                 if (showInformationSection && collapsedHeader) {
                     var showInfoRect = showInformationSection.getBoundingClientRect();
                     var showInfoBottom = showInfoRect.bottom;
@@ -1706,6 +1982,32 @@
             fullscreenIcon.textContent = isFullscreen ? '✕' : '⛶';
         }
 
+        function toggleFilterSection(sectionId) {
+            var section = document.getElementById(sectionId);
+            var allSections = document.querySelectorAll('.filter-content');
+            var allHeaders = document.querySelectorAll('.filter-header');
+
+            var headerId = sectionId.replace('FilterSection', 'FilterHeader');
+            var header = document.getElementById(headerId);
+
+            // If clicking on already open section, close it
+            if (section.style.display === 'block') {
+                section.style.display = 'none';
+                if (header) header.classList.remove('active');
+            } else {
+                // Close all other sections
+                allSections.forEach(function(s) {
+                    s.style.display = 'none';
+                });
+                allHeaders.forEach(function(h) {
+                    h.classList.remove('active');
+                });
+                // Open clicked section
+                section.style.display = 'block';
+                if (header) header.classList.add('active');
+            }
+        }
+
         function toggleColumn(column, event) {
             if (event) {
                 event.stopPropagation();
@@ -1727,15 +2029,6 @@
                     column = 'name';
                 } else if (text.includes('color')) {
                     column = 'color';
-                } else if (text.includes('complete')) {
-                    // Handle "Show Complete Parts" toggle
-                    // Active when showing complete parts (showCompleteParts = true)
-                    if (showCompleteParts) {
-                        toggle.classList.add('active');
-                    } else {
-                        toggle.classList.remove('active');
-                    }
-                    return;
                 }
 
                 if (column && visibleColumns[column]) {
@@ -1747,32 +2040,83 @@
         }
 
 
-        function toggleCompleteParts(event) {
-            if (event) {
-                event.stopPropagation();
+        function updateMinifigHeader() {
+            var header = document.getElementById('minifigHeader');
+            if (!header) return;
+
+            // Check if all minifigs are complete
+            var minifigs = partsData.filter(function(item) {
+                return item.type === 'minifig';
+            });
+
+            if (minifigs.length === 0) {
+                header.textContent = 'Minifigures';
+                return;
             }
+
+            var allComplete = minifigs.every(function(minifig) {
+                var key = getPartKey(minifig);
+                return (userCounts[key] || 0) === minifig.quantity;
+            });
+
+            // Show checkmark only when hide complete is ON and all minifigs are complete
+            if (!showCompleteParts && allComplete) {
+                header.innerHTML = 'Minifigures <span style="color: var(--green);">✓</span>';
+            } else {
+                header.textContent = 'Minifigures';
+            }
+        }
+
+        function toggleCompleteParts() {
             showCompleteParts = !showCompleteParts;
             localStorage.setItem('showCompleteParts', showCompleteParts);
+
+            // Update button appearance
+            // Note: toggle is ON (active) when HIDING complete parts (showCompleteParts = false)
+            var button = document.getElementById('completeToggle');
+            if (button) {
+                if (!showCompleteParts) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            }
 
             // Re-render table to update checkmark column visibility
             renderTable();
             updateTableVisibility();
+            updateMinifigHeader();
         }
 
         function updateTableVisibility() {
             partsData.forEach(function (part) {
-                var row = document.getElementById('row-' + part.id);
-                if (!row) return;
-
                 var key = getPartKey(part);
                 var isComplete = userCounts[key] === part.quantity;
-                var colorMatch = activeColorFilters.length === 0 || activeColorFilters.indexOf(part.color) > -1;
 
-                // Hide if: (complete AND not showing complete) OR (color doesn't match filter)
-                if ((isComplete && !showCompleteParts) || !colorMatch) {
-                    row.classList.add('hidden');
+                if (part.type === 'minifig') {
+                    // Handle minifig card visibility
+                    var card = document.getElementById('minifig-' + part.id);
+                    if (!card) return;
+
+                    // Hide if complete AND not showing complete parts
+                    if (isComplete && !showCompleteParts) {
+                        card.style.display = 'none';
+                    } else {
+                        card.style.display = '';
+                    }
                 } else {
-                    row.classList.remove('hidden');
+                    // Handle regular part row visibility
+                    var row = document.getElementById('row-' + part.id);
+                    if (!row) return;
+
+                    var colorMatch = activeColorFilters.length === 0 || activeColorFilters.indexOf(part.color) > -1;
+
+                    // Hide if: (complete AND not showing complete) OR (color doesn't match filter)
+                    if ((isComplete && !showCompleteParts) || !colorMatch) {
+                        row.classList.add('hidden');
+                    } else {
+                        row.classList.remove('hidden');
+                    }
                 }
             });
         }
@@ -1852,13 +2196,16 @@
                     currentSetNumber = setNumber;
                     localStorage.setItem('currentSetNumber', setNumber);
                     displaySetInfo(setData);
-                    return loadAllParts(setNumber);
+                    return Promise.all([loadAllParts(setNumber), loadMinifigures(setNumber)]);
                 })
-                .then(function (allParts) {
+                .then(function (results) {
+                    var allParts = results[0];
+                    var minifigs = results[1];
+
                     if (!allParts || allParts.length === 0) {
                         throw new Error('No parts found for this set');
                     }
-                    processParts(allParts);
+                    processParts(allParts, minifigs);
                 })
                 .catch(function (error) {
                     console.error('[BrickTally:API] Error:', error);
@@ -1949,6 +2296,24 @@
             return fetchPage(1);
         }
 
+        function loadMinifigures(setNumber) {
+            return fetch('/api/rebrickable?endpoint=/lego/sets/' + encodeURIComponent(setNumber) + '/minifigs/')
+                .then(function (response) {
+                    if (!response.ok) {
+                        console.warn('Minifigures API returned non-OK status:', response.status);
+                        return { results: [] };  // Return empty results instead of throwing
+                    }
+                    return response.json();
+                })
+                .then(function (data) {
+                    return data.results || [];
+                })
+                .catch(function (error) {
+                    console.warn('Minifigures unavailable:', error);
+                    return [];  // Continue gracefully if minifigs unavailable
+                });
+        }
+
         function displaySetInfo(setData) {
             var setImageUrl = setData.set_img_url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="300" height="200"%3E%3Crect width="300" height="200" fill="%23ddd"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="16" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E';
             var versionParts = currentSetNumber.split('-');
@@ -1972,10 +2337,11 @@
             show('setInfo');
         }
 
-        function processParts(results) {
+        function processParts(results, minifigs) {
             partsData = results.map(function (item, index) {
                 return {
                     id: index,
+                    type: 'part',
                     partNum: item.part.part_num || 'unknown',
                     name: item.part.name || 'Unknown Part',
                     color: (item.color && item.color.name) ? item.color.name : 'Unknown',
@@ -1985,6 +2351,23 @@
                 };
             });
 
+            // Transform and merge minifigs
+            var minifigsData = (minifigs || []).map(function(item) {
+                return {
+                    id: item.id,  // Use the API's unique ID
+                    type: 'minifig',
+                    partNum: item.set_num,
+                    name: item.set_name || 'Unknown Minifig',
+                    color: '',
+                    quantity: item.quantity,
+                    imageUrl: item.set_img_url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="80" height="80"%3E%3Crect width="80" height="80" fill="%23ddd"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="10" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E',
+                    isSpare: false,
+                    numParts: item.num_parts || 0
+                };
+            });
+
+            partsData = partsData.concat(minifigsData);
+
             userCounts = {};
             partsData.forEach(function (part) {
                 var key = getPartKey(part);
@@ -1993,9 +2376,11 @@
 
             loadState();
             renderColorFilters();
+            renderMinifigures();
             renderTable();
             updateTableVisibility();
-            show('statsSection', 'filterSection', 'resetButton');
+            updateMinifigHeader();
+            show('statsSection', 'filterSection', 'resetButton', 'partsSection');
             document.body.classList.add('has-set');
 
             updateStats();
@@ -2006,8 +2391,8 @@
             var colorCounts = {};
 
             partsData.forEach(function (part) {
-                // Skip spare parts in filter counts
-                if (part.isSpare) return;
+                // Skip minifigs and spare parts in filter counts
+                if (part.type === 'minifig' || part.isSpare) return;
 
                 if (!colorCounts[part.color]) {
                     colorCounts[part.color] = 0;
@@ -2065,18 +2450,15 @@
         }
 
         function renderTable() {
-            // showCompleteParts = true means column is VISIBLE
-            var checkmarkHidden = showCompleteParts ? '' : ' hidden';
-
             var html = '<table><tbody>';
 
             partsData.forEach(function (part) {
-                // Skip spare parts
-                if (part.isSpare) return;
+                // Skip minifigs and spare parts
+                if (part.type === 'minifig' || part.isSpare) return;
 
                 var key = getPartKey(part);
                 var currentCount = userCounts[key] || 0;
-                var checkmark = currentCount === part.quantity ? '<span class="checkmark">✓</span>' : '';
+                var isComplete = currentCount === part.quantity;
 
                 // Build combined info column content based on visible columns
                 var infoContent = [];
@@ -2106,19 +2488,25 @@
                     infoText = '&nbsp;';
                 }
 
-                // Use checkmark for single-quantity items
-                const incrementButtonText = part.quantity === 1 ? '✓' : '+';
+                // Show checkmark when complete, or for single-quantity items, otherwise show +
+                var incrementButtonText;
+                if (isComplete) {
+                    incrementButtonText = '✓';
+                } else {
+                    incrementButtonText = part.quantity === 1 ? '✓' : '+';
+                }
+                var incrementBtnClass = isComplete ? ' complete' : '';
+                var incrementBtnDisabled = isComplete ? ' disabled' : '';
 
                 var altText = (part.color + ' ' + part.name + ' (' + part.partNum + ')').replace(/"/g, '&quot;');
                 var fallbackInfo = part.color + ' ' + part.name + '<br>' + part.partNum;
                 html += '<tr id="row-' + part.id + '" data-fallback-info="' + fallbackInfo.replace(/"/g, '&quot;') + '">' +
-                    '<td class="col-check' + checkmarkHidden + '">' + checkmark + '</td>' +
                     '<td class="col-img"><img src="' + part.imageUrl + '" alt="' + altText + '" class="part-image" data-part-id="' + part.id + '" onerror="handleImageError(this)" onload="handleImageLoad(this)"></td>' +
                     '<td class="col-info" id="info-' + part.id + '">' + infoText + '</td>' +
                     '<td class="col-controls"><div class="controls">' +
                     '<button onclick="decrementPart(' + part.id + ')">-</button>' +
                     '<span class="count-display" id="count-' + part.id + '"><span class="counted">' + currentCount + '</span>/<span class="qty-click" onclick="fillQuantity(' + part.id + ')" title="Click to mark all as counted">' + part.quantity + '</span></span>' +
-                    '<button onclick="incrementPart(' + part.id + ')">' + incrementButtonText + '</button>' +
+                    '<button id="inc-' + part.id + '" class="increment-btn' + incrementBtnClass + '" onclick="incrementPart(' + part.id + ')"' + incrementBtnDisabled + '>' + incrementButtonText + '</button>' +
                     '</div></td></tr>';
             });
 
@@ -2128,6 +2516,74 @@
 
             // Update column toggle states
             updateColumnToggles();
+        }
+
+        function renderMinifigures() {
+            var minifigs = partsData.filter(function(item) {
+                return item.type === 'minifig';
+            });
+
+            if (minifigs.length === 0) {
+                hide('minifigSection');
+                return;
+            }
+
+            var html = '<div class="minifig-grid">';
+
+            minifigs.forEach(function(minifig) {
+                var key = getPartKey(minifig);
+                var currentCount = userCounts[key] || 0;
+                var isComplete = currentCount === minifig.quantity;
+                // Parse name: Try " - " first, then ", " as delimiter
+                var nameParts = minifig.name.split(' - ');
+                var title, description;
+
+                if (nameParts.length > 1) {
+                    // Found " - " delimiter
+                    title = nameParts[0];
+                    description = nameParts.slice(1).join(' - ');
+                } else {
+                    // Try ", " delimiter
+                    nameParts = minifig.name.split(', ');
+                    if (nameParts.length > 1) {
+                        title = nameParts[0];
+                        description = nameParts.slice(1).join(', ');
+                    } else {
+                        // No delimiter found, use full name as title
+                        title = minifig.name;
+                        description = '';
+                    }
+                }
+
+                var checkmarkHtml = isComplete ? '<div class="minifig-checkmark">✓</div>' : '';
+
+                html += '<div class="minifig-card' + (isComplete ? ' complete' : '') + '" id="minifig-' + minifig.id + '" onclick="toggleMinifig(' + minifig.id + ')">' +
+                    checkmarkHtml +
+                    '<img src="' + minifig.imageUrl + '" alt="' + minifig.name + '" class="minifig-image" data-part-id="' + minifig.id + '" onclick="event.stopPropagation(); openMinifigLightbox(this)" onerror="handleImageError(this)" onload="handleImageLoad(this)">' +
+                    '<div class="minifig-name">' + title + '</div>' +
+                    '<div class="minifig-id">' + description + '</div>' +
+                '</div>';
+            });
+
+            html += '</div>';
+
+            document.getElementById('minifigContainer').innerHTML = html;
+            show('minifigSection');
+        }
+
+        function toggleMinifig(partId) {
+            var part = partsData.find(function(p) { return p.id === partId; });
+            if (!part || part.type !== 'minifig') return;
+
+            var key = getPartKey(part);
+            // Toggle between 0 and 1
+            userCounts[key] = userCounts[key] === 1 ? 0 : 1;
+            updateRow(partId);
+            updateStats();
+            updateTableVisibility();
+            updateMinifigHeader();
+            checkAndCelebrate();
+            saveState();
         }
 
         function incrementPart(partId) {
@@ -2172,21 +2628,56 @@
         }
 
         function updateRow(partId) {
-            var part = partsData[partId];
-            if (!part) return; // Add safety check
+            // Find part by ID (not array index) to support both regular parts and minifigs
+            var part = partsData.find(function(p) { return p.id === partId; });
+            if (!part) return;
             var key = getPartKey(part);
+
+            if (part.type === 'minifig') {
+                // Update minifig card
+                var card = document.getElementById('minifig-' + partId);
+                if (!card) return;
+
+                var isComplete = (userCounts[key] || 0) === 1;
+                card.classList.toggle('complete', isComplete);
+
+                // Update checkmark visibility
+                var existingCheckmark = card.querySelector('.minifig-checkmark');
+                if (isComplete && !existingCheckmark) {
+                    // Add checkmark
+                    var checkmark = document.createElement('div');
+                    checkmark.className = 'minifig-checkmark';
+                    checkmark.textContent = '✓';
+                    card.insertBefore(checkmark, card.firstChild);
+                } else if (!isComplete && existingCheckmark) {
+                    // Remove checkmark
+                    existingCheckmark.remove();
+                }
+
+                return;
+            }
+
+            // Handle regular parts
             var countElement = document.getElementById('count-' + partId);
             var row = document.getElementById('row-' + partId);
             if (!row) return;
 
-            var checkElement = row.querySelector('.col-check');
+            var incrementBtn = document.getElementById('inc-' + partId);
 
             // Update count display with clickable quantity
             countElement.innerHTML = '<span class="counted">' + userCounts[key] + '</span>/<span class="qty-click" onclick="fillQuantity(' + partId + ')" title="Click to mark all as counted">' + part.quantity + '</span>';
 
             var isComplete = userCounts[key] === part.quantity;
-            if (checkElement) {
-                checkElement.innerHTML = isComplete ? '<span class="checkmark">✓</span>' : '';
+            if (incrementBtn) {
+                if (isComplete) {
+                    incrementBtn.classList.add('complete');
+                    incrementBtn.setAttribute('disabled', 'disabled');
+                    incrementBtn.textContent = '✓';
+                } else {
+                    incrementBtn.classList.remove('complete');
+                    incrementBtn.removeAttribute('disabled');
+                    incrementBtn.textContent = part.quantity === 1 ? '✓' : '+';
+                }
             }
 
             // Update row visibility
@@ -2203,7 +2694,7 @@
 
                 var key = getPartKey(part);
                 totalPieces += part.quantity;
-                completedPieces += userCounts[key];
+                completedPieces += (userCounts[key] || 0);
             });
 
             var percentage = totalPieces > 0 ? Math.round((completedPieces / totalPieces) * 100) : 0;
@@ -2404,6 +2895,7 @@
             }
 
             var missingParts = [];
+            var missingMinifigs = [];
 
             partsData.forEach(function (part) {
                 if (part.isSpare) return;
@@ -2412,16 +2904,24 @@
                 var missing = part.quantity - (userCounts[key] || 0);
 
                 if (missing > 0) {
-                    missingParts.push({
-                        partNum: part.partNum,
-                        color: part.color,
-                        quantity: missing,
-                        name: part.name
-                    });
+                    if (part.type === 'minifig') {
+                        missingMinifigs.push({
+                            partNum: part.partNum,
+                            name: part.name,
+                            quantity: missing
+                        });
+                    } else {
+                        missingParts.push({
+                            partNum: part.partNum,
+                            color: part.color,
+                            quantity: missing,
+                            name: part.name
+                        });
+                    }
                 }
             });
 
-            if (missingParts.length === 0) {
+            if (missingParts.length === 0 && missingMinifigs.length === 0) {
                 alert('No missing pieces! Your set is complete.');
                 return;
             }
@@ -2430,12 +2930,22 @@
             var xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
             xml += '<INVENTORY>\n';
 
+            // Parts
             missingParts.forEach(function (part) {
                 xml += '  <ITEM>\n';
                 xml += '    <ITEMTYPE>P</ITEMTYPE>\n';
                 xml += '    <ITEMID>' + part.partNum + '</ITEMID>\n';
                 xml += '    <COLORNAME>' + part.color + '</COLORNAME>\n';
                 xml += '    <MINQTY>' + part.quantity + '</MINQTY>\n';
+                xml += '  </ITEM>\n';
+            });
+
+            // Minifigs
+            missingMinifigs.forEach(function (minifig) {
+                xml += '  <ITEM>\n';
+                xml += '    <ITEMTYPE>M</ITEMTYPE>\n';
+                xml += '    <ITEMID>' + minifig.partNum + '</ITEMID>\n';
+                xml += '    <MINQTY>' + minifig.quantity + '</MINQTY>\n';
                 xml += '  </ITEM>\n';
             });
 
@@ -2463,7 +2973,8 @@
             var missingParts = [];
 
             partsData.forEach(function (part) {
-                if (part.isSpare) return;
+                // Skip minifigs and spare parts
+                if (part.type === 'minifig' || part.isSpare) return;
 
                 var key = getPartKey(part);
                 var missing = part.quantity - (userCounts[key] || 0);
@@ -2485,7 +2996,8 @@
             }
 
             // Generate CSV for Pick a Brick
-            var csv = 'Element ID,Design ID,Colour,Quantity,Name\n';
+            var csv = '# Note: Minifigures excluded (not available via Pick a Brick)\n';
+            csv += 'Element ID,Design ID,Colour,Quantity,Name\n';
 
             missingParts.forEach(function (part) {
                 // Pick a Brick uses Design ID (same as part number) and Element ID (part+color combination)
@@ -2514,6 +3026,7 @@
             }
 
             var missingParts = [];
+            var missingMinifigs = [];
 
             partsData.forEach(function (part) {
                 if (part.isSpare) return;
@@ -2522,16 +3035,24 @@
                 var missing = part.quantity - (userCounts[key] || 0);
 
                 if (missing > 0) {
-                    missingParts.push({
-                        partNum: part.partNum,
-                        name: part.name,
-                        color: part.color,
-                        quantity: missing
-                    });
+                    if (part.type === 'minifig') {
+                        missingMinifigs.push({
+                            partNum: part.partNum,
+                            name: part.name,
+                            quantity: missing
+                        });
+                    } else {
+                        missingParts.push({
+                            partNum: part.partNum,
+                            name: part.name,
+                            color: part.color,
+                            quantity: missing
+                        });
+                    }
                 }
             });
 
-            if (missingParts.length === 0) {
+            if (missingParts.length === 0 && missingMinifigs.length === 0) {
                 alert('No missing pieces! Your set is complete.');
                 return;
             }
@@ -2540,12 +3061,25 @@
             var text = 'Missing Pieces for Set ' + currentSetNumber.split('-')[0] + '\n';
             text += '='.repeat(50) + '\n\n';
 
-            missingParts.forEach(function (part) {
-                text += part.quantity + 'x ' + part.partNum + ' - ' + part.name + ' (' + part.color + ')\n';
-            });
+            if (missingParts.length > 0) {
+                text += 'PARTS:\n';
+                missingParts.forEach(function (part) {
+                    text += part.quantity + 'x ' + part.partNum + ' - ' + part.name + ' (' + part.color + ')\n';
+                });
+            }
+
+            if (missingMinifigs.length > 0) {
+                text += '\nMINIFIGURES:\n';
+                missingMinifigs.forEach(function (minifig) {
+                    text += minifig.quantity + 'x ' + minifig.partNum + ' - ' + minifig.name + '\n';
+                });
+            }
 
             text += '\n' + '='.repeat(50) + '\n';
             text += 'Total unique parts missing: ' + missingParts.length + '\n';
+            if (missingMinifigs.length > 0) {
+                text += 'Total unique minifigs missing: ' + missingMinifigs.length + '\n';
+            }
 
             var totalPieces = 0;
             missingParts.forEach(function (p) { totalPieces += p.quantity; });

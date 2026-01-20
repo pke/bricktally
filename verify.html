@@ -555,6 +555,11 @@
     });
 
     function getPartKey(part) {
+      if (part.type === 'minifig') {
+        // Use the API's unique ID for minifigs
+        return 'fig_' + part.id;
+      }
+
       var color = part.color || 'Unknown';
       var key = part.partNum + '_' + color;
       if (part.isSpare) {
@@ -627,6 +632,25 @@
       return fetchPage(1);
     }
 
+    function loadMinifigures(setNumber) {
+      return fetch('https://rebrickable.com/api/v3/lego/sets/' + setNumber + '/minifigs/', {
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'key ' + API_KEY
+        }
+      })
+      .then(function (response) {
+        if (!response.ok) return { results: [] };
+        return response.json();
+      })
+      .then(function (data) {
+        return data.results || [];
+      })
+      .catch(function() {
+        return [];
+      });
+    }
+
     function exportToBrickLink() {
       if (currentMissingParts.length === 0) {
         alert('No missing pieces to export!');
@@ -638,9 +662,14 @@
 
       currentMissingParts.forEach(function (item) {
         xml += '  <ITEM>\n';
-        xml += '    <ITEMTYPE>P</ITEMTYPE>\n';
-        xml += '    <ITEMID>' + item.part.partNum + '</ITEMID>\n';
-        xml += '    <COLORNAME>' + item.part.color + '</COLORNAME>\n';
+        if (item.part.type === 'minifig') {
+          xml += '    <ITEMTYPE>M</ITEMTYPE>\n';
+          xml += '    <ITEMID>' + item.part.partNum + '</ITEMID>\n';
+        } else {
+          xml += '    <ITEMTYPE>P</ITEMTYPE>\n';
+          xml += '    <ITEMID>' + item.part.partNum + '</ITEMID>\n';
+          xml += '    <COLORNAME>' + item.part.color + '</COLORNAME>\n';
+        }
         xml += '    <MINQTY>' + item.missing + '</MINQTY>\n';
         xml += '  </ITEM>\n';
       });
@@ -666,9 +695,13 @@
         return;
       }
 
-      var csv = 'Element ID,Design ID,Colour,Quantity,Name\n';
+      var csv = '# Note: Minifigures excluded (not available via Pick a Brick)\n';
+      csv += 'Element ID,Design ID,Colour,Quantity,Name\n';
 
       currentMissingParts.forEach(function (item) {
+        // Skip minifigs
+        if (item.part.type === 'minifig') return;
+
         csv += ',' + item.part.partNum + ',' + item.part.color + ',' + item.missing + ',"' + item.part.name + '"\n';
       });
 
@@ -695,16 +728,44 @@
       var text = 'Missing Pieces for Set ' + setNumber + '\n';
       text += '='.repeat(50) + '\n\n';
 
+      var missingParts = [];
+      var missingMinifigs = [];
+      var totalPieces = 0;
+      var totalMinifigs = 0;
+
       currentMissingParts.forEach(function (item) {
-        text += item.missing + 'x ' + item.part.partNum + ' - ' + item.part.name + ' (' + item.part.color + ')\n';
+        if (item.part.type === 'minifig') {
+          missingMinifigs.push(item);
+          totalMinifigs += item.missing;
+        } else {
+          missingParts.push(item);
+          totalPieces += item.missing;
+        }
       });
 
-      text += '\n' + '='.repeat(50) + '\n';
-      text += 'Total unique parts missing: ' + currentMissingParts.length + '\n';
+      if (missingParts.length > 0) {
+        text += 'PARTS:\n';
+        missingParts.forEach(function (item) {
+          text += item.missing + 'x ' + item.part.partNum + ' - ' + item.part.name + ' (' + item.part.color + ')\n';
+        });
+      }
 
-      var totalPieces = 0;
-      currentMissingParts.forEach(function (item) { totalPieces += item.missing; });
+      if (missingMinifigs.length > 0) {
+        text += '\nMINIFIGURES:\n';
+        missingMinifigs.forEach(function (item) {
+          text += item.missing + 'x ' + item.part.partNum + ' - ' + item.part.name + '\n';
+        });
+      }
+
+      text += '\n' + '='.repeat(50) + '\n';
+      text += 'Total unique parts missing: ' + missingParts.length + '\n';
+      if (missingMinifigs.length > 0) {
+        text += 'Total unique minifigs missing: ' + missingMinifigs.length + '\n';
+      }
       text += 'Total pieces missing: ' + totalPieces + '\n';
+      if (totalMinifigs > 0) {
+        text += 'Total minifigs missing: ' + totalMinifigs + '\n';
+      }
 
       var blob = new Blob([text], { type: 'text/plain' });
       var url = window.URL.createObjectURL(blob);
@@ -717,14 +778,19 @@
       window.URL.revokeObjectURL(url);
     }
 
-    function displayVerification(setData, partsData, missingParts) {
+    function displayVerification(setData, partsData, minifigsData, missingParts) {
       var totalPieces = 0;
       var missingPiecesCount = 0;
+      var totalMinifigs = 0;
+      var missingMinifigsCount = 0;
       var missingPartsList = [];
+      var missingMinifigsList = [];
 
+      // Process parts
       partsData.forEach(function (item, index) {
         var part = {
           id: index,
+          type: 'part',
           partNum: item.part.part_num || 'unknown',
           name: item.part.name || 'Unknown Part',
           color: (item.color && item.color.name) ? item.color.name : 'Unknown',
@@ -747,10 +813,39 @@
         }
       });
 
-      currentMissingParts = missingPartsList;
+      // Process minifigs
+      (minifigsData || []).forEach(function (item) {
+        var minifig = {
+          id: item.id,  // Use the API's unique ID
+          type: 'minifig',
+          partNum: item.set_num,
+          name: item.set_name || 'Unknown Minifig',
+          color: '',
+          quantity: item.quantity,
+          imageUrl: item.set_img_url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="60" height="60"%3E%3Crect width="60" height="60" fill="%23ddd"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="10" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E',
+          isSpare: false
+        };
 
-      var completedPieces = totalPieces - missingPiecesCount;
-      var percentage = totalPieces > 0 ? Math.round((completedPieces / totalPieces) * 100) : 0;
+        totalMinifigs += minifig.quantity;
+        var key = getPartKey(minifig);
+
+        if (missingParts[key]) {
+          missingMinifigsCount += missingParts[key];
+          missingMinifigsList.push({
+            part: minifig,
+            missing: missingParts[key]
+          });
+        }
+      });
+
+      currentMissingParts = missingPartsList.concat(missingMinifigsList);
+
+      // Combine all pieces (parts + minifigs)
+      var allPieces = totalPieces + totalMinifigs;
+      var allMissing = missingPiecesCount + missingMinifigsCount;
+      var completedPieces = allPieces - allMissing;
+
+      var percentage = allPieces > 0 ? Math.round((completedPieces / allPieces) * 100) : 0;
       var isComplete = percentage === 100;
 
       var setImageUrl = setData.set_img_url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect width="400" height="300" fill="%23ddd"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="20" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E';
@@ -779,15 +874,15 @@
         '<div class="stats-grid">' +
         '<div class="stat-item"><div class="stat-value">' + percentage + '%</div><div class="stat-label">Complete</div></div>' +
         '<div class="stat-item"><div class="stat-value">' + completedPieces + '</div><div class="stat-label">Pieces Found</div></div>' +
-        '<div class="stat-item"><div class="stat-value">' + missingPiecesCount + '</div><div class="stat-label">Pieces Missing</div></div>' +
-        '<div class="stat-item"><div class="stat-value">' + totalPieces + '</div><div class="stat-label">Total Pieces</div></div>' +
+        '<div class="stat-item"><div class="stat-value">' + allMissing + '</div><div class="stat-label">Pieces Missing</div></div>' +
+        '<div class="stat-item"><div class="stat-value">' + allPieces + '</div><div class="stat-label">Total Pieces</div></div>' +
         '</div>' +
         '<div class="progress-bar" data-percentage="' + percentage + '%">' +
         '<div class="progress-fill ' + (isComplete ? '' : 'incomplete') + '" style="width: ' + percentage + '%;"></div>' +
         '</div>' +
         '</div>';
 
-      if (missingPartsList.length === 0) {
+      if (missingPartsList.length === 0 && missingMinifigsList.length === 0) {
         html += '<div class="no-missing">' +
           '<div class="checkmark">✓</div>' +
           '<h2>All Pieces Accounted For!</h2>' +
@@ -796,26 +891,57 @@
       } else {
         html += '<div style="margin-top: 30px;">' +
           '<!-- Replace the single export button with multiple options --><div style="margin-top: 30px; display: flex; gap: 10px; flex-wrap: wrap;">    <button class="export-btn" onclick="exportToBrickLink()">📦 BrickLink XML</button>    <button class="export-btn" onclick="exportToPickABrick()">🧱 Pick a Brick CSV</button>    <button class="export-btn" onclick="exportMissingPartsText()">📄 Text List</button></div>' +
-          '</div>' +
-          '<h3 style="margin-top: 30px;">Missing Pieces (' + missingPartsList.length + ' unique parts)</h3>' +
-          '<table>' +
-          '<thead><tr>' +
-          '<th style="width: 80px;">Image</th>' +
-          '<th>Part</th>' +
-          '<th class="missing-col" style="width: 120px;">Missing</th>' +
-          '</tr></thead><tbody>';
+          '</div>';
 
-        missingPartsList.forEach(function (item) {
-          var partInfo = item.part.color + ' ' + item.part.name + '<br>' + item.part.partNum;
+        // Show missing parts if any
+        if (missingPartsList.length > 0) {
+          html += '<h3 style="margin-top: 30px;">Missing Parts (' + missingPartsList.length + ' unique parts)</h3>' +
+            '<table>' +
+            '<thead><tr>' +
+            '<th style="width: 80px;">Image</th>' +
+            '<th>Part</th>' +
+            '<th class="missing-col" style="width: 120px;">Missing</th>' +
+            '</tr></thead><tbody>';
 
-          html += '<tr>' +
-            '<td><img src="' + item.part.imageUrl + '" alt="' + item.part.name + '" class="part-image"></td>' +
-            '<td class="col-info">' + partInfo + '</td>' +
-            '<td class="missing-col"><span class="missing-count">' + item.missing + '</span></td>' +
-            '</tr>';
-        });
+          missingPartsList.forEach(function (item) {
+            var partInfo = item.part.color + ' ' + item.part.name + '<br>' + item.part.partNum;
 
-        html += '</tbody></table>';
+            html += '<tr>' +
+              '<td><img src="' + item.part.imageUrl + '" alt="' + item.part.name + '" class="part-image"></td>' +
+              '<td class="col-info">' + partInfo + '</td>' +
+              '<td class="missing-col"><span class="missing-count">' + item.missing + '</span></td>' +
+              '</tr>';
+          });
+
+          html += '</tbody></table>';
+        }
+
+        // Show missing minifigs if any
+        if (missingMinifigsList.length > 0) {
+          html += '<h3 style="margin-top: 30px;">Missing Minifigures (' + missingMinifigsList.length + ' unique minifigs)</h3>' +
+            '<table>' +
+            '<thead><tr>' +
+            '<th style="width: 80px;">Image</th>' +
+            '<th>Minifigure</th>' +
+            '<th class="missing-col" style="width: 120px;">Missing</th>' +
+            '</tr></thead><tbody>';
+
+          missingMinifigsList.forEach(function (item) {
+            // Parse name: "David - Dark Blue Vest, Black Trousers" -> "David<br>Dark Blue Vest, Black Trousers"
+            var nameParts = item.part.name.split(' - ');
+            var title = nameParts[0] || item.part.name;
+            var description = nameParts.length > 1 ? nameParts.slice(1).join(' - ') : '';
+            var minifigInfo = title + (description ? '<br>' + description : '');
+
+            html += '<tr>' +
+              '<td><img src="' + item.part.imageUrl + '" alt="' + item.part.name + '" class="part-image"></td>' +
+              '<td class="col-info">' + minifigInfo + '</td>' +
+              '<td class="missing-col"><span class="missing-count">' + item.missing + '</span></td>' +
+              '</tr>';
+          });
+
+          html += '</tbody></table>';
+        }
       }
 
       document.getElementById('content').innerHTML = html;
@@ -831,12 +957,13 @@
 
       loadSetData(params.setNumber)
         .then(function (setData) {
-          return loadAllParts(params.setNumber).then(function (partsData) {
-            return { setData: setData, partsData: partsData };
-          });
+          return Promise.all([loadAllParts(params.setNumber), loadMinifigures(params.setNumber)])
+            .then(function (results) {
+              return { setData: setData, partsData: results[0], minifigs: results[1] };
+            });
         })
         .then(function (result) {
-          displayVerification(result.setData, result.partsData, missingParts);
+          displayVerification(result.setData, result.partsData, result.minifigs, missingParts);
         })
         .catch(function (error) {
           document.getElementById('content').innerHTML = '<div class="no-missing"><h2>Error Loading Set</h2><p>' + error.message + '</p></div>';
