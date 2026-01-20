@@ -2,13 +2,7 @@
   "rewrites": [
     {
       "source": "/manifest.json",
-      "destination": "/manifest-preview.json",
-      "has": [
-        {
-          "type": "host",
-          "value": "preview.bricktally.app"
-        }
-      ]
+      "destination": "/api/manifest"
     }
   ]
 }
