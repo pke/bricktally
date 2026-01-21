@@ -1,0 +1,33 @@
+{
+  "name": "bricktally",
+  "version": "1.0.0",
+  "description": "LEGO® set verification and brick counting app",
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:report": "playwright show-report",
+    "test:unit": "vitest",
+    "test:unit:ui": "vitest --ui",
+    "test:unit:coverage": "vitest run --coverage",
+    "test:all": "vitest run && playwright test",
+    "serve": "python3 -m http.server 8080"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.41.0",
+    "@vitest/coverage-v8": "^1.2.0",
+    "@vitest/ui": "^1.2.0",
+    "jsdom": "^24.0.0",
+    "vitest": "^1.2.0"
+  },
+  "keywords": [
+    "lego",
+    "brick",
+    "verification",
+    "inventory"
+  ],
+  "author": "",
+  "license": "MIT"
+}

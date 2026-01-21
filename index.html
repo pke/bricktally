@@ -1494,6 +1494,26 @@
             show('minifigSection');
         }
 
+        function updateCorrespondingPart(sparePart) {
+            // Find the regular part with same partNum and color
+            var regularPart = partsData.find(function(p) {
+                return !p.isSpare && p.partNum === sparePart.partNum && p.color === sparePart.color;
+            });
+            if (regularPart) {
+                updateRow(regularPart.id);
+            }
+        }
+
+        function updateCorrespondingSpare(regularPart) {
+            // Find the spare part with same partNum and color
+            var sparePart = partsData.find(function(p) {
+                return p.isSpare && p.partNum === regularPart.partNum && p.color === regularPart.color;
+            });
+            if (sparePart) {
+                updateRow(sparePart.id);
+            }
+        }
+
         function toggleMinifig(partId) {
             var part = partsData.find(function(p) { return p.id === partId; });
             if (!part || part.type !== 'minifig') return;
@@ -1518,6 +1538,16 @@
 
             userCounts[key]++;
             updateRow(partId);
+
+            // If this is a spare part, also update the corresponding regular part
+            if (part.isSpare) {
+                updateCorrespondingPart(part);
+            }
+            // If this is a regular part, update its spare (if exists)
+            else {
+                updateCorrespondingSpare(part);
+            }
+
             updateStats();
             updatePartsHeader();
             updateSparePartsHeader();
@@ -1534,6 +1564,16 @@
 
             userCounts[key]--;
             updateRow(partId);
+
+            // If this is a spare part, also update the corresponding regular part
+            if (part.isSpare) {
+                updateCorrespondingPart(part);
+            }
+            // If this is a regular part, update its spare (if exists)
+            else {
+                updateCorrespondingSpare(part);
+            }
+
             updateStats();
             updatePartsHeader();
             updateSparePartsHeader();
@@ -1549,6 +1589,16 @@
             // Set the count to the full quantity
             userCounts[key] = part.quantity;
             updateRow(partId);
+
+            // If this is a spare part, also update the corresponding regular part
+            if (part.isSpare) {
+                updateCorrespondingPart(part);
+            }
+            // If this is a regular part, update its spare (if exists)
+            else {
+                updateCorrespondingSpare(part);
+            }
+
             updateStats();
             updatePartsHeader();
             updateSparePartsHeader();
@@ -1597,7 +1647,12 @@
             // Update count display with clickable quantity
             countElement.innerHTML = '<span class="counted">' + userCounts[key] + '</span>/<span class="qty-click" onclick="fillQuantity(' + partId + ')" title="Click to mark all as counted">' + part.quantity + '</span>';
 
-            var isComplete = userCounts[key] === part.quantity;
+            // Check completion: for regular parts, include spare parts as substitutes
+            var regularCount = userCounts[key] || 0;
+            var spareKey = key + '_s';
+            var spareCount = userCounts[spareKey] || 0;
+            var combinedCount = part.isSpare ? regularCount : regularCount + spareCount;
+            var isComplete = combinedCount >= part.quantity;
             if (incrementBtn) {
                 if (isComplete) {
                     incrementBtn.classList.add('complete');
@@ -1674,13 +1729,12 @@
                 });
             }
 
-            // Calculate percentage including extras (can exceed 100% only when complete)
-            var totalWithExtras = completedPieces + extraSparesCollected;
-            var percentage = totalPieces > 0 ? Math.floor((totalWithExtras / totalPieces) * 100) : 0;
+            // Calculate percentage (capped at 100% even with extras)
+            var percentage = totalPieces > 0 ? Math.floor((completedPieces / totalPieces) * 100) : 0;
 
-            // Cap progress bar width at 100% but show actual percentage in text
+            // Cap both progress bar width and percentage text at 100%
             var progressBarWidth = Math.min(percentage, 100) + '%';
-            var percentText = percentage + '%';
+            var percentText = Math.min(percentage, 100) + '%';
             var piecesText = completedPieces + '/' + totalPieces;
 
             // Add extras to display if any
