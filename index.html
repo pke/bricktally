@@ -70,7 +70,6 @@
                     <h1 onclick="goToSetHistory()">🧱 BrickTally</h1>
                     <div class="input-group">
                         <input type="number" id="setNumber" placeholder="Enter set number (e.g., 10294)" autocomplete="off" />
-                        <button id="loadButton" onclick="loadSet()">🔍</button>
                     </div>
                 </div>
             </div>
@@ -987,7 +986,6 @@
             show('loading');
             hide('error', 'tableContainer', 'statsSection', 'setInfo', 'filterSection', 'resetButton');
             document.getElementById('tableContainer').innerHTML = '';
-            document.getElementById('loadButton').disabled = true;
 
             continueLoadSet(setNumber);
         }
@@ -1003,7 +1001,6 @@
             show('loading');
             hide('error', 'tableContainer', 'statsSection', 'setInfo', 'filterSection', 'resetButton');
             document.getElementById('tableContainer').innerHTML = '';
-            document.getElementById('loadButton').disabled = true;
 
             var baseNumber = setNumber.split('-')[0];
 
@@ -1014,7 +1011,6 @@
                         // Multiple versions exist - show selector
                         showVersionSelector(versions);
                         hide('loading');
-                        document.getElementById('loadButton').disabled = false;
                     } else {
                         // Single version - proceed normally
                         var finalSetNumber = setNumber.includes('-') ? setNumber : setNumber + '-1';
@@ -1057,7 +1053,6 @@
                 })
                 .finally(function () {
                     hide('loading');
-                    document.getElementById('loadButton').disabled = false;
                 });
         }
 
@@ -1833,7 +1828,7 @@
 
             var completedPieces = 0;
             var totalPieces = 0;
-            var missingParts = [];
+            var missingPartsDetailed = [];
 
             // Calculate set completion using regular parts, spare parts, and minifigs
             partsData.forEach(function (part) {
@@ -1848,7 +1843,13 @@
                     completedPieces += (userCounts[key] || 0);
                     var missing = part.quantity - (userCounts[key] || 0);
                     if (missing > 0) {
-                        missingParts.push(key + ':' + missing);
+                        missingPartsDetailed.push({
+                            name: part.name,
+                            color: '',
+                            quantity: missing,
+                            type: 'minifig',
+                            imageUrl: part.imageUrl
+                        });
                     }
                 } else {
                     // Regular parts can have spares
@@ -1865,18 +1866,22 @@
                     // Calculate missing considering spares
                     var missing = part.quantity - Math.min(combinedCount, part.quantity);
                     if (missing > 0) {
-                        missingParts.push(key + ':' + missing);
+                        missingPartsDetailed.push({
+                            name: part.name,
+                            color: part.color,
+                            quantity: missing,
+                            type: 'part',
+                            imageUrl: part.imageUrl
+                        });
                     }
                 }
             });
 
             var percentage = totalPieces > 0 ? Math.floor((completedPieces / totalPieces) * 100) : 0;
-            var missingData = missingParts.join(',');
 
             // Get set info
             var setImageUrl = document.querySelector('#setDetails img') ?
-                document.querySelector('#setDetails img').src :
-                'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="80" height="80"%3E%3Crect width="80" height="80" fill="%23ddd"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="10" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E';
+                document.querySelector('#setDetails img').src : null;
 
             var setName = document.getElementById('setName').textContent;
 
@@ -1885,56 +1890,348 @@
             var displaySetNumber = versionParts[0];
             var versionLabel = versionNumber !== '1' ? ' v' + versionNumber : '';
 
-            // Truncate set name if too long - reduce to fit better
-            var displayName = setName.length > 50 ? setName.substring(0, 50-3) + '...' : setName;
-
-            // Create badge URL - handle both local files and deployed sites
-            var baseUrl = window.location.origin;
-            var currentPath = window.location.pathname;
-            var verifyUrl;
-
-            if (baseUrl === 'file://' || baseUrl === 'null' || window.location.protocol === 'file:') {
-                var directory = currentPath.substring(0, currentPath.lastIndexOf('/'));
-                verifyUrl = directory + '/verify.html?set=' + currentSetNumber + '&missing=' + encodeURIComponent(missingData);
-            } else {
-                verifyUrl = baseUrl + '/verify.html?set=' + currentSetNumber + '&missing=' + encodeURIComponent(missingData);
-            }
-
-            // Badge HTML with inline styles
-            var badgeColor = percentage === 100 ? '#4CAF50' : (percentage >= 80 ? '#FF9800' : '#FF6B6B');
-            var badgeHtml = '<a href="' + verifyUrl + '" target="_blank" style="text-decoration: none; display: inline-block;">' +
-                '<div style="background: linear-gradient(180deg, ' + badgeColor + ' 0%, ' + badgeColor + 'dd 100%); border-radius: 8px; padding: 10px; box-sizing: border-box; display: flex; gap: 15px; position: relative; font-family: Arial, sans-serif; color: white;">' +
-                '<img src="' + setImageUrl + '" style="width: 80px; height: 80px; object-fit: cover;">' +
-                '<div style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 5px;">' +
-                '<div style="font-size: 16px; font-weight: bold;">' + displayName + '</div>' +
-                '<div style="font-size: 12px; opacity: 0.85; margin-top: 2px;">Set ' + displaySetNumber + versionLabel + '</div>' +
-                '<div style="display: flex; align-items: baseline; gap: 8px;">' +
-                '<div style="font-size: 32px; font-weight: bold; line-height: 1;">' + percentage + '%</div>' +
-                '<div style="font-size: 13px; opacity: 0.9;">' + completedPieces + '/' + totalPieces + ' pieces</div>' +
-                '</div>' +
-                '<div style="font-size: 9px; opacity: 0.7; align-self: flex-end;">bricktally.app</div>' +
-                '</div>' +
-                '</div>' +
-                '</a>';
-
-            showBadgeModal(badgeHtml, verifyUrl);
+            // Generate PNG badge
+            generatePNGBadge({
+                setName: setName,
+                setNumber: displaySetNumber,
+                versionLabel: versionLabel,
+                percentage: percentage,
+                completedPieces: completedPieces,
+                totalPieces: totalPieces,
+                missingParts: missingPartsDetailed,
+                setImageUrl: setImageUrl
+            });
         }
 
-        function showBadgeModal(badgeHtml, verifyUrl) {
+        function generatePNGBadge(data) {
+            // Pre-load all images before drawing
+            var imagesToLoad = [];
+            var loadedImages = {};
+
+            // Helper to get proxied URL
+            function getProxiedUrl(url) {
+                if (url && (url.startsWith('https://cdn.rebrickable.com/') || url.startsWith('https://rebrickable.com/'))) {
+                    return '/api/image-proxy?url=' + encodeURIComponent(url);
+                }
+                return url;
+            }
+
+            // Add set image
+            if (data.setImageUrl) {
+                imagesToLoad.push({ key: 'setImage', url: getProxiedUrl(data.setImageUrl) });
+            }
+
+            // Add part images (max 10)
+            var maxParts = Math.min(data.missingParts.length, 10);
+            for (var i = 0; i < maxParts; i++) {
+                var part = data.missingParts[i];
+                if (part.imageUrl) {
+                    imagesToLoad.push({ key: 'part_' + i, url: getProxiedUrl(part.imageUrl) });
+                }
+            }
+
+            // Load all images, then draw
+            var loadedCount = 0;
+            var totalToLoad = imagesToLoad.length;
+
+            function onImageLoaded() {
+                loadedCount++;
+                if (loadedCount >= totalToLoad) {
+                    drawBadgeWithImages(data, loadedImages);
+                }
+            }
+
+            if (totalToLoad === 0) {
+                drawBadgeWithImages(data, loadedImages);
+                return;
+            }
+
+            imagesToLoad.forEach(function(item) {
+                var img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = function() {
+                    loadedImages[item.key] = img;
+                    onImageLoaded();
+                };
+                img.onerror = function() {
+                    loadedImages[item.key] = null;
+                    onImageLoaded();
+                };
+                img.src = item.url;
+            });
+        }
+
+        function drawBadgeWithImages(data, loadedImages) {
+            var canvas = document.createElement('canvas');
+            var ctx = canvas.getContext('2d');
+
+            // High-res badge dimensions (2x for retina)
+            var scale = 2;
+            var setImgSize = 100; // Set image size
+            var partImgSize = 40; // Part thumbnail size
+            var contentX = setImgSize + 20; // Content starts after image + padding
+            var width = 550;
+
+            // Calculate height based on missing parts with images
+            var maxParts = Math.min(data.missingParts.length, 10);
+            var partRowHeight = 50; // Height per part row (image + text)
+            var headerHeight = 120;
+            var missingHeaderHeight = data.missingParts.length > 0 ? 45 : 0;
+            var partsListHeight = maxParts * partRowHeight;
+            var moreTextHeight = data.missingParts.length > 10 ? 30 : 0;
+            var footerHeight = 30;
+
+            var height = data.missingParts.length > 0
+                ? headerHeight + missingHeaderHeight + partsListHeight + moreTextHeight + footerHeight
+                : headerHeight + footerHeight + 50;
+
+            canvas.width = width * scale;
+            canvas.height = height * scale;
+            ctx.scale(scale, scale);
+
+            // Badge color based on percentage
+            var badgeColor = data.percentage === 100 ? '#4CAF50' : (data.percentage >= 80 ? '#FF9800' : '#FF6B6B');
+
+            // Draw rounded rectangle background
+            ctx.fillStyle = badgeColor;
+            roundRect(ctx, 0, 0, width, height, 16, true);
+
+            // Draw header section
+            ctx.fillStyle = 'rgba(0,0,0,0.15)';
+            roundRectTop(ctx, 0, 0, width, headerHeight, 16);
+
+            // Draw set image placeholder (white rounded square)
+            ctx.fillStyle = 'rgba(255,255,255,0.9)';
+            roundRect(ctx, 10, 10, setImgSize, setImgSize, 8, true);
+
+            // Draw set image if loaded (maintain aspect ratio)
+            if (loadedImages.setImage) {
+                var img = loadedImages.setImage;
+                var imgW = img.naturalWidth || img.width;
+                var imgH = img.naturalHeight || img.height;
+                var boxSize = setImgSize - 10;
+                var scale = Math.min(boxSize / imgW, boxSize / imgH);
+                var drawW = imgW * scale;
+                var drawH = imgH * scale;
+                var drawX = 15 + (boxSize - drawW) / 2;
+                var drawY = 15 + (boxSize - drawH) / 2;
+                ctx.drawImage(img, drawX, drawY, drawW, drawH);
+            } else {
+                ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                ctx.font = '12px Arial, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('No Image', 10 + setImgSize/2, 10 + setImgSize/2 + 4);
+                ctx.textAlign = 'left';
+            }
+
+            // Set name (full name, may wrap)
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 18px Arial, sans-serif';
+            var maxNameWidth = width - contentX - 15;
+            var displayName = data.setName;
+            // Wrap text if too long
+            if (ctx.measureText(displayName).width > maxNameWidth) {
+                ctx.font = 'bold 16px Arial, sans-serif';
+                if (ctx.measureText(displayName).width > maxNameWidth) {
+                    // Two lines
+                    var words = displayName.split(' ');
+                    var line1 = '';
+                    var line2 = '';
+                    for (var w = 0; w < words.length; w++) {
+                        var testLine = line1 + (line1 ? ' ' : '') + words[w];
+                        if (ctx.measureText(testLine).width <= maxNameWidth) {
+                            line1 = testLine;
+                        } else {
+                            line2 = words.slice(w).join(' ');
+                            break;
+                        }
+                    }
+                    ctx.fillText(line1, contentX, 28);
+                    if (line2) {
+                        ctx.font = '14px Arial, sans-serif';
+                        ctx.fillText(line2, contentX, 44);
+                    }
+                } else {
+                    ctx.fillText(displayName, contentX, 32);
+                }
+            } else {
+                ctx.fillText(displayName, contentX, 32);
+            }
+
+            // Set number (larger)
+            ctx.font = 'bold 18px Arial, sans-serif';
+            ctx.fillStyle = 'rgba(255,255,255,0.9)';
+            ctx.fillText('Set ' + data.setNumber + data.versionLabel, contentX, 58);
+
+            // Piece count - at original percentage position
+            ctx.font = '16px Arial, sans-serif';
+            ctx.fillStyle = 'rgba(255,255,255,0.9)';
+            var pieceText = data.completedPieces + ' / ' + data.totalPieces + ' pieces';
+            var percentBaselineY = 100;
+            ctx.fillText(pieceText, contentX, percentBaselineY);
+
+            // Percentage - right aligned
+            ctx.font = 'bold 40px Arial, sans-serif';
+            ctx.fillStyle = 'white';
+            var percentText = data.percentage + '%';
+            var percentWidth = ctx.measureText(percentText).width;
+            ctx.fillText(percentText, width - 15 - percentWidth, percentBaselineY);
+
+            // Missing parts section
+            if (data.missingParts.length > 0) {
+                var missingY = headerHeight + 10;
+
+                // Section header
+                ctx.fillStyle = 'rgba(0,0,0,0.1)';
+                ctx.fillRect(0, missingY - 5, width, 35);
+
+                ctx.font = 'bold 16px Arial, sans-serif';
+                ctx.fillStyle = 'white';
+                var missingCount = data.missingParts.reduce(function(sum, p) { return sum + p.quantity; }, 0);
+                ctx.fillText('Missing ' + missingCount + ' piece' + (missingCount !== 1 ? 's' : '') + ':', 20, missingY + 17);
+
+                // List missing parts with images
+                var listY = missingY + 45;
+                var maxItems = Math.min(data.missingParts.length, 10);
+
+                for (var i = 0; i < maxItems; i++) {
+                    var part = data.missingParts[i];
+                    var rowY = listY + i * partRowHeight;
+
+                    // Draw part image background
+                    ctx.fillStyle = 'rgba(255,255,255,0.15)';
+                    roundRect(ctx, 15, rowY, partImgSize, partImgSize, 4, true);
+
+                    // Draw part image if loaded
+                    var partImg = loadedImages['part_' + i];
+                    if (partImg) {
+                        ctx.drawImage(partImg, 17, rowY + 2, partImgSize - 4, partImgSize - 4);
+                    }
+
+                    // Part text - full name, no truncation
+                    var textX = 15 + partImgSize + 10;
+                    var textMaxWidth = width - textX - 15;
+
+                    // Quantity badge
+                    ctx.font = 'bold 14px Arial, sans-serif';
+                    ctx.fillStyle = 'rgba(255,255,255,0.95)';
+                    var qtyText = part.quantity + ' ×';
+                    ctx.fillText(qtyText, textX, rowY + 16);
+
+                    // Part name (full)
+                    ctx.font = '13px Arial, sans-serif';
+                    var nameText = part.name;
+                    if (part.type === 'minifig') {
+                        nameText += ' (minifig)';
+                    }
+
+                    // Wrap name if needed
+                    var nameX = textX + ctx.measureText(qtyText).width + 8;
+                    var nameMaxWidth = width - nameX - 15;
+
+                    if (ctx.measureText(nameText).width > nameMaxWidth) {
+                        // Split into two lines
+                        var nameWords = nameText.split(' ');
+                        var nameLine1 = '';
+                        var nameLine2 = '';
+                        for (var nw = 0; nw < nameWords.length; nw++) {
+                            var testName = nameLine1 + (nameLine1 ? ' ' : '') + nameWords[nw];
+                            if (ctx.measureText(testName).width <= nameMaxWidth) {
+                                nameLine1 = testName;
+                            } else {
+                                nameLine2 = nameWords.slice(nw).join(' ');
+                                break;
+                            }
+                        }
+                        ctx.fillText(nameLine1, nameX, rowY + 16);
+                        if (nameLine2) {
+                            ctx.font = '12px Arial, sans-serif';
+                            ctx.fillText(nameLine2, nameX, rowY + 30);
+                        }
+                    } else {
+                        ctx.fillText(nameText, nameX, rowY + 16);
+                    }
+
+                    // Color (below name)
+                    if (part.color) {
+                        ctx.font = '11px Arial, sans-serif';
+                        ctx.fillStyle = 'rgba(255,255,255,0.7)';
+                        ctx.fillText(part.color, nameX, rowY + 38);
+                    }
+                }
+
+                if (data.missingParts.length > 10) {
+                    var moreY = listY + 10 * partRowHeight + 5;
+                    ctx.font = '14px Arial, sans-serif';
+                    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+                    ctx.fillText('... and ' + (data.missingParts.length - 10) + ' more missing pieces', 20, moreY);
+                }
+            }
+
+            // Watermark
+            ctx.font = 'bold 16px Arial, sans-serif';
+            ctx.fillStyle = 'rgba(255,255,255,0.6)';
+            ctx.textAlign = 'right';
+            ctx.fillText('bricktally.app', width - 15, height - 14);
+            ctx.textAlign = 'left';
+
+            // Convert to data URL and show modal
+            var dataUrl = canvas.toDataURL('image/png');
+            showBadgeModal(dataUrl, data);
+        }
+
+        function roundRect(ctx, x, y, width, height, radius, fill) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+            if (fill) ctx.fill();
+        }
+
+        function roundRectTop(ctx, x, y, width, height, radius) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height);
+            ctx.lineTo(x, y + height);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function showBadgeModal(imageDataUrl, data) {
             var modal = document.createElement('div');
             modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px;';
 
             var content = document.createElement('div');
-            content.style.cssText = 'background: var(--bg-secondary); padding: 30px; border-radius: 8px; max-width: 750px; width: 100%;';
+            content.style.cssText = 'background: var(--bg-secondary); padding: 30px; border-radius: 8px; max-width: 550px; width: 100%;';
+
+            // Create filename: bricktally-<set-id>-<set-name>-<missing count or complete>.png
+            var safeSetName = data.setName.toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')  // Replace non-alphanumeric with hyphens
+                .replace(/^-+|-+$/g, '')       // Remove leading/trailing hyphens
+                .substring(0, 30);             // Limit length
+            var missingCount = data.totalPieces - data.completedPieces;
+            var missingSuffix = missingCount === 0 ? 'complete' : missingCount + '-missing';
+            var filename = 'bricktally-' + data.setNumber + '-' + safeSetName + '-' + missingSuffix + '.png';
+
             content.innerHTML = '<h2 style="margin-bottom: 20px; color: var(--text-primary);">BrickTally Badge</h2>' +
-                '<div style="margin: 20px 0;">' + badgeHtml + '</div>' +
-                '<h3 style="margin: 20px 0 10px 0; color: var(--text-primary);">Badge HTML Code:</h3>' +
-                '<textarea id="badgeCode" readonly style="width: 100%; height: 150px; padding: 10px; font-family: monospace; font-size: 12px; background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 4px;">' +
-                badgeHtml.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</textarea>' +
-                '<div style="margin-top: 15px; display: flex; gap: 10px;">' +
-                '<button onclick="copyBadgeCode()" style="flex: 1;">Copy Badge Code</button>' +
-                '<button onclick="window.open(\'' + verifyUrl + '\', \'_blank\')" style="flex: 1; background: var(--green);">View Verification Page</button>' +
+                '<p style="color: var(--text-secondary); margin-bottom: 15px;">Download this badge to share on eBay, Facebook Marketplace, or other platforms as proof of your set\'s completeness.</p>' +
+                '<div style="margin: 20px 0; text-align: center;">' +
+                '<img src="' + imageDataUrl + '" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);" alt="BrickTally Badge">' +
                 '</div>' +
+                '<a id="badgeDownload" href="' + imageDataUrl + '" download="' + filename + '" style="display: block; text-decoration: none;">' +
+                '<button style="width: 100%; background: var(--green); font-size: 16px; padding: 12px;">Download Badge (PNG)</button>' +
+                '</a>' +
                 '<button onclick="this.parentElement.parentElement.remove()" style="margin-top: 15px; width: 100%; background: var(--text-secondary);">Close</button>';
 
             modal.appendChild(content);
@@ -1943,13 +2240,6 @@
             modal.onclick = function (e) {
                 if (e.target === modal) modal.remove();
             };
-        }
-
-        function copyBadgeCode() {
-            var textarea = document.getElementById('badgeCode');
-            textarea.select();
-            document.execCommand('copy');
-            alert('Badge code copied to clipboard!');
         }
 
         function exportToBrickLink() {
@@ -2264,6 +2554,12 @@
     </script>
 
     <div id="fireworksContainer"></div>
+
+    <footer class="app-footer">
+        <span class="footer-tagline">Made with ❤️ for LEGO® enthusiasts</span>
+        <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
+        <span id="versionInfo">v1.0.0 (2fce009)</span>
+    </footer>
 </body>
 
 </html>

@@ -151,11 +151,9 @@ export async function loadTestSet(page, setNumber) {
     el.type = 'text';
   });
 
-  // Set the value
+  // Set the value and press Enter to load
   await page.locator('#setNumber').fill(setNumber);
-
-  // Click the load button
-  await page.click('#loadButton');
+  await page.locator('#setNumber').press('Enter');
 
   // Wait for set to load
   await page.waitForSelector('#setInfo:not(.hide)', { timeout: 10000 });

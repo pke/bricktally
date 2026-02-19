@@ -29,7 +29,7 @@ test.describe('Category 13: Version Selection', () => {
 
     // Fill input with base number
     await page.locator('#setNumber').fill('99008');
-    await page.click('#loadButton');
+    await page.locator('#setNumber').press('Enter');
 
     // Version selector should appear
     await expect(page.locator('text=Multiple Set Versions Found')).toBeVisible({ timeout: 5000 });
@@ -44,7 +44,7 @@ test.describe('Category 13: Version Selection', () => {
 
     await page.goto('/');
     await page.locator('#setNumber').fill('99008');
-    await page.click('#loadButton');
+    await page.locator('#setNumber').press('Enter');
 
     await expect(page.locator('h2:text("Multiple Set Versions Found")')).toBeVisible();
 
@@ -69,7 +69,7 @@ test.describe('Category 13: Version Selection', () => {
 
     await page.goto('/');
     await page.locator('#setNumber').fill('99008');
-    await page.click('#loadButton');
+    await page.locator('#setNumber').press('Enter');
 
     // Wait for dialog and click first version (99008-1)
     await expect(page.locator('h2:text("Multiple Set Versions Found")')).toBeVisible();
@@ -94,7 +94,7 @@ test.describe('Category 13: Version Selection', () => {
 
     await page.goto('/');
     await page.locator('#setNumber').fill('99008');
-    await page.click('#loadButton');
+    await page.locator('#setNumber').press('Enter');
 
     // Wait for dialog and click second version (99008-2)
     await expect(page.locator('h2:text("Multiple Set Versions Found")')).toBeVisible();
@@ -118,7 +118,7 @@ test.describe('Category 13: Version Selection', () => {
 
     await page.goto('/');
     await page.locator('#setNumber').fill('99008');
-    await page.click('#loadButton');
+    await page.locator('#setNumber').press('Enter');
 
     await expect(page.locator('text=Multiple Set Versions Found')).toBeVisible();
 
@@ -140,7 +140,7 @@ test.describe('Category 13: Version Selection', () => {
 
     await page.goto('/');
     await page.locator('#setNumber').fill('99008');
-    await page.click('#loadButton');
+    await page.locator('#setNumber').press('Enter');
 
     await expect(page.locator('text=Multiple Set Versions Found')).toBeVisible();
 
