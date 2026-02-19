@@ -1,0 +1,94 @@
+#!/bin/bash
+
+# Post-commit hook to auto-bump version based on conventional commit messages
+#
+# Bump rules:
+#   BREAKING CHANGE or type!: -> MAJOR (reset minor and patch)
+#   feat: or feat(...):       -> MINOR (reset patch)
+#   All other conventional    -> PATCH
+#   Non-conventional message  -> Skip (no bump)
+
+# Prevent infinite recursion (amend triggers post-commit again)
+BUMP_LOCK_FILE="$(git rev-parse --git-dir)/POST_COMMIT_RUNNING"
+if [ -f "$BUMP_LOCK_FILE" ]; then
+  exit 0
+fi
+touch "$BUMP_LOCK_FILE"
+trap 'rm -f "$BUMP_LOCK_FILE"' EXIT
+
+# Skip during rebase
+if [ -d "$(git rev-parse --git-dir)/rebase-merge" ] || [ -d "$(git rev-parse --git-dir)/rebase-apply" ]; then
+  echo "[post-commit] Rebase in progress, skipping version bump"
+  exit 0
+fi
+
+# Skip merge commits
+PARENT_COUNT=$(git log -1 --pretty=%P | wc -w | tr -d ' ')
+if [ "$PARENT_COUNT" -gt 1 ]; then
+  echo "[post-commit] Merge commit, skipping version bump"
+  exit 0
+fi
+
+# Get the commit message
+COMMIT_MSG=$(git log -1 --pretty=%B)
+SUBJECT=$(echo "$COMMIT_MSG" | head -1)
+
+# Only bump for conventional commit messages
+if ! echo "$SUBJECT" | grep -qE "^(feat|fix|refactor|test|build|chore|docs|perf|ci|style|revert)(\(.+\))?(!)?: "; then
+  echo "[post-commit] Non-conventional commit message, skipping version bump"
+  exit 0
+fi
+
+# Determine bump type
+BUMP_TYPE="patch"
+
+if echo "$COMMIT_MSG" | grep -qE "^BREAKING CHANGE: "; then
+  BUMP_TYPE="major"
+elif echo "$SUBJECT" | grep -qE "^[a-z]+(\(.+\))?!:"; then
+  BUMP_TYPE="major"
+elif echo "$SUBJECT" | grep -qE "^feat(\(.+\))?:"; then
+  BUMP_TYPE="minor"
+fi
+
+# Read current version from package.json
+CURRENT_VERSION=$(grep '"version"' package.json | sed 's/.*"version": *"\([^"]*\)".*/\1/')
+
+# Parse semver components
+IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
+
+# Calculate new version
+case "$BUMP_TYPE" in
+  major)
+    MAJOR=$((MAJOR + 1))
+    MINOR=0
+    PATCH=0
+    ;;
+  minor)
+    MINOR=$((MINOR + 1))
+    PATCH=0
+    ;;
+  patch)
+    PATCH=$((PATCH + 1))
+    ;;
+esac
+
+NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+
+echo "[post-commit] Bumping version: $CURRENT_VERSION -> $NEW_VERSION ($BUMP_TYPE)"
+
+# Update package.json
+sed -i.bak "s/\"version\": \"$CURRENT_VERSION\"/\"version\": \"$NEW_VERSION\"/" package.json
+rm -f package.json.bak
+
+# Update version in index.html
+GIT_HASH=$(git rev-parse --short HEAD)
+if [ -f "index.html" ]; then
+  sed -i.bak "s|<span id=\"versionInfo\">v[^<]*</span>|<span id=\"versionInfo\">v${NEW_VERSION} (${GIT_HASH})</span>|" "index.html"
+  rm -f "index.html.bak"
+fi
+
+# Stage and amend
+git add package.json index.html
+git commit --amend --no-edit --no-verify
+
+echo "[post-commit] ✓ Version bumped to v${NEW_VERSION}"

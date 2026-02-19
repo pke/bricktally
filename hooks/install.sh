@@ -21,6 +21,16 @@ else
   echo "✗ pre-commit hook not found"
 fi
 
+# Install post-commit hook (version bumping)
+if [ -f "$SCRIPT_DIR/post-commit" ]; then
+  ln -sf "$SCRIPT_DIR/post-commit" "$GIT_HOOKS_DIR/post-commit"
+  chmod +x "$GIT_HOOKS_DIR/post-commit"
+  echo "✓ Installed post-commit hook"
+else
+  echo "✗ post-commit hook not found"
+fi
+
 echo ""
 echo "Git hooks installed successfully!"
 echo "The cache version in sw.js will now auto-increment on commits that modify cached assets."
+echo "The package version will auto-bump based on conventional commit messages."
