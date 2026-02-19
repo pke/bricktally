@@ -159,6 +159,7 @@ test.describe('Category 9: Export Functions', () => {
     const downloadPromise = page.waitForEvent('download');
 
     await page.click('.filter-header:has-text("Export")');
+    await expect(page.locator('#exportFilterSection')).toBeVisible();
     await page.click('button:has-text("Text List")');
 
     const download = await downloadPromise;
@@ -181,14 +182,14 @@ test.describe('Category 9: Export Functions', () => {
 });
 
 test.describe('Category 10: Badge Generation', () => {
-  test('10.1: Badge calculation - with spares', async ({ page }) => {
-    await mockAPIForSet(page, mockSets['TEST-003']);
+  test('10.1: Badge modal shows PNG image', async ({ page }) => {
+    await mockAPIForSet(page, mockSets['TEST-001']);
 
     await page.goto('/');
-    await loadTestSet(page, '99003');
+    await loadTestSet(page, '99001');
 
-    // Complete all via spares
-    await fillQuantity(page, 0); // Regular parts
+    // Complete all parts
+    await fillQuantity(page, 0);
     await fillQuantity(page, 1);
     await fillQuantity(page, 2);
 
@@ -201,61 +202,14 @@ test.describe('Category 10: Badge Generation', () => {
     // Wait for modal
     await page.waitForSelector('text=BrickTally Badge', { timeout: 5000 });
 
-    // Check badge shows 100%
-    const badgeHtml = await page.locator('#badgeCode').inputValue();
-    expect(badgeHtml).toContain('100%');
-    expect(badgeHtml).toMatch(/10\/10/); // May or may not include " pieces"
+    // Check modal shows PNG image with data URL
+    const badgeImg = page.locator('img[alt="BrickTally Badge"]');
+    await expect(badgeImg).toBeVisible();
+    const imgSrc = await badgeImg.getAttribute('src');
+    expect(imgSrc).toMatch(/^data:image\/png;base64,/);
   });
 
-  test('10.2: Badge calculation - with minifigs', async ({ page }) => {
-    await mockAPIForSet(page, mockSets['TEST-002']);
-
-    await page.goto('/');
-    await loadTestSet(page, '99002');
-
-    // Count 10 parts + 1 minifig = 11/12
-    await fillQuantity(page, 0);
-    await fillQuantity(page, 1);
-    await page.click('#minifig-2 .minifig-name');
-
-    await waitForProgressUpdate(page);
-
-    // Generate badge
-    await page.click('.filter-header:has-text("Export")');
-    await page.click('button:has-text("Generate Badge")');
-
-    await page.waitForSelector('text=BrickTally Badge', { timeout: 5000 });
-
-    // Check badge shows 91% (11/12)
-    const badgeHtml = await page.locator('#badgeCode').inputValue();
-    expect(badgeHtml).toContain('91%');
-    expect(badgeHtml).toMatch(/11\/12/); // May or may not include " pieces"
-  });
-
-  test('10.3: Badge long name truncation', async ({ page }) => {
-    // Create a mock set with a very long name
-    const longNameSet = {
-      ...mockSets['TEST-001'],
-      setName: 'This is an extremely long set name that should be truncated'
-    };
-
-    await mockAPIForSet(page, longNameSet);
-
-    await page.goto('/');
-    await loadTestSet(page, '99001');
-
-    // Generate badge
-    await page.click('.filter-header:has-text("Export")');
-    await page.click('button:has-text("Generate Badge")');
-
-    await page.waitForSelector('text=BrickTally Badge', { timeout: 5000 });
-
-    // Check badge name is truncated
-    const badgeHtml = await page.locator('#badgeCode').inputValue();
-    expect(badgeHtml).toContain('...');
-  });
-
-  test('10.4: Badge color - complete (green)', async ({ page }) => {
+  test('10.2: Badge download button with correct filename - complete set', async ({ page }) => {
     await mockAPIForSet(page, mockSets['TEST-001']);
 
     await page.goto('/');
@@ -274,21 +228,21 @@ test.describe('Category 10: Badge Generation', () => {
 
     await page.waitForSelector('text=BrickTally Badge', { timeout: 5000 });
 
-    // Check badge has green color
-    const badgeHtml = await page.locator('#badgeCode').inputValue();
-    expect(badgeHtml).toContain('#4CAF50'); // Green color
+    // Check download link has correct filename: bricktally-<set-id>-<set-name>-<missing>-missing.png
+    const downloadLink = page.locator('#badgeDownload');
+    await expect(downloadLink).toBeVisible();
+    const filename = await downloadLink.getAttribute('download');
+    expect(filename).toBe('bricktally-99001-basic-parts-set-complete.png');
   });
 
-  test('10.5: Badge color - incomplete (orange)', async ({ page }) => {
+  test('10.3: Badge download filename shows missing count', async ({ page }) => {
     await mockAPIForSet(page, mockSets['TEST-001']);
 
     await page.goto('/');
     await loadTestSet(page, '99001');
 
-    // Count only some (85%)
-    await fillQuantity(page, 0); // 5
-    await fillQuantity(page, 1); // 3
-    await incrementPart(page, 2); // 1 out of 2
+    // Count only some parts (5 out of 10 total, 5 missing)
+    await fillQuantity(page, 0); // 5 red parts
 
     await waitForProgressUpdate(page);
 
@@ -298,12 +252,38 @@ test.describe('Category 10: Badge Generation', () => {
 
     await page.waitForSelector('text=BrickTally Badge', { timeout: 5000 });
 
-    // Check badge has orange color (>= 80%)
-    const badgeHtml = await page.locator('#badgeCode').inputValue();
-    expect(badgeHtml).toContain('#FF9800'); // Orange color
+    // Check download filename shows 5 missing
+    const downloadLink = page.locator('#badgeDownload');
+    const filename = await downloadLink.getAttribute('download');
+    expect(filename).toBe('bricktally-99001-basic-parts-set-5-missing.png');
   });
 
-  test('10.6: Badge attribution', async ({ page }) => {
+  test('10.4: Badge filename with minifigs missing', async ({ page }) => {
+    await mockAPIForSet(page, mockSets['TEST-002']);
+
+    await page.goto('/');
+    await loadTestSet(page, '99002');
+
+    // Count 10 parts + 1 minifig = 11/12 (one minifig missing)
+    await fillQuantity(page, 0);
+    await fillQuantity(page, 1);
+    await page.click('#minifig-2 .minifig-name');
+
+    await waitForProgressUpdate(page);
+
+    // Generate badge
+    await page.click('.filter-header:has-text("Export")');
+    await page.click('button:has-text("Generate Badge")');
+
+    await page.waitForSelector('text=BrickTally Badge', { timeout: 5000 });
+
+    // Check download filename shows 1 missing (the minifig)
+    const downloadLink = page.locator('#badgeDownload');
+    const filename = await downloadLink.getAttribute('download');
+    expect(filename).toBe('bricktally-99002-set-with-minifigures-1-missing.png');
+  });
+
+  test('10.5: Badge download triggers file save', async ({ page }) => {
     await mockAPIForSet(page, mockSets['TEST-001']);
 
     await page.goto('/');
@@ -315,8 +295,29 @@ test.describe('Category 10: Badge Generation', () => {
 
     await page.waitForSelector('text=BrickTally Badge', { timeout: 5000 });
 
-    // Check badge has bricktally.app attribution
-    const badgeHtml = await page.locator('#badgeCode').inputValue();
-    expect(badgeHtml).toContain('bricktally.app');
+    // Click download and verify file is created (10 missing since nothing counted)
+    const downloadPromise = page.waitForEvent('download');
+    await page.click('#badgeDownload button');
+    const download = await downloadPromise;
+
+    expect(download.suggestedFilename()).toBe('bricktally-99001-basic-parts-set-10-missing.png');
+  });
+
+  test('10.6: Badge modal shows download instructions', async ({ page }) => {
+    await mockAPIForSet(page, mockSets['TEST-001']);
+
+    await page.goto('/');
+    await loadTestSet(page, '99001');
+
+    // Generate badge
+    await page.click('.filter-header:has-text("Export")');
+    await page.click('button:has-text("Generate Badge")');
+
+    await page.waitForSelector('text=BrickTally Badge', { timeout: 5000 });
+
+    // Check modal shows instructions about sharing
+    await expect(page.locator('text=eBay')).toBeVisible();
+    await expect(page.locator('text=Facebook Marketplace')).toBeVisible();
+    await expect(page.locator('text=Download Badge')).toBeVisible();
   });
 });

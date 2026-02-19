@@ -1,15 +1,46 @@
 #!/bin/bash
 
-# Pre-commit hook to auto-increment service worker cache version
-# when cached assets are modified
+# Pre-commit hook to:
+# 1. Auto-increment service worker cache version when cached assets are modified
+# 2. Inject git hash into HTML version footer
 
 # Get list of staged files
 STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
+
+# =============================================================================
+# Part 1: Update version info in HTML files
+# =============================================================================
+
+# Get version from package.json
+VERSION=$(grep '"version"' package.json | sed 's/.*"version": *"\([^"]*\)".*/\1/')
+
+# Get the short git hash (will be the NEW commit hash after this commit)
+# Use HEAD for now, it will be accurate after the commit
+GIT_HASH=$(git rev-parse --short HEAD 2>/dev/null || echo "dev")
+
+# Update version in index.html
+if [ -f "index.html" ]; then
+  # Update the version span content
+  sed -i.bak "s|<span id=\"versionInfo\">v[^<]*</span>|<span id=\"versionInfo\">v${VERSION} (${GIT_HASH})</span>|" "index.html"
+
+  if ! diff -q "index.html" "index.html.bak" > /dev/null 2>&1; then
+    rm "index.html.bak"
+    git add "index.html"
+    echo "[pre-commit] ✓ Updated version to: v${VERSION} (${GIT_HASH})"
+  else
+    rm "index.html.bak"
+  fi
+fi
+
+# =============================================================================
+# Part 2: Cache version bump for service worker
+# =============================================================================
 
 # Files that require cache version bump
 CACHED_PATTERNS=(
   "index.html"
   "verify.html"
+  "styles.css"
   "assets/"
   "js/"
 )

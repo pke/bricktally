@@ -123,8 +123,14 @@ test.describe('Category 6: Completion & Celebration', () => {
     // Dismiss the completion modal
     await page.click('button:has-text("Awesome!")');
 
-    // Wait for fireworks to disappear
-    await page.waitForTimeout(5000);
+    // Wait for fireworks to disappear (they auto-hide after animation)
+    await page.waitForFunction(
+      () => {
+        const el = document.getElementById('fireworksContainer');
+        return !el || window.getComputedStyle(el).display === 'none';
+      },
+      { timeout: 10000 }
+    );
 
     // Turn off hide complete to access the parts
     await page.evaluate(() => {
