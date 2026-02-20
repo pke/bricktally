@@ -302,9 +302,28 @@ test.describe('Category 7: Count Controls', () => {
     await page.goto('/');
     await loadTestSet(page, '99001');
 
-    // Check decrement button is hidden
+    // Check decrement button is not visible
     const decrementBtn = page.locator('#dec-0');
     await expect(decrementBtn).toBeHidden();
+  });
+
+  test('7.6: Decrement button preserves layout space when hidden', async ({ page }) => {
+    await mockAPIForSet(page, mockSets['TEST-001']);
+
+    await page.goto('/');
+    await loadTestSet(page, '99001');
+
+    // Get the row width before incrementing
+    const rowBefore = await page.locator('#row-0 .controls').boundingBox();
+
+    // Increment to show decrement button
+    await incrementPart(page, 0);
+
+    // Get the row width after
+    const rowAfter = await page.locator('#row-0 .controls').boundingBox();
+
+    // Layout should not shift — controls width should be the same
+    expect(rowAfter.width).toBe(rowBefore.width);
   });
 
   test('7.2: Decrement button appears after increment', async ({ page }) => {

@@ -1762,7 +1762,7 @@
 
                 var altText = (part.color + ' ' + part.name + ' (' + part.partNum + ')').replace(/"/g, '&quot;');
                 var fallbackInfo = part.color + ' ' + part.name + '<br>' + part.partNum;
-                var decrementStyle = currentCount === 0 ? ' style="display: none;"' : '';
+                var decrementStyle = currentCount === 0 ? ' style="visibility: hidden;"' : '';
                 html += '<tr id="row-' + part.id + '" data-fallback-info="' + fallbackInfo.replace(/"/g, '&quot;') + '">' +
                     '<td class="col-img"><img src="' + part.imageUrl + '" alt="' + altText + '" class="part-image" data-part-id="' + part.id + '" onerror="handleImageError(this)" onload="handleImageLoad(this)"></td>' +
                     '<td class="col-info" id="info-' + part.id + '">' + infoText + '</td>' +
@@ -1835,7 +1835,7 @@
 
                 var altText = (part.color + ' ' + part.name + ' (' + part.partNum + ')').replace(/"/g, '&quot;');
                 var fallbackInfo = part.color + ' ' + part.name + '<br>' + part.partNum;
-                var decrementStyle = currentCount === 0 ? ' style="display: none;"' : '';
+                var decrementStyle = currentCount === 0 ? ' style="visibility: hidden;"' : '';
                 html += '<tr id="row-' + part.id + '" data-fallback-info="' + fallbackInfo.replace(/"/g, '&quot;') + '">' +
                     '<td class="col-img"><img src="' + part.imageUrl + '" alt="' + altText + '" class="part-image" data-part-id="' + part.id + '" onerror="handleImageError(this)" onload="handleImageLoad(this)"></td>' +
                     '<td class="col-info" id="info-' + part.id + '">' + infoText + '</td>' +
@@ -2077,9 +2077,9 @@
             // Show/hide decrement button based on count
             if (decrementBtn) {
                 if (userCounts[key] === 0) {
-                    decrementBtn.style.display = 'none';
+                    decrementBtn.style.visibility = 'hidden';
                 } else {
-                    decrementBtn.style.display = '';
+                    decrementBtn.style.visibility = '';
                 }
             }
 
@@ -2980,7 +2980,7 @@
     <footer class="app-footer">
         <span class="footer-tagline">Made with ❤️ for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <span id="versionInfo">v1.15.1 (851afed)</span>
+        <span id="versionInfo">v1.15.2 (87ad08c)</span>
     </footer>
 </body>
 
