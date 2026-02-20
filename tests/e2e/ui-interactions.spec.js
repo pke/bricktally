@@ -171,6 +171,80 @@ test.describe('Category 5: Section Headers & Hide Complete', () => {
     });
     expect(visibleMinifigs).toBe(1); // 1 incomplete minifig visible
   });
+
+  test('5.6: Hide complete toggle on parts header for sets without minifigures', async ({ page }) => {
+    // TEST-001 has no minifigures
+    await mockAPIForSet(page, mockSets['TEST-001']);
+
+    await page.goto('/');
+    await loadTestSet(page, '99001');
+
+    // Minifig section should be hidden
+    await expect(page.locator('#minifigSection')).toHaveClass(/hide/);
+
+    // Toggle should be visible and inside the parts section
+    await expect(page.locator('#completeToggle')).toBeVisible();
+    await expect(page.locator('#partsSection #completeToggle')).toBeVisible();
+  });
+
+  test('5.9: Hide complete toggle on minifig header when set has minifigures', async ({ page }) => {
+    // TEST-002 has minifigures
+    await mockAPIForSet(page, mockSets['TEST-002']);
+
+    await page.goto('/');
+    await loadTestSet(page, '99002');
+
+    // Minifig section should be visible
+    await expect(page.locator('#minifigSection')).not.toHaveClass(/hide/);
+
+    // Toggle should be visible and inside the minifig section
+    await expect(page.locator('#completeToggle')).toBeVisible();
+    await expect(page.locator('#minifigSection #completeToggle')).toBeVisible();
+  });
+
+  test('5.7: Hide complete toggle works for parts-only sets', async ({ page }) => {
+    // TEST-001 has no minifigures, only parts
+    await mockAPIForSet(page, mockSets['TEST-001']);
+
+    await page.goto('/');
+    await loadTestSet(page, '99001');
+
+    // First turn off hide complete (it's ON by default)
+    await page.click('#completeToggle');
+
+    // Complete first part
+    await fillQuantity(page, 0);
+
+    // All 3 parts should be visible (hide complete is OFF)
+    const initialCount = await page.locator('#tableContainer table tbody tr:not(.hidden)').count();
+    expect(initialCount).toBe(3);
+
+    // Click toggle again to turn hide complete ON
+    await page.click('#completeToggle');
+
+    // Should hide the completed part
+    const visibleCount = await page.locator('#tableContainer table tbody tr:not(.hidden)').count();
+    expect(visibleCount).toBe(2);
+  });
+
+  test('5.8: Hide complete toggle visible in collapsed header when scrolling', async ({ page }) => {
+    await mockAPIForSet(page, mockSets['TEST-001']);
+
+    await page.goto('/');
+    // Use a small viewport so the progress bar scrolls out of view
+    await page.setViewportSize({ width: 375, height: 300 });
+    await loadTestSet(page, '99001');
+
+    // Scroll to bottom of page
+    await page.evaluate(() => {
+      window.scrollTo(0, document.body.scrollHeight);
+      window.dispatchEvent(new Event('scroll'));
+    });
+    await expect(page.locator('#collapsedHeader')).toHaveClass(/visible/, { timeout: 5000 });
+
+    // Hide-complete toggle should be in the collapsed header
+    await expect(page.locator('#collapsedHeader #completeToggleCollapsed')).toBeVisible();
+  });
 });
 
 test.describe('Category 7: Count Controls', () => {

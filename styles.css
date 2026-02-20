@@ -478,11 +478,21 @@ button.filter.active {
 
 .collapsed-progress {
   width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .collapsed-progress .progress-bar {
+  flex: 1;
   height: 20px;
   margin: 0;
+}
+
+.collapsed-toggle {
+  flex-direction: row;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
 .collapsed-progress .progress-bar::before {
@@ -616,6 +626,13 @@ details[open] summary {
   background-repeat: no-repeat;
   background-position: 12px center;
   background-size: 18px;
+}
+
+.section-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
 }
 
 .complete-toggle-container {
@@ -1106,6 +1123,11 @@ tr.hidden {
   border-color: var(--red);
 }
 
+.set-history-item-actions button.backup:hover {
+  background: var(--green, #27ae60);
+  border-color: var(--green, #27ae60);
+}
+
 .set-history-empty {
   text-align: center;
   padding: 60px 20px;
@@ -1115,6 +1137,306 @@ tr.hidden {
 .set-history-empty p {
   font-size: 18px;
   margin-bottom: 10px;
+}
+
+/* Backup/Restore Toolbar */
+.backup-restore-toolbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  align-items: center;
+}
+
+.restore-btn,
+.backup-all-btn,
+.backup-selected-btn,
+.cancel-backup-btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  border: 2px solid var(--border-color);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.restore-btn:hover,
+.backup-all-btn:hover,
+.backup-selected-btn:hover {
+  background: var(--blue);
+  color: white;
+  border-color: var(--blue);
+}
+
+.cancel-backup-btn:hover {
+  background: var(--red);
+  color: white;
+  border-color: var(--red);
+}
+
+/* Backup mode checkbox */
+.backup-checkbox {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  cursor: pointer;
+  accent-color: var(--blue);
+}
+
+/* Restore Modal */
+.restore-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.restore-modal-overlay.hide {
+  display: none;
+}
+
+.restore-modal {
+  background: var(--bg-primary);
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+}
+
+.restore-modal h3 {
+  margin: 0 0 16px;
+  color: var(--text-primary);
+}
+
+.restore-set-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.restore-set-item {
+  padding: 12px;
+  border-radius: 8px;
+  border: 2px solid var(--border-color);
+  background: var(--bg-secondary);
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.restore-set-image {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.restore-set-item.restore-conflict {
+  border-color: #f0ad4e;
+}
+
+.restore-set-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.restore-set-info strong {
+  color: var(--text-primary);
+}
+
+.restore-set-info span {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.restore-comparison {
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-basis: 100%;
+}
+
+.restore-local,
+.restore-imported {
+  color: var(--text-secondary);
+}
+
+.restore-choice {
+  display: flex;
+  gap: 0;
+  margin-top: 8px;
+}
+
+.restore-choice input[type="radio"] {
+  display: none;
+}
+
+.restore-choice-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border: 2px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.restore-choice-btn:first-of-type {
+  border-radius: 8px 0 0 8px;
+  border-right: 1px solid var(--border-color);
+}
+
+.restore-choice-btn:last-of-type {
+  border-radius: 0 8px 8px 0;
+  border-left: 1px solid var(--border-color);
+}
+
+.restore-choice input[type="radio"]:checked + .restore-choice-btn {
+  background: #0055BF;
+  border-color: #0055BF;
+  color: #fff;
+}
+
+.restore-new {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.restore-modal-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.restore-modal-actions button {
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  border: 2px solid var(--border-color);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.restore-modal-actions button#executeRestoreBtn {
+  background: var(--blue);
+  color: white;
+  border-color: var(--blue);
+}
+
+.restore-modal-actions button#executeRestoreBtn:hover {
+  opacity: 0.9;
+}
+
+.restore-modal-actions button#cancelRestoreBtn:hover {
+  background: var(--red);
+  color: white;
+  border-color: var(--red);
+}
+
+/* Delete Confirmation Modal */
+.delete-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.delete-modal-overlay.hide {
+  display: none;
+}
+
+.delete-modal {
+  background: var(--bg-primary);
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 450px;
+  width: 100%;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+}
+
+.delete-modal h3 {
+  margin: 0 0 16px;
+  color: var(--text-primary);
+}
+
+.delete-status-safe {
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(39, 174, 96, 0.1);
+  border: 1px solid rgba(39, 174, 96, 0.3);
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.delete-status-warning {
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(240, 173, 78, 0.1);
+  border: 1px solid rgba(240, 173, 78, 0.3);
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.delete-modal-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.delete-modal-actions button {
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  border: 2px solid var(--border-color);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.delete-modal-actions button#confirmDeleteBtn {
+  background: var(--red);
+  color: white;
+  border-color: var(--red);
+}
+
+.delete-modal-actions button#backupAndDeleteBtn {
+  background: var(--blue);
+  color: white;
+  border-color: var(--blue);
+}
+
+.delete-modal-actions button#cancelDeleteBtn:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--text-secondary);
 }
 
 .minifig-grid {

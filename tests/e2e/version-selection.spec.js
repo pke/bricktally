@@ -122,8 +122,8 @@ test.describe('Category 13: Version Selection', () => {
 
     await expect(page.locator('text=Multiple Set Versions Found')).toBeVisible();
 
-    // Click cancel
-    await page.click('button:has-text("Cancel")');
+    // Click cancel button in the version dialog (not import/export toolbar)
+    await page.locator('button:has-text("Cancel"):visible').click();
 
     // Dialog should close
     await expect(page.locator('text=Multiple Set Versions Found')).not.toBeVisible();

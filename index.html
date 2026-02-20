@@ -108,6 +108,10 @@
                 <div class="progress-bar" id="progressBarCollapsed" data-percentage="0%" data-pieces="0/0">
                     <div id="progressFillCollapsed" class="progress-fill" style="width: 0%;"></div>
                 </div>
+                <div class="complete-toggle-container collapsed-toggle">
+                    <button class="complete-toggle" id="completeToggleCollapsed" onclick="toggleCompleteParts()" title="Hide Complete Parts"></button>
+                    <span class="complete-toggle-label">Hide complete</span>
+                </div>
             </div>
             <div class="collapsed-filters">
                 <details id="colorFilterCollapsed" class="hide">
@@ -133,10 +137,38 @@
 
             <!-- Set History Section -->
             <div id="setHistorySection" class="set-history hide">
+                <div class="backup-restore-toolbar">
+                    <button onclick="restoreSets()" class="restore-btn" title="Restore sets">📥 Restore</button>
+                    <button id="backupAllBtn" onclick="startBackupAll()" class="backup-all-btn hide" title="Backup all sets">📤 Backup All</button>
+                    <button id="backupSelectedBtn" onclick="executeBackupAll()" class="backup-selected-btn hide" title="Backup selected sets">📤 Backup Selected</button>
+                    <button id="cancelBackupBtn" onclick="cancelBackupAll()" class="cancel-backup-btn hide" title="Cancel backup">Cancel</button>
+                    <input type="file" id="restoreFileInput" accept=".bricktally,.json" class="hide" onchange="handleRestoreFile(event)">
+                </div>
                 <div id="setHistoryList" class="set-history-list"></div>
                 <div id="setHistoryEmpty" class="set-history-empty hide">
                     <p>No sets worked on yet</p>
                     <p style="font-size: 14px;">Enter a set number above to get started</p>
+                </div>
+            </div>
+
+            <!-- Restore Modal -->
+            <div id="restoreModalOverlay" class="restore-modal-overlay hide">
+                <div class="restore-modal">
+                    <h3>Restore Sets</h3>
+                    <div id="restoreSetList" class="restore-set-list"></div>
+                    <div class="restore-modal-actions">
+                        <button id="cancelRestoreBtn" onclick="cancelRestore()">Cancel</button>
+                        <button id="executeRestoreBtn" onclick="executeRestore()">Restore Selected</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delete Confirmation Modal -->
+            <div id="deleteModalOverlay" class="delete-modal-overlay hide">
+                <div class="delete-modal">
+                    <h3 id="deleteModalTitle">Delete Set?</h3>
+                    <div id="deleteModalMessage"></div>
+                    <div id="deleteModalActions" class="delete-modal-actions"></div>
                 </div>
             </div>
 
@@ -179,24 +211,29 @@
             </div>
 
             <div id="minifigSection" class="hide m-20">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div class="section-header-row">
                     <h3 id="minifigHeader" style="margin: 0;">Minifigures</h3>
-                    <div class="complete-toggle-container">
-                        <button class="complete-toggle" id="completeToggle" onclick="toggleCompleteParts()" title="Hide Complete Parts"></button>
-                        <span class="complete-toggle-label">Hide complete</span>
-                    </div>
                 </div>
                 <div id="minifigContainer"></div>
             </div>
 
             <div id="partsSection" class="hide m-20">
-                <h3 id="partsHeader" style="margin-bottom: 15px;">Parts</h3>
+                <div class="section-header-row">
+                    <h3 id="partsHeader" style="margin: 0;">Parts</h3>
+                </div>
             </div>
 
             <div id="tableContainer"></div>
 
             <div id="sparePartsSection" class="hide m-20">
-                <h3 id="sparePartsHeader" style="margin-bottom: 15px;">Spare Parts</h3>
+                <div class="section-header-row">
+                    <h3 id="sparePartsHeader" style="margin: 0;">Spare Parts</h3>
+                </div>
+            </div>
+
+            <div class="complete-toggle-container" id="completeToggleContainer" style="display: none;">
+                <button class="complete-toggle" id="completeToggle" onclick="toggleCompleteParts()" title="Hide Complete Parts"></button>
+                <span class="complete-toggle-label">Hide complete</span>
             </div>
 
             <div id="spareTableContainer"></div>
@@ -306,14 +343,17 @@
             var historySection = document.getElementById('setHistorySection');
             var historyList = document.getElementById('setHistoryList');
             var historyEmpty = document.getElementById('setHistoryEmpty');
+            var backupAllBtn = document.getElementById('backupAllBtn');
 
             if (sets.length === 0) {
                 historyList.innerHTML = '';
                 historyEmpty.classList.remove('hide');
+                if (backupAllBtn) backupAllBtn.classList.add('hide');
                 return;
             }
 
             historyEmpty.classList.add('hide');
+            if (backupAllBtn) backupAllBtn.classList.remove('hide');
             historyList.innerHTML = '';
 
             sets.forEach(function(setInfo) {
@@ -332,6 +372,7 @@
 
                 var percentage = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
+                // Note: innerHTML used here with app-controlled data only (setInfo from localStorage written by this app)
                 var item = document.createElement('div');
                 item.className = 'set-history-item';
                 item.setAttribute('data-set-number', setInfo.fullNumber);
@@ -347,14 +388,15 @@
                         '</div>' +
                     '</div>' +
                     '<div class="set-history-item-actions">' +
+                        '<button class="backup" onclick="backupSingleSet(event, \'' + setInfo.fullNumber + '\')" title="Backup set">📤</button>' +
                         '<button class="reset" onclick="resetSetHistory(event, \'' + setInfo.fullNumber + '\')" title="Reset progress">↻</button>' +
                         '<button class="delete" onclick="deleteSetHistory(event, \'' + setInfo.fullNumber + '\')" title="Delete set">🗑</button>' +
                     '</div>';
 
                 // Click on row to load set
                 item.addEventListener('click', function(e) {
-                    // Don't trigger if clicking buttons
-                    if (e.target.tagName === 'BUTTON') return;
+                    // Don't trigger if clicking buttons or checkboxes
+                    if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
 
                     document.getElementById('setNumber').value = setInfo.number;
                     loadSetDirect(setInfo.fullNumber);
@@ -364,21 +406,94 @@
             });
         }
 
+        var pendingDeleteSetNumber = null;
+
         function deleteSetHistory(event, setNumber) {
             event.stopPropagation();
+            pendingDeleteSetNumber = setNumber;
 
-            if (!confirm('Are you sure you want to delete this set and all its progress?')) {
-                return;
+            var infoStr = localStorage.getItem('setInfo_' + setNumber);
+            var info = infoStr ? JSON.parse(infoStr) : {};
+            var setName = info.name || setNumber;
+            var setNum = info.number || setNumber.split('-')[0];
+
+            var backupStr = localStorage.getItem('backupInfo_' + setNumber);
+            var currentProgress = localStorage.getItem('set_' + setNumber) || '';
+
+            var titleEl = document.getElementById('deleteModalTitle');
+            var messageEl = document.getElementById('deleteModalMessage');
+            var actionsEl = document.getElementById('deleteModalActions');
+
+            titleEl.textContent = 'Delete "' + setName + '" (Set ' + setNum + ')?';
+
+            var actionsHtml = '';
+
+            if (backupStr) {
+                var backup = JSON.parse(backupStr);
+                if (backup.progress === currentProgress) {
+                    // State 1: Backup is current
+                    messageEl.innerHTML = '<div class="delete-status-safe">✅ Safe to delete — backed up ' + formatDate(backup.lastBackedUp) + ' (' + backup.percentage + '% complete)</div>';
+                    actionsHtml += '<button id="confirmDeleteBtn" onclick="confirmDelete()">Delete</button>';
+                } else {
+                    // State 2: Backup is outdated
+                    var currentProg = calculateProgressFromString(info.numParts || 0, currentProgress);
+                    var backupParts = (backup.completed !== undefined ? backup.completed : '?') + '/' + (backup.total !== undefined ? backup.total : '?');
+                    var currentParts = currentProg.completed + '/' + currentProg.total;
+                    messageEl.innerHTML = '<div class="delete-status-warning">⚠️ Backup is outdated — backed up ' + formatDate(backup.lastBackedUp) + ' at ' + backup.percentage + '% (' + backupParts + ' pieces), now ' + currentProg.percentage + '% (' + currentParts + ' pieces)</div>';
+                    actionsHtml += '<button id="confirmDeleteBtn" onclick="confirmDelete()">Delete</button>';
+                    actionsHtml += '<button id="backupAndDeleteBtn" onclick="backupAndDelete()">Backup & Delete</button>';
+                }
+            } else {
+                // State 3: Never backed up
+                messageEl.innerHTML = '<div class="delete-status-warning">⚠️ This set has never been backed up!</div>';
+                actionsHtml += '<button id="confirmDeleteBtn" onclick="confirmDelete()">Delete</button>';
+                actionsHtml += '<button id="backupAndDeleteBtn" onclick="backupAndDelete()">Backup & Delete</button>';
             }
 
-            // Remove all data for this set
+            actionsHtml += '<button id="cancelDeleteBtn" onclick="cancelDelete()">Cancel</button>';
+
+            actionsEl.innerHTML = actionsHtml;
+            document.getElementById('deleteModalOverlay').classList.remove('hide');
+        }
+
+        window.cancelDelete = function() {
+            document.getElementById('deleteModalOverlay').classList.add('hide');
+            pendingDeleteSetNumber = null;
+        };
+
+        window.confirmDelete = function() {
+            if (!pendingDeleteSetNumber) return;
+            var setNumber = pendingDeleteSetNumber;
+
             localStorage.removeItem('setInfo_' + setNumber);
             localStorage.removeItem('set_' + setNumber);
             localStorage.removeItem('setData_' + setNumber);
+            localStorage.removeItem('backupInfo_' + setNumber);
 
-            // Refresh the display
+            document.getElementById('deleteModalOverlay').classList.add('hide');
+            pendingDeleteSetNumber = null;
             displaySetHistory();
-        }
+        };
+
+        window.backupAndDelete = function() {
+            if (!pendingDeleteSetNumber) return;
+            var setNumber = pendingDeleteSetNumber;
+
+            // Build and download backup
+            var data = buildBackupData([setNumber]);
+            var baseNumber = setNumber.split('-')[0];
+            downloadBricktally(data, 'BrickTally-' + baseNumber + '.bricktally');
+
+            // Then delete
+            localStorage.removeItem('setInfo_' + setNumber);
+            localStorage.removeItem('set_' + setNumber);
+            localStorage.removeItem('setData_' + setNumber);
+            localStorage.removeItem('backupInfo_' + setNumber);
+
+            document.getElementById('deleteModalOverlay').classList.add('hide');
+            pendingDeleteSetNumber = null;
+            displaySetHistory();
+        };
 
         function resetSetHistory(event, setNumber) {
             event.stopPropagation();
@@ -393,6 +508,291 @@
             // Refresh the display
             displaySetHistory();
         }
+
+        // ─── Backup/Restore Functions ────────────────────────────────────
+
+        function getAppVersion() {
+            var versionText = document.getElementById('versionInfo').textContent || '';
+            var match = versionText.match(/v(\d+\.\d+\.\d+)/);
+            return 'BrickTally/' + (match ? match[1] : '0.0.0');
+        }
+
+        function calculateProgressFromString(numParts, progressString) {
+            if (!progressString) return { completed: 0, total: numParts, percentage: 0 };
+            var completed = 0;
+            progressString.split(',').forEach(function(part) {
+                if (!part) return;
+                var split = part.split(':');
+                completed += parseInt(split[1]) || 0;
+            });
+            var percentage = numParts > 0 ? Math.round((completed / numParts) * 100) : 0;
+            return { completed: completed, total: numParts, percentage: percentage };
+        }
+
+        function formatDate(timestamp) {
+            if (!timestamp) return 'Unknown';
+            var d = new Date(timestamp);
+            var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            return months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+        }
+
+        function validateBricktally(data) {
+            if (!data || typeof data !== 'object') return false;
+            if (data.version !== 1) return false;
+            if (typeof data.exportedAt !== 'string') return false;
+            if (typeof data.app !== 'string' || !data.app.match(/^BrickTally\/.+$/)) return false;
+            if (!Array.isArray(data.sets) || data.sets.length === 0) return false;
+            for (var i = 0; i < data.sets.length; i++) {
+                var s = data.sets[i];
+                if (!s.fullNumber || !s.info || typeof s.lastWorkedOn !== 'number') return false;
+                if (!s.info.name || !s.info.fullNumber) return false;
+            }
+            return true;
+        }
+
+        function buildBackupData(fullNumbers) {
+            var sets = [];
+            fullNumbers.forEach(function(fullNumber) {
+                var infoStr = localStorage.getItem('setInfo_' + fullNumber);
+                if (!infoStr) return;
+                var info = JSON.parse(infoStr);
+                var progress = localStorage.getItem('set_' + fullNumber) || '';
+                sets.push({
+                    fullNumber: fullNumber,
+                    info: info,
+                    progress: progress,
+                    lastWorkedOn: info.lastAccessed || 0
+                });
+            });
+
+            // Record backup state for each included set
+            sets.forEach(function(s) {
+                var prog = calculateProgressFromString(s.info.numParts, s.progress);
+                localStorage.setItem('backupInfo_' + s.fullNumber, JSON.stringify({
+                    lastBackedUp: Date.now(),
+                    progress: s.progress,
+                    percentage: prog.percentage,
+                    completed: prog.completed,
+                    total: prog.total
+                }));
+            });
+
+            return {
+                version: 1,
+                exportedAt: new Date().toISOString(),
+                app: getAppVersion(),
+                sets: sets
+            };
+        }
+
+        function downloadBricktally(data, filename) {
+            var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        window.backupSingleSet = function(event, fullNumber) {
+            event.stopPropagation();
+            var data = buildBackupData([fullNumber]);
+            var baseNumber = fullNumber.split('-')[0];
+            downloadBricktally(data, 'BrickTally-' + baseNumber + '.bricktally');
+        };
+
+        window.startBackupAll = function() {
+            // Enter backup selection mode
+            document.getElementById('backupAllBtn').classList.add('hide');
+            document.getElementById('backupSelectedBtn').classList.remove('hide');
+            document.getElementById('cancelBackupBtn').classList.remove('hide');
+
+            // Add checkboxes to each set card
+            var items = document.querySelectorAll('.set-history-item');
+            items.forEach(function(item) {
+                if (item.querySelector('input[type="checkbox"]')) return;
+                var checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = true;
+                checkbox.className = 'backup-checkbox';
+                checkbox.onclick = function(e) { e.stopPropagation(); };
+                item.insertBefore(checkbox, item.firstChild);
+            });
+        };
+
+        window.cancelBackupAll = function() {
+            // Exit backup selection mode
+            document.getElementById('backupAllBtn').classList.remove('hide');
+            document.getElementById('backupSelectedBtn').classList.add('hide');
+            document.getElementById('cancelBackupBtn').classList.add('hide');
+
+            // Remove checkboxes
+            document.querySelectorAll('.set-history-item input[type="checkbox"]').forEach(function(cb) {
+                cb.remove();
+            });
+        };
+
+        window.executeBackupAll = function() {
+            var selected = [];
+            document.querySelectorAll('.set-history-item').forEach(function(item) {
+                var cb = item.querySelector('input[type="checkbox"]');
+                if (cb && cb.checked) {
+                    selected.push(item.getAttribute('data-set-number'));
+                }
+            });
+
+            if (selected.length === 0) {
+                alert('No sets selected for backup.');
+                return;
+            }
+
+            var data = buildBackupData(selected);
+            var today = new Date().toISOString().split('T')[0];
+            downloadBricktally(data, 'BrickTally-backup-' + today + '.bricktally');
+            cancelBackupAll();
+        };
+
+        window.restoreSets = function() {
+            var input = document.getElementById('restoreFileInput');
+            input.value = '';
+            input.click();
+        };
+
+        window.handleRestoreFile = function(event) {
+            var file = event.target.files[0];
+            if (!file) return;
+
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    var data = JSON.parse(e.target.result);
+                    if (!validateBricktally(data)) {
+                        alert('Invalid .bricktally file: does not match expected format.');
+                        return;
+                    }
+                    showRestoreDialog(data);
+                } catch (err) {
+                    alert('Invalid .bricktally file: could not parse JSON.');
+                }
+            };
+            reader.readAsText(file);
+        };
+
+        var pendingRestoreData = null;
+
+        function showRestoreDialog(restoreData) {
+            pendingRestoreData = restoreData;
+            var listEl = document.getElementById('restoreSetList');
+            listEl.innerHTML = '';
+
+            restoreData.sets.forEach(function(restoreSet) {
+                var localInfoStr = localStorage.getItem('setInfo_' + restoreSet.fullNumber);
+                var hasConflict = !!localInfoStr;
+
+                var itemEl = document.createElement('div');
+                itemEl.className = 'restore-set-item' + (hasConflict ? ' restore-conflict' : '');
+                itemEl.setAttribute('data-set-number', restoreSet.fullNumber);
+
+                var restoreProgress = calculateProgressFromString(restoreSet.info.numParts, restoreSet.progress);
+
+                var imgUrl = restoreSet.info.imageUrl || '/assets/favicon.svg';
+                var html = '<img src="' + imgUrl + '" class="restore-set-image" onerror="handleImageError(this)">' +
+                    '<div class="restore-set-info">' +
+                    '<strong>' + restoreSet.info.name + '</strong>' +
+                    '<span>Set ' + restoreSet.info.number + ' (' + restoreSet.info.year + ')</span>' +
+                    '</div>';
+
+                if (hasConflict) {
+                    var localInfo = JSON.parse(localInfoStr);
+                    var localProgress = calculateProgressFromString(
+                        localInfo.numParts,
+                        localStorage.getItem('set_' + restoreSet.fullNumber) || ''
+                    );
+
+                    var restoreIsNewer = restoreSet.lastWorkedOn > (localInfo.lastAccessed || 0);
+                    html += '<div class="restore-comparison">' +
+                        '<div class="restore-local">' +
+                            '<span>Local: ' + localProgress.percentage + '% (' + formatDate(localInfo.lastAccessed) + ')</span>' +
+                        '</div>' +
+                        '<div class="restore-imported">' +
+                            '<span>Restore: ' + restoreProgress.percentage + '% (' + formatDate(restoreSet.lastWorkedOn) + ')</span>' +
+                        '</div>' +
+                        '<div class="restore-choice">' +
+                            '<input type="radio" name="restore-' + restoreSet.fullNumber + '" id="restore-keep-' + restoreSet.fullNumber + '" value="keep" ' + (!restoreIsNewer ? 'checked' : '') + '>' +
+                            '<label for="restore-keep-' + restoreSet.fullNumber + '" class="restore-choice-btn">Keep local</label>' +
+                            '<input type="radio" name="restore-' + restoreSet.fullNumber + '" id="restore-import-' + restoreSet.fullNumber + '" value="import" ' + (restoreIsNewer ? 'checked' : '') + '>' +
+                            '<label for="restore-import-' + restoreSet.fullNumber + '" class="restore-choice-btn">Overwrite</label>' +
+                        '</div>' +
+                    '</div>';
+                } else {
+                    html += '<div class="restore-new">' +
+                        '<span>' + restoreProgress.percentage + '% complete (' + formatDate(restoreSet.lastWorkedOn) + ')</span>' +
+                    '</div>';
+                }
+
+                itemEl.innerHTML = html;
+                listEl.appendChild(itemEl);
+            });
+
+            document.getElementById('restoreModalOverlay').classList.remove('hide');
+        }
+
+        window.cancelRestore = function() {
+            document.getElementById('restoreModalOverlay').classList.add('hide');
+            pendingRestoreData = null;
+        };
+
+        window.executeRestore = function() {
+            if (!pendingRestoreData) return;
+
+            pendingRestoreData.sets.forEach(function(restoreSet) {
+                var localInfoStr = localStorage.getItem('setInfo_' + restoreSet.fullNumber);
+                var hasConflict = !!localInfoStr;
+
+                if (hasConflict) {
+                    var radio = document.querySelector('input[name="restore-' + restoreSet.fullNumber + '"]:checked');
+                    if (!radio || radio.value === 'keep') return;
+                }
+
+                // Write restored data to localStorage
+                localStorage.setItem('setInfo_' + restoreSet.fullNumber, JSON.stringify(restoreSet.info));
+                if (restoreSet.progress) {
+                    localStorage.setItem('set_' + restoreSet.fullNumber, restoreSet.progress);
+                } else {
+                    localStorage.removeItem('set_' + restoreSet.fullNumber);
+                }
+                // Clear backup info since local state diverged from last backup
+                localStorage.removeItem('backupInfo_' + restoreSet.fullNumber);
+            });
+
+            document.getElementById('restoreModalOverlay').classList.add('hide');
+            pendingRestoreData = null;
+            displaySetHistory();
+        };
+
+        // PWA file handler via launchQueue
+        if ('launchQueue' in window) {
+            window.launchQueue.setConsumer(function(launchParams) {
+                if (!launchParams.files || !launchParams.files.length) return;
+                launchParams.files[0].getFile().then(function(file) {
+                    return file.text();
+                }).then(function(text) {
+                    var data = JSON.parse(text);
+                    if (validateBricktally(data)) {
+                        showRestoreDialog(data);
+                    } else {
+                        alert('Invalid .bricktally file');
+                    }
+                }).catch(function() {
+                    alert('Invalid .bricktally file');
+                });
+            });
+        }
+
+        // ─── End Backup/Restore ──────────────────────────────────────────
 
         function showSetHistory() {
             hide('setInfo', 'statsSection', 'filterSection', 'tableContainer', 'resetButton');
@@ -466,9 +866,11 @@
 
             // Update complete toggle button appearance
             // Toggle is ON (active) when HIDING complete parts (showCompleteParts = false)
-            var completeToggle = document.getElementById('completeToggle');
-            if (completeToggle && !showCompleteParts) {
-                completeToggle.classList.add('active');
+            if (!showCompleteParts) {
+                var completeToggle = document.getElementById('completeToggle');
+                var completeToggleCollapsed = document.getElementById('completeToggleCollapsed');
+                if (completeToggle) completeToggle.classList.add('active');
+                if (completeToggleCollapsed) completeToggleCollapsed.classList.add('active');
             }
 
             // Load column preferences
@@ -907,20 +1309,41 @@
             }
         }
 
+        function placeCompleteToggle() {
+            var toggle = document.getElementById('completeToggleContainer');
+            if (!toggle) return;
+
+            // Find the first visible section in order: minifig, parts, spare parts
+            var sections = ['minifigSection', 'partsSection', 'sparePartsSection'];
+            for (var i = 0; i < sections.length; i++) {
+                var section = document.getElementById(sections[i]);
+                if (section && !section.classList.contains('hide')) {
+                    var headerRow = section.querySelector('.section-header-row');
+                    if (headerRow) {
+                        headerRow.appendChild(toggle);
+                        toggle.style.display = '';
+                        return;
+                    }
+                }
+            }
+        }
+
         function toggleCompleteParts() {
             showCompleteParts = !showCompleteParts;
             localStorage.setItem('showCompleteParts', showCompleteParts);
 
-            // Update button appearance
+            // Update button appearance for both toggles
             // Note: toggle is ON (active) when HIDING complete parts (showCompleteParts = false)
-            var button = document.getElementById('completeToggle');
-            if (button) {
-                if (!showCompleteParts) {
-                    button.classList.add('active');
-                } else {
-                    button.classList.remove('active');
+            ['completeToggle', 'completeToggleCollapsed'].forEach(function(id) {
+                var button = document.getElementById(id);
+                if (button) {
+                    if (!showCompleteParts) {
+                        button.classList.add('active');
+                    } else {
+                        button.classList.remove('active');
+                    }
                 }
-            }
+            });
 
             // Re-render table to update checkmark column visibility
             renderTable();
@@ -1223,6 +1646,7 @@
             updatePartsHeader();
             updateSparePartsHeader();
             show('statsSection', 'filterSection', 'resetButton', 'partsSection');
+            placeCompleteToggle();
             document.body.classList.add('has-set');
 
             updateStats();
@@ -1762,6 +2186,14 @@
                 }
             }
             localStorage.setItem('set_' + currentSetNumber, compressed.join(','));
+
+            // Update lastAccessed timestamp
+            var infoKey = 'setInfo_' + currentSetNumber;
+            var info = JSON.parse(localStorage.getItem(infoKey) || '{}');
+            if (info.fullNumber) {
+                info.lastAccessed = Date.now();
+                localStorage.setItem(infoKey, JSON.stringify(info));
+            }
         }
 
         function loadState() {
@@ -2558,7 +2990,7 @@
     <footer class="app-footer">
         <span class="footer-tagline">Made with ❤️ for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <span id="versionInfo">v1.13.1 (434d4ae)</span>
+        <span id="versionInfo">v1.14.0 (a04db35)</span>
     </footer>
 </body>
 
