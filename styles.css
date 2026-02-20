@@ -1152,6 +1152,7 @@ body.dark-mode .set-history-item.backup-selected {
   display: flex;
   gap: 8px;
   flex-shrink: 0;
+  align-self: flex-end;
 }
 
 .set-history-item-actions button {

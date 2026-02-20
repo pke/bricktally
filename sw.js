@@ -1,6 +1,6 @@
 // BrickTally Service Worker
 // Version: 1
-const CACHE_VERSION = 'v20260220-180233';
+const CACHE_VERSION = 'v20260220-180330';
 const STATIC_CACHE = `bricktally-static-${CACHE_VERSION}`;
 const API_CACHE = `bricktally-api-${CACHE_VERSION}`;
 const IMAGE_CACHE = `bricktally-images-${CACHE_VERSION}`;
