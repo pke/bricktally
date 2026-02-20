@@ -74,23 +74,27 @@
                 </div>
             </div>
 
-            <div id="setInfo" class="text-center hide">
-                <h2 id="setName"></h2>
-                <p id="setDetails"></p>
-            </div>
-
-            <div id="statsSection" class="hide">
-                <div class="stats text-center">
-                    <span id="completedPieces">0</span> / <span id="totalPieces">0</span> pieces checked
-                    <button id="resetButton" class="reset-inline hide" onclick="resetSet()" title="Reset progress">↻</button>
-                </div>
-                <div class="progress-bar" id="progressBar" data-percentage="0%" data-pieces="0/0">
-                    <div id="progressFill" class="progress-fill" style="width: 0%;"></div>
-                </div>
-                <div id="spareProgressContainer" class="spare-progress-container hide">
-                    <div class="spare-progress-label">Extra Spare Parts</div>
-                    <div class="progress-bar spare-progress-bar" id="spareProgressBar" data-percentage="0%">
-                        <div id="spareProgressFill" class="progress-fill spare-progress-fill" style="width: 0%;"></div>
+            <div id="setInfo" class="hide">
+                <div class="set-info-layout">
+                    <div id="setImageContainer" class="set-image-container"></div>
+                    <div class="set-info-content">
+                        <h2 id="setName"></h2>
+                        <p id="setDetails"></p>
+                        <div id="statsSection" class="hide">
+                            <div class="stats text-center">
+                                <span id="completedPieces">0</span> / <span id="totalPieces">0</span> pieces checked
+                                <button id="resetButton" class="reset-inline hide" onclick="resetSet()" title="Reset progress">↻</button>
+                            </div>
+                            <div class="progress-bar" id="progressBar" data-percentage="0%" data-pieces="0/0">
+                                <div id="progressFill" class="progress-fill" style="width: 0%;"></div>
+                            </div>
+                            <div id="spareProgressContainer" class="spare-progress-container hide">
+                                <div class="spare-progress-label">Extra Spare Parts</div>
+                                <div class="progress-bar spare-progress-bar" id="spareProgressBar" data-percentage="0%">
+                                    <div id="spareProgressFill" class="progress-fill spare-progress-fill" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1585,9 +1589,10 @@
                 ' <span style="color: var(--orange);">(Version ' + versionNumber + ')</span>' : '';
 
             document.getElementById('setName').textContent = setData.name;
+            document.getElementById('setImageContainer').innerHTML =
+                '<img src="' + setImageUrl + '" alt="' + setData.name + '" class="set-detail-image" onerror="handleImageError(this)" onclick="retryImageLoad(this)">';
             document.getElementById('setDetails').innerHTML =
-                '<img src="' + setImageUrl + '" alt="' + setData.name + '" style="max-width: 300px; max-height: 200px; object-fit: contain; margin: 15px 0; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" class="set-detail-image" onerror="handleImageError(this)" onclick="retryImageLoad(this)">' +
-                '<br>Set Number: ' + displaySetNumber + versionInfo + ' | Year: ' + setData.year + ' | Parts: ' + setData.num_parts;
+                'Set Number: ' + displaySetNumber + versionInfo + ' | Year: ' + setData.year + ' | Parts: ' + setData.num_parts;
 
             // Update collapsed header set name
             var collapsedVersionInfo = versionNumber !== '1' ? ' (v' + versionNumber + ')' : '';
@@ -2980,7 +2985,7 @@
     <footer class="app-footer">
         <span class="footer-tagline">Made with ❤️ for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <span id="versionInfo">v1.15.2 (87ad08c)</span>
+        <span id="versionInfo">v1.16.0 (32b6ef6)</span>
     </footer>
 </body>
 

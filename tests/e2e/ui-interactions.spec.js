@@ -533,3 +533,37 @@ test.describe('Category 12: Lightbox', () => {
     expect(lightboxActive).toBe(false);
   });
 });
+
+test.describe('Category 16: Compact Desktop Header', () => {
+  test('16.1: On desktop, set image and info are side by side (horizontal layout)', async ({ page, browserName }, testInfo) => {
+    // Only run on desktop projects (skip mobile)
+    const isMobile = testInfo.project.name.includes('Mobile');
+    test.skip(isMobile, 'Desktop-only test');
+
+    await mockAPIForSet(page, mockSets['TEST-001']);
+    await page.goto('/');
+    await loadTestSet(page, '99001');
+
+    // Get the bounding boxes of the set image and the set info text
+    const image = page.locator('.set-detail-image');
+    const imageBox = await image.boundingBox();
+    expect(imageBox).not.toBeNull();
+
+    // The setInfo container should use a horizontal layout on desktop
+    // Check that the image is to the left and there's content to its right
+    const setInfo = page.locator('#setInfo');
+    const setInfoBox = await setInfo.boundingBox();
+    expect(setInfoBox).not.toBeNull();
+
+    // In a compact horizontal layout, the image should NOT be centered above the text.
+    // The image right edge should be less than the setInfo right edge (image is on the left side)
+    // AND the setInfo should be wider than the image (text fills remaining space)
+    const imageRight = imageBox.x + imageBox.width;
+    expect(imageRight).toBeLessThan(setInfoBox.x + setInfoBox.width - 50);
+
+    // The header total height should be compact - less than 350px
+    const headerWrapper = page.locator('.full-header .header-wrapper');
+    const headerBox = await headerWrapper.boundingBox();
+    expect(headerBox.height).toBeLessThan(350);
+  });
+});
