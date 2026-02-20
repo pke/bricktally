@@ -1494,13 +1494,15 @@ body.dark-mode .set-history-item.backup-selected {
 }
 
 .minifig-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 15px;
   margin-bottom: 30px;
 }
 
 .minifig-card {
+  width: 200px;
   background: var(--bg-tertiary);
   border: 2px solid var(--border-color);
   border-radius: 8px;
@@ -1687,7 +1689,6 @@ body.dark-mode .minifig-card.complete {
   }
 
   .minifig-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 10px;
   }
 
