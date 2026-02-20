@@ -1754,13 +1754,9 @@
                     infoText = '&nbsp;';
                 }
 
-                // Show checkmark when complete, or for single-quantity items, otherwise show +
-                var incrementButtonText;
-                if (isComplete) {
-                    incrementButtonText = '✓';
-                } else {
-                    incrementButtonText = part.quantity === 1 ? '✓' : '+';
-                }
+                // Show checkmark when complete or one piece remaining, otherwise show +
+                var remaining = part.quantity - currentCount;
+                var incrementButtonText = (isComplete || remaining <= 1) ? '✓' : '+';
                 var incrementBtnClass = isComplete ? ' complete' : '';
                 var incrementBtnDisabled = isComplete ? ' disabled' : '';
 
@@ -1831,13 +1827,9 @@
                     infoText = '&nbsp;';
                 }
 
-                // Show checkmark when complete, or for single-quantity items, otherwise show +
-                var incrementButtonText;
-                if (isComplete) {
-                    incrementButtonText = '✓';
-                } else {
-                    incrementButtonText = part.quantity === 1 ? '✓' : '+';
-                }
+                // Show checkmark when complete or one piece remaining, otherwise show +
+                var remaining = part.quantity - currentCount;
+                var incrementButtonText = (isComplete || remaining <= 1) ? '✓' : '+';
                 var incrementBtnClass = isComplete ? ' complete' : '';
                 var incrementBtnDisabled = isComplete ? ' disabled' : '';
 
@@ -2073,6 +2065,7 @@
             var combinedCount = part.isSpare ? regularCount : regularCount + spareCount;
             var isComplete = combinedCount >= part.quantity;
             if (incrementBtn) {
+                var remaining = part.quantity - (userCounts[key] || 0);
                 if (isComplete) {
                     incrementBtn.classList.add('complete');
                     incrementBtn.setAttribute('disabled', 'disabled');
@@ -2080,7 +2073,7 @@
                 } else {
                     incrementBtn.classList.remove('complete');
                     incrementBtn.removeAttribute('disabled');
-                    incrementBtn.textContent = part.quantity === 1 ? '✓' : '+';
+                    incrementBtn.textContent = remaining <= 1 ? '✓' : '+';
                 }
             }
 
@@ -2990,7 +2983,7 @@
     <footer class="app-footer">
         <span class="footer-tagline">Made with ❤️ for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <span id="versionInfo">v1.14.1 (5bccd3d)</span>
+        <span id="versionInfo">v1.15.0 (9f060ec)</span>
     </footer>
 </body>
 

@@ -1,6 +1,6 @@
 {
   "name": "bricktally",
-  "version": "1.14.1",
+  "version": "1.15.0",
   "description": "LEGO® set verification and brick counting app",
   "type": "module",
   "scripts": {

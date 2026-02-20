@@ -313,6 +313,30 @@ test.describe('Category 7: Count Controls', () => {
     count = await page.locator('#count-0 .counted').textContent();
     expect(count).toBe('5');
   });
+
+  test('7.5: Increment button shows checkmark when one piece remaining', async ({ page }) => {
+    await mockAPIForSet(page, mockSets['TEST-001']);
+
+    await page.goto('/');
+    await loadTestSet(page, '99001');
+
+    // Part 0 has quantity 5, increment to 4 (one remaining)
+    await incrementPart(page, 0);
+    await incrementPart(page, 0);
+    await incrementPart(page, 0);
+    await incrementPart(page, 0);
+
+    const count = await page.locator('#count-0 .counted').textContent();
+    expect(count).toBe('4');
+
+    // Button should show checkmark (not +) since next click completes it
+    const incrementBtn = page.locator('#inc-0');
+    const btnText = await incrementBtn.textContent();
+    expect(btnText).toBe('✓');
+
+    // But it should NOT have the complete class yet
+    await expect(incrementBtn).not.toHaveClass(/complete/);
+  });
 });
 
 test.describe('Category 11: Color Filters', () => {
