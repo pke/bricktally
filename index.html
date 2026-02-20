@@ -2058,14 +2058,11 @@
             // Update count display with clickable quantity
             countElement.innerHTML = '<span class="counted">' + userCounts[key] + '</span>/<span class="qty-click" onclick="fillQuantity(' + partId + ')" title="Click to mark all as counted">' + part.quantity + '</span>';
 
-            // Check completion: for regular parts, include spare parts as substitutes
-            var regularCount = userCounts[key] || 0;
-            var spareKey = key + '_s';
-            var spareCount = userCounts[spareKey] || 0;
-            var combinedCount = part.isSpare ? regularCount : regularCount + spareCount;
-            var isComplete = combinedCount >= part.quantity;
+            // Check completion using only the row's own count
+            var ownCount = userCounts[key] || 0;
+            var isComplete = ownCount >= part.quantity;
             if (incrementBtn) {
-                var remaining = part.quantity - (userCounts[key] || 0);
+                var remaining = part.quantity - ownCount;
                 if (isComplete) {
                     incrementBtn.classList.add('complete');
                     incrementBtn.setAttribute('disabled', 'disabled');
@@ -2983,7 +2980,7 @@
     <footer class="app-footer">
         <span class="footer-tagline">Made with ❤️ for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <span id="versionInfo">v1.15.0 (9f060ec)</span>
+        <span id="versionInfo">v1.15.1 (851afed)</span>
     </footer>
 </body>
 

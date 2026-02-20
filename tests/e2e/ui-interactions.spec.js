@@ -68,6 +68,54 @@ test.describe('Category 4: Spare Parts Section', () => {
     expect(header).not.toContain('✓');
     expect(header).toBe('Spare Parts');
   });
+
+  test('4.4: Regular part row not marked complete when spare makes up the count', async ({ page }) => {
+    // TEST-003: part 0 = Red Brick 2x4 qty 5, spare 3 = same part qty 2
+    await mockAPIForSet(page, mockSets['TEST-003']);
+
+    await page.goto('/');
+    await loadTestSet(page, '99003');
+
+    // Increment regular part to 3/5
+    await incrementPart(page, 0);
+    await incrementPart(page, 0);
+    await incrementPart(page, 0);
+
+    // Complete the spare (2/2) — this should NOT make the regular row show complete
+    await fillQuantity(page, 3);
+
+    // Regular part increment button should NOT be complete (3+2=5 combined, but only 3/5 own)
+    const incrementBtn = page.locator('#inc-0');
+    await expect(incrementBtn).not.toHaveClass(/complete/);
+    await expect(incrementBtn).not.toBeDisabled();
+  });
+
+  test('4.5: Regular part still incrementable after decrementing with full spare count', async ({ page }) => {
+    // TEST-003: part 0 = Red Brick 2x4 qty 5, spare 3 = same part qty 2
+    await mockAPIForSet(page, mockSets['TEST-003']);
+
+    await page.goto('/');
+    await loadTestSet(page, '99003');
+
+    // Turn off hide complete so completed rows stay visible
+    await toggleHideComplete(page, false);
+
+    // Complete both regular (5/5) and spare (2/2)
+    await fillQuantity(page, 0);
+    await fillQuantity(page, 3);
+
+    // Decrement regular by one (now 4/5)
+    await decrementPart(page, 0);
+
+    // Regular row should NOT be complete — own count is 4/5
+    const incrementBtn = page.locator('#inc-0');
+    await expect(incrementBtn).not.toHaveClass(/complete/);
+    await expect(incrementBtn).not.toBeDisabled();
+
+    // Button should show checkmark (one piece remaining)
+    const btnText = await incrementBtn.textContent();
+    expect(btnText).toBe('✓');
+  });
 });
 
 test.describe('Category 5: Section Headers & Hide Complete', () => {
