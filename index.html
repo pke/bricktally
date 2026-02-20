@@ -397,10 +397,18 @@
                         '<button class="delete" onclick="deleteSetHistory(event, \'' + setInfo.fullNumber + '\')" title="Delete set">🗑</button>' +
                     '</div>';
 
-                // Click on row to load set
+                // Click on row to load set or toggle backup checkbox
                 item.addEventListener('click', function(e) {
                     // Don't trigger if clicking buttons or checkboxes
                     if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
+
+                    // In backup selection mode, toggle checkbox instead of loading set
+                    var cb = this.querySelector('input[type="checkbox"]');
+                    if (cb) {
+                        cb.checked = !cb.checked;
+                        this.classList.toggle('backup-selected', cb.checked);
+                        return;
+                    }
 
                     document.getElementById('setNumber').value = setInfo.number;
                     loadSetDirect(setInfo.fullNumber);
@@ -622,8 +630,12 @@
                 checkbox.type = 'checkbox';
                 checkbox.checked = true;
                 checkbox.className = 'backup-checkbox';
-                checkbox.onclick = function(e) { e.stopPropagation(); };
+                checkbox.onclick = function(e) {
+                    e.stopPropagation();
+                    item.classList.toggle('backup-selected', checkbox.checked);
+                };
                 item.insertBefore(checkbox, item.firstChild);
+                item.classList.add('backup-selected');
             });
         };
 
@@ -633,9 +645,11 @@
             document.getElementById('backupSelectedBtn').classList.add('hide');
             document.getElementById('cancelBackupBtn').classList.add('hide');
 
-            // Remove checkboxes
-            document.querySelectorAll('.set-history-item input[type="checkbox"]').forEach(function(cb) {
-                cb.remove();
+            // Remove checkboxes and selection styling
+            document.querySelectorAll('.set-history-item').forEach(function(item) {
+                var cb = item.querySelector('input[type="checkbox"]');
+                if (cb) cb.remove();
+                item.classList.remove('backup-selected');
             });
         };
 
@@ -2985,7 +2999,7 @@
     <footer class="app-footer">
         <span class="footer-tagline">Made with ❤️ for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <span id="versionInfo">v1.16.1 (ce0adde)</span>
+        <span id="versionInfo">v1.16.2 (9c98e7c)</span>
     </footer>
 </body>
 
