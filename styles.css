@@ -1212,6 +1212,8 @@ body.dark-mode .set-history-item.backup-selected {
   border: 2px solid var(--border-color);
   background: var(--bg-tertiary);
   color: var(--text-primary);
+  box-sizing: border-box;
+  min-height: 40px;
 }
 
 .restore-btn:hover,
@@ -1677,15 +1679,6 @@ body.dark-mode .minifig-card.complete {
   .col-controls {
     width: auto;
     max-width: 180px;
-  }
-
-  .set-history-item {
-    flex-wrap: wrap;
-  }
-
-  .set-history-item-actions {
-    width: 100%;
-    justify-content: flex-end;
   }
 
   .minifig-grid {
