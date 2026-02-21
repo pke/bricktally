@@ -39,6 +39,12 @@ if ! echo "$SUBJECT" | grep -qE "^(feat|fix|refactor|test|build|chore|docs|perf|
   exit 0
 fi
 
+# Skip version bump for non-production commit types
+if echo "$SUBJECT" | grep -qE "^(chore|test|docs|ci|style)(\(.+\))?: "; then
+  echo "[post-commit] Non-production commit type, skipping version bump"
+  exit 0
+fi
+
 # Determine bump type
 BUMP_TYPE="patch"
 
