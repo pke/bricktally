@@ -104,7 +104,6 @@ Visit [bricktally.app](https://bricktally.app) to try it out!
 ```
 bricktally/
 ├── index.html           # Main application
-├── verify.html          # Set verification badge page
 ├── api/
 │   └── rebrickable.js   # Serverless API proxy
 ├── favicon.svg          # Favicon

@@ -9,7 +9,6 @@ const IMAGE_CACHE = `bricktally-images-${CACHE_VERSION}`;
 const STATIC_ASSETS = [
     '/',
     '/index.html',
-    '/verify.html',
     '/styles.css',
     // Note: manifest.json excluded to allow Vercel rewrites for preview/prod
     '/assets/favicon.svg',

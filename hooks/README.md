@@ -11,7 +11,6 @@ The `pre-commit` hook automatically increments the service worker cache version 
 When you commit changes to any of these files:
 
 - `index.html`
-- `verify.html`
 - `manifest.json`
 - Files in `assets/`
 - Files in `js/`

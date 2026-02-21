@@ -20,7 +20,6 @@ else
   # Files that require cache version bump (only production assets served to users)
   CACHED_PATTERNS=(
     "index.html"
-    "verify.html"
     "changelog.html"
     "changelog.json"
     "styles.css"
@@ -81,7 +80,6 @@ fi
 # Files that represent user-facing changes (features, UI, behavior)
 USER_FACING_PATTERNS=(
   "index.html"
-  "verify.html"
   "styles.css"
   "js/"
 )
