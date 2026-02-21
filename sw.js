@@ -1,6 +1,6 @@
 // BrickTally Service Worker
 // Version: 1
-const CACHE_VERSION = 'v20260221-040444';
+const CACHE_VERSION = 'v20260221-220111';
 const STATIC_CACHE = `bricktally-static-${CACHE_VERSION}`;
 const API_CACHE = `bricktally-api-${CACHE_VERSION}`;
 const IMAGE_CACHE = `bricktally-images-${CACHE_VERSION}`;
@@ -93,6 +93,12 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
+    // Handle proxied Rebrickable images (Cache First) — fallback for blocked CDN
+    if (url.pathname === '/api/image-proxy') {
+        event.respondWith(cacheFirst(request, IMAGE_CACHE));
+        return;
+    }
+
     // Handle static assets (Cache First)
     if (isStaticAsset(url)) {
         event.respondWith(cacheFirst(request, STATIC_CACHE));
@@ -144,10 +150,10 @@ async function cacheFirst(request, cacheName) {
     try {
         const networkResponse = await fetch(request);
 
-        // Cache the new response if successful
-        if (networkResponse.ok) {
+        // Cache the new response if successful (only GET can be cached)
+        if (networkResponse.ok && request.method === 'GET') {
             cache.put(request, networkResponse.clone());
-            console.log('[BrickTally:Cache] Cached new image:', request.url);
+            console.log('[BrickTally:Cache] Cached new resource:', request.url);
         }
 
         return networkResponse;
@@ -157,6 +163,7 @@ async function cacheFirst(request, cacheName) {
         // For images, return a network error so onerror handler fires
         // The client-side will then show the placeholder and fallback info
         if (request.url.includes('cdn.rebrickable.com') ||
+            request.url.includes('/api/image-proxy') ||
             request.destination === 'image' ||
             request.url.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i)) {
             // Return error response to trigger onerror

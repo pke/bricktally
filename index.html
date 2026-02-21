@@ -297,13 +297,26 @@
             return key;
         }
 
-        // Placeholder functions for image handling (currently disabled)
+        // Proxy Rebrickable CDN URLs through our API (used for canvas CORS and fallback)
+        function getProxiedUrl(url) {
+            if (url && (url.startsWith('https://cdn.rebrickable.com/') || url.startsWith('https://rebrickable.com/'))) {
+                return '/api/image-proxy?url=' + encodeURIComponent(url);
+            }
+            return url;
+        }
+
+        // Handle image load errors — retry through proxy if CDN is blocked (e.g. uMatrix)
         window.handleImageError = function(img) {
-            // Currently disabled - just use browser default broken image
+            var src = img.getAttribute('src');
+            if (!src) return;
+            // If a direct CDN URL failed, retry through our same-origin proxy
+            if (src.startsWith('https://cdn.rebrickable.com/') || src.startsWith('https://rebrickable.com/')) {
+                img.src = getProxiedUrl(src);
+            }
         };
 
         window.handleImageLoad = function(img) {
-            // Currently disabled
+            // Currently unused
         };
 
         // ─── localStorage helpers ────────────────────────────────────────
@@ -2583,14 +2596,6 @@
             var imagesToLoad = [];
             var loadedImages = {};
 
-            // Helper to get proxied URL
-            function getProxiedUrl(url) {
-                if (url && (url.startsWith('https://cdn.rebrickable.com/') || url.startsWith('https://rebrickable.com/'))) {
-                    return '/api/image-proxy?url=' + encodeURIComponent(url);
-                }
-                return url;
-            }
-
             // Add set image
             if (data.setImageUrl) {
                 imagesToLoad.push({ key: 'setImage', url: getProxiedUrl(data.setImageUrl) });
@@ -3280,7 +3285,7 @@
     <footer class="app-footer">
         <span class="footer-tagline">Made with ❤️ for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <span id="versionInfo">v1.18.1 (0a9bf25)</span>
+        <span id="versionInfo">v1.19.0 (9495a65)</span>
     </footer>
 </body>
 
