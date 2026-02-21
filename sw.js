@@ -110,8 +110,16 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // Default: Network only for everything else
-    event.respondWith(fetch(request));
+    // Default: Network only for everything else (with fallback to avoid loops)
+    event.respondWith(
+        fetch(request).catch(function() {
+            return new Response('Network unavailable', {
+                status: 503,
+                statusText: 'Service Unavailable',
+                headers: { 'Content-Type': 'text/plain' }
+            });
+        })
+    );
 });
 
 // Helper: Check if request is for a static asset
