@@ -176,9 +176,15 @@ test.describe('Category 3: Spare Parts - Substitution Logic', () => {
     await fillQuantity(page, redSparePartId);
     await waitForProgressUpdate(page);
 
-    // Part should be considered complete (3 regular + 2 spare = 5 needed)
-    const incrementBtn = page.locator(`#inc-0`);
-    await expect(incrementBtn).toHaveClass(/complete/);
+    // Regular row should NOT be complete — each row tracks its own count
+    // (otherwise the user couldn't keep incrementing the regular row)
+    const incrementBtn = page.locator('#inc-0');
+    await expect(incrementBtn).not.toHaveClass(/complete/);
+
+    // But overall progress should count spare substitution (3 regular + 2 spare = 5/5 for red)
+    // Total set: red 5/5 + blue 0/3 + green 0/2 = 5/10
+    const completedPieces = page.locator('#completedPieces');
+    await expect(completedPieces).toHaveText('5');
   });
 
   test('3.2: Spare part creates extra', async ({ page }) => {
