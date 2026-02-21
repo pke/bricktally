@@ -211,6 +211,7 @@
                         <button onclick="exportToBrickLink()" class="export-btn" style="background: var(--orange);">📦 BrickLink XML</button>
                         <button onclick="exportToPickABrick()" class="export-btn" style="background: var(--red);">🧱 Pick a Brick CSV</button>
                         <button onclick="exportMissingPartsText()" class="export-btn" style="background: var(--blue);">📄 Text List</button>
+                        <button onclick="exportToRebrickable()" class="export-btn" style="background: #6b5b95;">🧩 Export partlist</button>
                     </div>
                 </div>
             </div>
@@ -3144,6 +3145,53 @@
             window.URL.revokeObjectURL(url);
         }
 
+        function exportToRebrickable() {
+            if (!currentSetNumber) {
+                alert('Please load a set first');
+                return;
+            }
+
+            // Collect counted parts, merging spare counts into regular parts
+            var partCounts = {}; // key: "partNum,colorId" → total count
+
+            partsData.forEach(function(part) {
+                if (part.isSpare) return; // spares are merged into regular below
+
+                var key = getPartKey(part);
+                var count = userCounts[key] || 0;
+
+                // Add spare count for this part+color combination
+                var spareKey = key + '_s';
+                var spareCount = userCounts[spareKey] || 0;
+
+                var total = count + spareCount;
+                if (total <= 0) return;
+
+                var csvKey = part.partNum + ',' + part.colorId;
+                partCounts[csvKey] = (partCounts[csvKey] || 0) + total;
+            });
+
+            if (Object.keys(partCounts).length === 0) {
+                alert('No parts counted yet.');
+                return;
+            }
+
+            var csv = 'Part,Color,Quantity\n';
+            for (var csvKey in partCounts) {
+                csv += csvKey + ',' + partCounts[csvKey] + '\n';
+            }
+
+            var blob = new Blob([csv], { type: 'text/csv' });
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'rebrickable-partlist-' + currentSetNumber.replace('-', '_') + '.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
         var wasComplete = false; // Add with global variables
 
         function checkAndCelebrate() {
@@ -3227,7 +3275,7 @@
     <footer class="app-footer">
         <span class="footer-tagline">Made with ❤️ for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <span id="versionInfo">v1.17.0 (4600770)</span>
+        <span id="versionInfo">v1.18.0 (f5cec0e)</span>
     </footer>
 </body>
 

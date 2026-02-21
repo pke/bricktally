@@ -179,6 +179,141 @@ test.describe('Category 9: Export Functions', () => {
     // Check minifigs listed
     expect(text).toContain('Firefighter'); // Missing minifig
   });
+
+  test('9.6: Rebrickable export - completed parts with correct CSV format', async ({ page }) => {
+    await mockAPIForSet(page, mockSets['TEST-001']);
+
+    await page.goto('/');
+    await loadTestSet(page, '99001');
+
+    // Count 5 red bricks and 1 blue brick
+    await fillQuantity(page, 0); // 5 red
+    await incrementPart(page, 1); // 1 blue
+
+    await waitForProgressUpdate(page);
+
+    const downloadPromise = page.waitForEvent('download');
+
+    await page.click('.filter-header:has-text("Export")');
+    await page.click('button:has-text("Export partlist")');
+
+    const download = await downloadPromise;
+    const path = await download.path();
+
+    const fs = await import('fs');
+    const csv = fs.readFileSync(path, 'utf-8');
+
+    // Check CSV header
+    expect(csv).toMatch(/^Part,Color,Quantity\n/);
+
+    // Check completed parts are included with Rebrickable color IDs
+    expect(csv).toContain('3001,5,5');  // 5 red bricks (colorId 5)
+    expect(csv).toContain('3004,11,1'); // 1 blue brick (colorId 11)
+
+    // Green bricks not counted, should NOT be in export
+    expect(csv).not.toContain('3005');
+  });
+
+  test('9.7: Rebrickable export - nothing counted shows alert', async ({ page }) => {
+    await mockAPIForSet(page, mockSets['TEST-001']);
+
+    await page.goto('/');
+    await loadTestSet(page, '99001');
+
+    // Don't count anything
+
+    page.on('dialog', async (dialog) => {
+      expect(dialog.message()).toContain('No parts counted');
+      await dialog.accept();
+    });
+
+    await page.click('.filter-header:has-text("Export")');
+    await page.click('button:has-text("Export partlist")');
+
+    await page.waitForTimeout(500);
+  });
+
+  test('9.8: Rebrickable export - spares merged into regular part counts', async ({ page }) => {
+    await mockAPIForSet(page, mockSets['TEST-003']);
+
+    await page.goto('/');
+    await loadTestSet(page, '99003');
+
+    // Count 3 regular red bricks
+    for (let i = 0; i < 3; i++) {
+      await incrementPart(page, 0);
+    }
+
+    // Count 2 spare red bricks
+    const redSparePartId = await page.evaluate(() => {
+      return window.partsData.find(p => p.isSpare && p.color === 'Red')?.id;
+    });
+    await fillQuantity(page, redSparePartId);
+
+    await waitForProgressUpdate(page);
+
+    const downloadPromise = page.waitForEvent('download');
+
+    await page.click('.filter-header:has-text("Export")');
+    await page.click('button:has-text("Export partlist")');
+
+    const download = await downloadPromise;
+    const path = await download.path();
+
+    const fs = await import('fs');
+    const csv = fs.readFileSync(path, 'utf-8');
+
+    // 3 regular + 2 spare = 5 total red bricks, single row
+    expect(csv).toContain('3001,5,5');
+
+    // Should NOT have separate spare rows
+    const lines = csv.split('\n').filter(l => l.startsWith('3001,'));
+    expect(lines).toHaveLength(1);
+  });
+
+  test('9.9: Rebrickable export - minifigs included', async ({ page }) => {
+    await mockAPIForSet(page, mockSets['TEST-002']);
+
+    await page.goto('/');
+    await loadTestSet(page, '99002');
+
+    // Count 1 minifig
+    await page.click('#minifig-2 .minifig-name');
+
+    await waitForProgressUpdate(page);
+
+    const downloadPromise = page.waitForEvent('download');
+
+    await page.click('.filter-header:has-text("Export")');
+    await page.click('button:has-text("Export partlist")');
+
+    const download = await downloadPromise;
+    const path = await download.path();
+
+    const fs = await import('fs');
+    const csv = fs.readFileSync(path, 'utf-8');
+
+    // Minifig should be in the CSV with colorId 0
+    expect(csv).toContain('fig-001234,0,1');
+  });
+
+  test('9.10: Rebrickable export - correct filename', async ({ page }) => {
+    await mockAPIForSet(page, mockSets['TEST-001']);
+
+    await page.goto('/');
+    await loadTestSet(page, '99001');
+
+    await fillQuantity(page, 0);
+    await waitForProgressUpdate(page);
+
+    const downloadPromise = page.waitForEvent('download');
+
+    await page.click('.filter-header:has-text("Export")');
+    await page.click('button:has-text("Export partlist")');
+
+    const download = await downloadPromise;
+    expect(download.suggestedFilename()).toBe('rebrickable-partlist-99001_1.csv');
+  });
 });
 
 test.describe('Category 10: Badge Generation', () => {
