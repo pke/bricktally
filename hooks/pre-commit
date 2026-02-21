@@ -74,4 +74,41 @@ else
   echo "[pre-commit] No cached assets changed, skipping version bump"
 fi
 
+# =============================================================================
+# Changelog reminder for user-facing changes
+# =============================================================================
+
+# Files that represent user-facing changes (features, UI, behavior)
+USER_FACING_PATTERNS=(
+  "index.html"
+  "verify.html"
+  "styles.css"
+  "js/"
+)
+
+HAS_USER_FACING=false
+for file in $STAGED_FILES; do
+  for pattern in "${USER_FACING_PATTERNS[@]}"; do
+    if [[ $file == *"$pattern"* ]]; then
+      HAS_USER_FACING=true
+      break 2
+    fi
+  done
+done
+
+HAS_CHANGELOG=false
+for file in $STAGED_FILES; do
+  if [[ $file == "changelog.json" ]]; then
+    HAS_CHANGELOG=true
+    break
+  fi
+done
+
+if [ "$HAS_USER_FACING" = true ] && [ "$HAS_CHANGELOG" = false ]; then
+  echo ""
+  echo "[pre-commit] ⚠️  User-facing files changed but changelog.json was not updated."
+  echo "[pre-commit]    If this is a user-visible change, consider updating changelog.json."
+  echo ""
+fi
+
 exit 0
