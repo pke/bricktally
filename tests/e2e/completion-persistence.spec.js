@@ -136,7 +136,7 @@ test.describe('Category 6: Completion & Celebration', () => {
     // Turn off hide complete to access the parts
     await page.evaluate(() => {
       window.showCompleteParts = true;
-      window.updateTableVisibility();
+      document.body.setAttribute('data-show-complete', 'true');
     });
 
     // Decrement one part

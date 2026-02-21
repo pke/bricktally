@@ -1260,6 +1260,7 @@
             if (savedShowComplete === 'true') {
                 showCompleteParts = true;
             }
+            document.body.setAttribute('data-show-complete', showCompleteParts ? 'true' : 'false');
 
             // Update complete toggle button appearance
             // Toggle is ON (active) when HIDING complete parts (showCompleteParts = false)
@@ -1713,6 +1714,7 @@
         function toggleCompleteParts() {
             showCompleteParts = !showCompleteParts;
             localStorage.setItem('showCompleteParts', showCompleteParts);
+            document.body.setAttribute('data-show-complete', showCompleteParts ? 'true' : 'false');
 
             // Update button appearance for both toggles
             // Note: toggle is ON (active) when HIDING complete parts (showCompleteParts = false)
@@ -1727,44 +1729,27 @@
                 }
             });
 
-            // Re-render table to update checkmark column visibility
-            renderTable();
-            renderSparePartsTable();
-            updateTableVisibility();
+            // CSS handles row/card visibility via body[data-show-complete] + [data-complete]
+            // Only need to update header counts
             updateMinifigHeader();
             updatePartsHeader();
             updateSparePartsHeader();
         }
 
         function updateTableVisibility() {
+            // Completion visibility is handled by CSS via body[data-show-complete] + tr[data-complete]
+            // This function only handles color filtering
             partsData.forEach(function (part) {
-                var key = getPartKey(part);
-                var isComplete = userCounts[key] === part.quantity;
+                if (part.type === 'minifig') return; // minifigs don't have color filters
 
-                if (part.type === 'minifig') {
-                    // Handle minifig card visibility
-                    var card = document.getElementById('minifig-' + part.id);
-                    if (!card) return;
+                var row = document.getElementById('row-' + part.id);
+                if (!row) return;
 
-                    // Hide if complete AND not showing complete parts
-                    if (isComplete && !showCompleteParts) {
-                        card.style.display = 'none';
-                    } else {
-                        card.style.display = '';
-                    }
+                var colorMatch = activeColorFilters.length === 0 || activeColorFilters.indexOf(part.color) > -1;
+                if (!colorMatch) {
+                    row.setAttribute('data-color-hidden', '');
                 } else {
-                    // Handle regular part row visibility
-                    var row = document.getElementById('row-' + part.id);
-                    if (!row) return;
-
-                    var colorMatch = activeColorFilters.length === 0 || activeColorFilters.indexOf(part.color) > -1;
-
-                    // Hide if: (complete AND not showing complete) OR (color doesn't match filter)
-                    if ((isComplete && !showCompleteParts) || !colorMatch) {
-                        row.classList.add('hidden');
-                    } else {
-                        row.classList.remove('hidden');
-                    }
+                    row.removeAttribute('data-color-hidden');
                 }
             });
         }
@@ -2148,7 +2133,7 @@
                 var altText = (part.color + ' ' + part.name + ' (' + part.partNum + ')').replace(/"/g, '&quot;');
                 var fallbackInfo = part.color + ' ' + part.name + '<br>' + part.partNum;
                 var decrementStyle = currentCount === 0 ? ' style="visibility: hidden;"' : '';
-                html += '<tr id="row-' + part.id + '" data-fallback-info="' + fallbackInfo.replace(/"/g, '&quot;') + '">' +
+                html += '<tr id="row-' + part.id + '" data-complete="' + isComplete + '" data-color="' + part.color + '" data-fallback-info="' + fallbackInfo.replace(/"/g, '&quot;') + '">' +
                     '<td class="col-img"><img src="' + part.imageUrl + '" alt="' + altText + '" class="part-image" data-part-id="' + part.id + '" onerror="handleImageError(this)" onload="handleImageLoad(this)"></td>' +
                     '<td class="col-info" id="info-' + part.id + '">' + infoText + '</td>' +
                     '<td class="col-controls"><div class="controls">' +
@@ -2221,7 +2206,7 @@
                 var altText = (part.color + ' ' + part.name + ' (' + part.partNum + ')').replace(/"/g, '&quot;');
                 var fallbackInfo = part.color + ' ' + part.name + '<br>' + part.partNum;
                 var decrementStyle = currentCount === 0 ? ' style="visibility: hidden;"' : '';
-                html += '<tr id="row-' + part.id + '" data-fallback-info="' + fallbackInfo.replace(/"/g, '&quot;') + '">' +
+                html += '<tr id="row-' + part.id + '" data-complete="' + isComplete + '" data-color="' + part.color + '" data-fallback-info="' + fallbackInfo.replace(/"/g, '&quot;') + '">' +
                     '<td class="col-img"><img src="' + part.imageUrl + '" alt="' + altText + '" class="part-image" data-part-id="' + part.id + '" onerror="handleImageError(this)" onload="handleImageLoad(this)"></td>' +
                     '<td class="col-info" id="info-' + part.id + '">' + infoText + '</td>' +
                     '<td class="col-controls"><div class="controls">' +
@@ -2276,7 +2261,7 @@
 
                 var checkmarkHtml = isComplete ? '<div class="minifig-checkmark">✓</div>' : '';
 
-                html += '<div class="minifig-card' + (isComplete ? ' complete' : '') + '" id="minifig-' + minifig.id + '" onclick="toggleMinifig(' + minifig.id + ')">' +
+                html += '<div class="minifig-card' + (isComplete ? ' complete' : '') + '" data-complete="' + isComplete + '" id="minifig-' + minifig.id + '" onclick="toggleMinifig(' + minifig.id + ')">' +
                     checkmarkHtml +
                     '<img src="' + minifig.imageUrl + '" alt="' + minifig.name + '" class="minifig-image" data-part-id="' + minifig.id + '" onclick="event.stopPropagation(); openMinifigLightbox(this)" onerror="handleImageError(this)" onload="handleImageLoad(this)">' +
                     '<div class="minifig-name">' + title + '</div>' +
@@ -2415,6 +2400,7 @@
 
                 var isComplete = (userCounts[key] || 0) === 1;
                 card.classList.toggle('complete', isComplete);
+                card.setAttribute('data-complete', isComplete ? 'true' : 'false');
 
                 // Update checkmark visibility
                 var existingCheckmark = card.querySelector('.minifig-checkmark');
@@ -2446,6 +2432,7 @@
             // Check completion using only the row's own count
             var ownCount = userCounts[key] || 0;
             var isComplete = ownCount >= part.quantity;
+            row.setAttribute('data-complete', isComplete ? 'true' : 'false');
             if (incrementBtn) {
                 var remaining = part.quantity - ownCount;
                 if (isComplete) {
@@ -3397,7 +3384,7 @@
     <footer class="app-footer">
         <span class="footer-tagline">Made with ❤️ for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog.html" id="versionInfo" class="footer-version-link">v1.20.3 (a4d9f03)</a>
+        <a href="/changelog.html" id="versionInfo" class="footer-version-link">v1.20.4 (ab41920)</a>
     </footer>
 </body>
 

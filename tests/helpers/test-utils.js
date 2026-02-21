@@ -300,7 +300,7 @@ export async function toggleHideComplete(page, desiredState) {
  * Get visible parts count in table
  */
 export async function getVisiblePartsCount(page) {
-  return await page.locator('#tableContainer table tr:not(.hidden)').count();
+  return await page.locator('#tableContainer table tr:not([data-color-hidden])').count();
 }
 
 /**

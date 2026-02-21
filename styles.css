@@ -885,7 +885,13 @@ tr:hover {
   background: var(--hover-bg);
 }
 
-tr.hidden {
+tr[data-color-hidden] {
+  display: none;
+}
+
+/* Hide complete rows/cards when show-complete is false */
+body[data-show-complete="false"] tr[data-complete="true"],
+body[data-show-complete="false"] .minifig-card[data-complete="true"] {
   display: none;
 }
 

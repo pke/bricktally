@@ -193,8 +193,10 @@ test.describe('Category 5: Section Headers & Hide Complete', () => {
     // Turn on hide complete
     await toggleHideComplete(page, true);
 
-    // Should hide the completed part
-    const visibleCount = await page.locator('#tableContainer table tbody tr:not(.hidden)').count();
+    // Should hide the completed part (CSS hides via body[data-show-complete] + data-complete)
+    const visibleCount = await page.locator('#tableContainer table tbody tr').evaluateAll(rows => {
+      return rows.filter(r => window.getComputedStyle(r).display !== 'none').length;
+    });
     expect(visibleCount).toBe(1); // 1 incomplete part visible
   });
 
@@ -264,14 +266,18 @@ test.describe('Category 5: Section Headers & Hide Complete', () => {
     await fillQuantity(page, 0);
 
     // All 3 parts should be visible (hide complete is OFF)
-    const initialCount = await page.locator('#tableContainer table tbody tr:not(.hidden)').count();
+    const initialCount = await page.locator('#tableContainer table tbody tr').evaluateAll(rows => {
+      return rows.filter(r => window.getComputedStyle(r).display !== 'none').length;
+    });
     expect(initialCount).toBe(3);
 
     // Click toggle again to turn hide complete ON
     await page.click('#completeToggle');
 
-    // Should hide the completed part
-    const visibleCount = await page.locator('#tableContainer table tbody tr:not(.hidden)').count();
+    // Should hide the completed part (CSS hides via body[data-show-complete] + data-complete)
+    const visibleCount = await page.locator('#tableContainer table tbody tr').evaluateAll(rows => {
+      return rows.filter(r => window.getComputedStyle(r).display !== 'none').length;
+    });
     expect(visibleCount).toBe(2);
   });
 
@@ -414,14 +420,14 @@ test.describe('Category 11: Color Filters', () => {
     await loadTestSet(page, '99007');
 
     // Get initial visible count (should be 3 different colors)
-    const initialCount = await page.locator('#tableContainer table tbody tr:not(.hidden)').count();
+    const initialCount = await page.locator('#tableContainer table tbody tr:not([data-color-hidden])').count();
     expect(initialCount).toBe(3);
 
     // Apply Red filter
     await applyColorFilter(page, 'Red');
 
     // Should only show red parts
-    const visibleCount = await page.locator('#tableContainer table tbody tr:not(.hidden)').count();
+    const visibleCount = await page.locator('#tableContainer table tbody tr:not([data-color-hidden])').count();
     expect(visibleCount).toBe(1);
   });
 
@@ -436,7 +442,7 @@ test.describe('Category 11: Color Filters', () => {
     await applyColorFilter(page, 'Blue');
 
     // Should show red + blue parts (2 parts)
-    const visibleCount = await page.locator('#tableContainer table tbody tr:not(.hidden)').count();
+    const visibleCount = await page.locator('#tableContainer table tbody tr:not([data-color-hidden])').count();
     expect(visibleCount).toBe(2);
   });
 
@@ -453,7 +459,7 @@ test.describe('Category 11: Color Filters', () => {
     await applyColorFilter(page, 'Red');
 
     // Should show all parts again
-    const visibleCount = await page.locator('#tableContainer table tbody tr:not(.hidden)').count();
+    const visibleCount = await page.locator('#tableContainer table tbody tr:not([data-color-hidden])').count();
     expect(visibleCount).toBe(3);
   });
 
