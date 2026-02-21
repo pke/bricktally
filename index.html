@@ -249,11 +249,14 @@
     <script>
         // Service Worker Registration
         var waitingWorker = null;
+        var userRequestedUpdate = false;
 
         if ('serviceWorker' in navigator) {
-            // Reload once the new SW takes control
+            // Reload once the new SW takes control (only if user clicked "Update Now")
             navigator.serviceWorker.addEventListener('controllerchange', function() {
-                window.location.reload();
+                if (userRequestedUpdate) {
+                    window.location.reload();
+                }
             });
 
             window.addEventListener('load', function() {
@@ -288,7 +291,7 @@
         }
 
         function showWhatsNewModal() {
-            fetch('/changelog.json')
+            fetch('/changelog.json?_=' + Date.now())
                 .then(function(response) { return response.json(); })
                 .then(function(changelog) {
                     var lastSeen = localStorage.getItem('lastSeenVersion') || '0.0.0';
@@ -362,6 +365,7 @@
             updateBtn.textContent = 'Update Now';
             updateBtn.onclick = function() {
                 if (version) localStorage.setItem('lastSeenVersion', version);
+                userRequestedUpdate = true;
                 if (waitingWorker) {
                     waitingWorker.postMessage({ type: 'SKIP_WAITING' });
                 } else {
@@ -383,6 +387,17 @@
 
             overlay.appendChild(modal);
             document.body.appendChild(overlay);
+
+            // Dismiss on overlay click or Escape key
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) laterBtn.click();
+            });
+            document.addEventListener('keydown', function onEscape(e) {
+                if (e.key === 'Escape' && document.querySelector('.whats-new-overlay')) {
+                    laterBtn.click();
+                    document.removeEventListener('keydown', onEscape);
+                }
+            });
         }
 
         var partsData = [];
@@ -3398,7 +3413,7 @@
     <footer class="app-footer">
         <span class="footer-tagline">Made with ❤️ for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog.html" id="versionInfo" class="footer-version-link">v1.20.1 (fe28700)</a>
+        <a href="/changelog.html" id="versionInfo" class="footer-version-link">v1.20.2 (adb2963)</a>
     </footer>
 </body>
 

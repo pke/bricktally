@@ -27,12 +27,12 @@ function escapeHtml(text) {
     .replace(/"/g, '&quot;');
 }
 
-function buildReleaseHtml(release, isFirst) {
+function buildReleaseHtml(release) {
   const entries = release.entries
     .map(e => `        <li>${escapeHtml(e)}</li>`)
     .join('\n');
 
-  return `    <div class="changelog-release${isFirst ? '' : ''}">
+  return `    <div class="changelog-release">
       <div class="changelog-release-header">
         <span class="changelog-version">v${escapeHtml(release.version)}</span>
         <span class="changelog-date">${escapeHtml(release.date)}</span>
@@ -45,7 +45,7 @@ ${entries}
 }
 
 const releasesHtml = changelog
-  .map((release, i) => buildReleaseHtml(release, i === 0))
+  .map((release) => buildReleaseHtml(release))
   .join('\n\n');
 
 const html = `<!DOCTYPE html>
