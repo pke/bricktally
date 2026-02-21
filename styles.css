@@ -170,8 +170,13 @@ h2 {
   transform: scale(1.2);
 }
 
+#themeIcon {
+  font-size: 0;
+}
+
 #themeIcon::before {
   content: '🌙';
+  font-size: 24px;
 }
 
 body.dark-mode #themeIcon::before {
