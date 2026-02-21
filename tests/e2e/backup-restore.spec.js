@@ -16,19 +16,17 @@ import {
  */
 async function seedSet(page, fullNumber, name, year, numParts, progress, lastAccessed) {
   await page.evaluate(({ fullNumber, name, year, numParts, progress, lastAccessed }) => {
-    const info = {
+    const data = {
       number: fullNumber.split('-')[0],
       fullNumber: fullNumber,
       name: name,
       year: year,
       numParts: numParts,
       imageUrl: '/assets/favicon.svg',
-      lastAccessed: lastAccessed
+      lastAccessed: lastAccessed,
+      progress: progress || ''
     };
-    localStorage.setItem('setInfo_' + fullNumber, JSON.stringify(info));
-    if (progress) {
-      localStorage.setItem('set_' + fullNumber, progress);
-    }
+    localStorage.setItem('set_' + fullNumber, JSON.stringify(data));
   }, { fullNumber, name, year, numParts, progress, lastAccessed });
 }
 
@@ -350,8 +348,9 @@ test.describe('Category 15: Backup/Restore', () => {
     await page.click('#executeRestoreBtn');
 
     // Verify local progress was preserved (0:5,1:3,2:2)
-    const progress = await getLocalStorage(page, 'set_99001-1');
-    expect(progress).toBe('0:5,1:3,2:2');
+    const raw = await getLocalStorage(page, 'set_99001-1');
+    const data = JSON.parse(raw);
+    expect(data.progress).toBe('0:5,1:3,2:2');
   });
 
   test('15.13: Restore overwrites set when user chooses restore', async ({ page }) => {
@@ -384,8 +383,9 @@ test.describe('Category 15: Backup/Restore', () => {
     await page.click('#executeRestoreBtn');
 
     // Verify progress was overwritten
-    const progress = await getLocalStorage(page, 'set_99001-1');
-    expect(progress).toBe('0:5,1:3,2:2');
+    const raw = await getLocalStorage(page, 'set_99001-1');
+    const data = JSON.parse(raw);
+    expect(data.progress).toBe('0:5,1:3,2:2');
   });
 
   // ─── Restore Multi-Set ────────────────────────────────────────────
@@ -461,8 +461,8 @@ test.describe('Category 15: Backup/Restore', () => {
     await loadTestSet(page, '99001');
 
     // Get initial lastAccessed
-    const infoBefore = JSON.parse(await getLocalStorage(page, 'setInfo_99001-1'));
-    const initialLastAccessed = infoBefore.lastAccessed;
+    const dataBefore = JSON.parse(await getLocalStorage(page, 'set_99001-1'));
+    const initialLastAccessed = dataBefore.lastAccessed;
 
     // Wait a bit then count a part
     await page.waitForTimeout(50);
@@ -470,8 +470,8 @@ test.describe('Category 15: Backup/Restore', () => {
     await waitForProgressUpdate(page);
 
     // lastAccessed should be updated
-    const infoAfter = JSON.parse(await getLocalStorage(page, 'setInfo_99001-1'));
-    expect(infoAfter.lastAccessed).toBeGreaterThan(initialLastAccessed);
+    const dataAfter = JSON.parse(await getLocalStorage(page, 'set_99001-1'));
+    expect(dataAfter.lastAccessed).toBeGreaterThan(initialLastAccessed);
   });
 
   // ─── Restore Cancel ───────────────────────────────────────────────
@@ -503,8 +503,8 @@ test.describe('Category 15: Backup/Restore', () => {
     await expect(page.locator('.restore-modal')).toBeHidden();
 
     // No set should have been added
-    const setInfo = await getLocalStorage(page, 'setInfo_10294-1');
-    expect(setInfo).toBeNull();
+    const setData = await getLocalStorage(page, 'set_10294-1');
+    expect(setData).toBeNull();
   });
 
   // ─── Backup File Format Validation ────────────────────────────────
@@ -544,14 +544,11 @@ test.describe('Category 15: Backup/Restore', () => {
     await page.click('.set-history-item[data-set-number="99001-1"] .backup');
     await downloadPromise;
 
-    // Check backupInfo was persisted
-    const backupInfo = JSON.parse(await getLocalStorage(page, 'backupInfo_99001-1'));
-    expect(backupInfo).toBeTruthy();
-    expect(backupInfo.lastBackedUp).toBeGreaterThan(0);
-    expect(backupInfo.progress).toBe('0:5,1:3');
-    expect(backupInfo.percentage).toBe(80);
-    expect(backupInfo.completed).toBe(8);
-    expect(backupInfo.total).toBe(10);
+    // Check backup state was persisted in consolidated set data
+    const setData = JSON.parse(await getLocalStorage(page, 'set_99001-1'));
+    expect(setData).toBeTruthy();
+    expect(setData.backup).toBeGreaterThan(0);
+    expect(setData.backupCompleted).toBe(8);
   });
 
   // ─── Smart Delete Dialog ──────────────────────────────────────────
@@ -561,13 +558,12 @@ test.describe('Category 15: Backup/Restore', () => {
     await clearLocalStorage(page);
     await seedSet(page, '99001-1', 'Basic Parts Set', 2024, 10, '0:5,1:3', Date.now());
 
-    // Seed matching backupInfo (same progress)
+    // Add backup fields to consolidated object (backupCompleted matches current = current)
     await page.evaluate(() => {
-      localStorage.setItem('backupInfo_99001-1', JSON.stringify({
-        lastBackedUp: Date.now(),
-        progress: '0:5,1:3',
-        percentage: 80
-      }));
+      const data = JSON.parse(localStorage.getItem('set_99001-1'));
+      data.backup = Date.now();
+      data.backupCompleted = 8; // 5+3 = 8 pieces completed
+      localStorage.setItem('set_99001-1', JSON.stringify(data));
     });
     await page.reload();
 
@@ -593,15 +589,12 @@ test.describe('Category 15: Backup/Restore', () => {
     await clearLocalStorage(page);
     await seedSet(page, '99001-1', 'Basic Parts Set', 2024, 10, '0:5,1:3,2:2', Date.now());
 
-    // Seed outdated backupInfo (less progress)
+    // Add outdated backup fields (less progress than current)
     await page.evaluate(() => {
-      localStorage.setItem('backupInfo_99001-1', JSON.stringify({
-        lastBackedUp: Date.now() - 86400000,
-        progress: '0:5,1:3',
-        percentage: 80,
-        completed: 8,
-        total: 10
-      }));
+      const data = JSON.parse(localStorage.getItem('set_99001-1'));
+      data.backup = Date.now() - 86400000;
+      data.backupCompleted = 8; // 5+3 = 8 pieces, but current is 10/10
+      localStorage.setItem('set_99001-1', JSON.stringify(data));
     });
     await page.reload();
 
@@ -658,8 +651,8 @@ test.describe('Category 15: Backup/Restore', () => {
     await expect(page.locator('.set-history-item[data-set-number="99001-1"]')).toHaveCount(0);
 
     // localStorage should be cleaned
-    const setInfo = await getLocalStorage(page, 'setInfo_99001-1');
-    expect(setInfo).toBeNull();
+    const setData = await getLocalStorage(page, 'set_99001-1');
+    expect(setData).toBeNull();
   });
 
   test('15.24: Delete without backup removes set', async ({ page }) => {
@@ -679,20 +672,21 @@ test.describe('Category 15: Backup/Restore', () => {
     // Set should be gone
     await expect(page.locator('.delete-modal')).toBeHidden();
     await expect(page.locator('.set-history-item[data-set-number="99001-1"]')).toHaveCount(0);
-    const setInfo = await getLocalStorage(page, 'setInfo_99001-1');
-    expect(setInfo).toBeNull();
+    const setData = await getLocalStorage(page, 'set_99001-1');
+    expect(setData).toBeNull();
   });
 
-  test('15.25: Delete also removes backupInfo key', async ({ page }) => {
+  test('15.25: Delete also removes all set data', async ({ page }) => {
     await page.goto('/');
     await clearLocalStorage(page);
     await seedSet(page, '99001-1', 'Basic Parts Set', 2024, 10, '0:5', Date.now());
+
+    // Add backup fields to consolidated object
     await page.evaluate(() => {
-      localStorage.setItem('backupInfo_99001-1', JSON.stringify({
-        lastBackedUp: Date.now(),
-        progress: '0:5',
-        percentage: 50
-      }));
+      const data = JSON.parse(localStorage.getItem('set_99001-1'));
+      data.backup = Date.now();
+      data.backupCompleted = 5;
+      localStorage.setItem('set_99001-1', JSON.stringify(data));
     });
     await page.reload();
 
@@ -702,8 +696,9 @@ test.describe('Category 15: Backup/Restore', () => {
     await expect(page.locator('.delete-modal')).toBeVisible({ timeout: 5000 });
     await page.click('#confirmDeleteBtn');
 
-    const backupInfo = await getLocalStorage(page, 'backupInfo_99001-1');
-    expect(backupInfo).toBeNull();
+    // Entire set_ key should be removed
+    const setData = await getLocalStorage(page, 'set_99001-1');
+    expect(setData).toBeNull();
   });
 
   // ─── Restore Dialog Images ────────────────────────────────────────
@@ -736,18 +731,17 @@ test.describe('Category 15: Backup/Restore', () => {
 
   // ─── Restore Clears backupInfo ────────────────────────────────────
 
-  test('15.27: Restoring a set clears its backupInfo', async ({ page }) => {
+  test('15.27: Restoring a set clears its backup state', async ({ page }) => {
     await page.goto('/');
     await clearLocalStorage(page);
 
-    // Seed local set with backup info
+    // Seed local set with backup fields in consolidated object
     await seedSet(page, '99001-1', 'Basic Parts Set', 2024, 10, '0:3', Date.now() - 86400000 * 7);
     await page.evaluate(() => {
-      localStorage.setItem('backupInfo_99001-1', JSON.stringify({
-        lastBackedUp: Date.now() - 86400000 * 7,
-        progress: '0:3',
-        percentage: 30
-      }));
+      const data = JSON.parse(localStorage.getItem('set_99001-1'));
+      data.backup = Date.now() - 86400000 * 7;
+      data.backupCompleted = 3;
+      localStorage.setItem('set_99001-1', JSON.stringify(data));
     });
     await page.reload();
 
@@ -769,9 +763,13 @@ test.describe('Category 15: Backup/Restore', () => {
     await page.locator('input[type="radio"][value="import"]').first().check();
     await page.click('#executeRestoreBtn');
 
-    // backupInfo should be cleared since local state diverged
-    const backupInfo = await getLocalStorage(page, 'backupInfo_99001-1');
-    expect(backupInfo).toBeNull();
+    // Backup fields should be cleared since restored data replaces the object
+    const raw = await getLocalStorage(page, 'set_99001-1');
+    const setData = JSON.parse(raw);
+    expect(setData.backup).toBeUndefined();
+    expect(setData.backupCompleted).toBeUndefined();
+    // But the set data itself should exist with restored progress
+    expect(setData.progress).toBe('0:5,1:3');
   });
 
   // ─── Delete Modal Cancel ──────────────────────────────────────────

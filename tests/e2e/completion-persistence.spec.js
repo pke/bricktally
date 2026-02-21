@@ -12,7 +12,8 @@ import {
   setLocalStorage,
   clearLocalStorage,
   waitForProgressUpdate,
-  toggleHideComplete
+  toggleHideComplete,
+  getPartCount
 } from '../helpers/test-utils.js';
 
 test.describe('Category 6: Completion & Celebration', () => {
@@ -197,11 +198,16 @@ test.describe('Category 8: localStorage Persistence', () => {
     await incrementPart(page, 1);
     await waitForProgressUpdate(page);
 
-    // Check localStorage
-    const savedState = await getLocalStorage(page, 'set_99001-1');
-    expect(savedState).toBeTruthy();
-    expect(savedState).toContain('3001_Red:5'); // 5 red bricks
-    expect(savedState).toContain('3004_Blue:1'); // 1 blue brick
+    // Check localStorage — progress is compressed (no colon)
+    const raw = await getLocalStorage(page, 'set_99001-1');
+    expect(raw).toBeTruthy();
+    const data = JSON.parse(raw);
+    expect(data.progress).toBeTruthy();
+    expect(data.progress).not.toContain(':');
+
+    // Verify counts via UI
+    expect(await getPartCount(page, 0)).toBe(5); // 5 red bricks
+    expect(await getPartCount(page, 1)).toBe(1); // 1 blue brick
   });
 
   test('8.2: Save state with spares', async ({ page }) => {
@@ -223,11 +229,18 @@ test.describe('Category 8: localStorage Persistence', () => {
 
     await waitForProgressUpdate(page);
 
-    // Check localStorage
-    const savedState = await getLocalStorage(page, 'set_99003-1');
-    expect(savedState).toBeTruthy();
-    expect(savedState).toContain('3001_Red:5'); // Regular
-    expect(savedState).toContain('3001_Red_s:'); // Spare (with _s suffix)
+    // Check localStorage — progress is compressed (no colon)
+    const raw = await getLocalStorage(page, 'set_99003-1');
+    expect(raw).toBeTruthy();
+    const data = JSON.parse(raw);
+    expect(data.progress).toBeTruthy();
+    expect(data.progress).not.toContain(':');
+
+    // Verify regular parts via UI
+    expect(await getPartCount(page, 0)).toBe(5); // Regular red brick
+    // Verify spare part was saved
+    const spareCount = await getPartCount(page, parseInt(partId));
+    expect(spareCount).toBeGreaterThan(0);
   });
 
   test('8.3: Restore state on reload', async ({ page, context }) => {
@@ -283,9 +296,11 @@ test.describe('Category 8: localStorage Persistence', () => {
     // Wait for reset
     await page.waitForTimeout(500);
 
-    // Check localStorage is cleared
+    // Check progress is cleared but set data still exists
     savedState = await getLocalStorage(page, 'set_99001-1');
-    expect(savedState).toBeNull();
+    expect(savedState).toBeTruthy();
+    const data = JSON.parse(savedState);
+    expect(data.progress).toBe('');
 
     // Counts should be reset
     const count = await page.locator('#count-0 .counted').textContent();
@@ -316,18 +331,13 @@ test.describe('Category 8: localStorage Persistence', () => {
     expect(set1State).toBeTruthy();
     expect(set2State).toBeTruthy();
 
-    // Check history has both sets (stored as setInfo_<setNumber>)
-    const setInfo1 = await getLocalStorage(page, 'setInfo_99001-1');
-    const setInfo2 = await getLocalStorage(page, 'setInfo_99002-1');
+    // Parse consolidated objects and verify they contain correct data
+    const set1Data = JSON.parse(set1State);
+    const set2Data = JSON.parse(set2State);
 
-    expect(setInfo1).toBeTruthy();
-    expect(setInfo2).toBeTruthy();
-
-    // Parse and verify the set info contains correct data
-    const set1Info = JSON.parse(setInfo1);
-    const set2Info = JSON.parse(setInfo2);
-
-    expect(set1Info.name).toContain('Basic Parts Set');
-    expect(set2Info.name).toContain('Set with Minifigures');
+    expect(set1Data.name).toContain('Basic Parts Set');
+    expect(set1Data.progress).toBeTruthy();
+    expect(set2Data.name).toContain('Set with Minifigures');
+    expect(set2Data.progress).toBeTruthy();
   });
 });
