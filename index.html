@@ -248,8 +248,24 @@
 
     <script>
         // Service Worker Registration
+        var waitingWorker = null;
+
         if ('serviceWorker' in navigator) {
+            // Reload once the new SW takes control
+            navigator.serviceWorker.addEventListener('controllerchange', function() {
+                window.location.reload();
+            });
+
             window.addEventListener('load', function() {
+                // Store current version for changelog comparison
+                var versionEl = document.getElementById('versionInfo');
+                if (versionEl) {
+                    var versionMatch = versionEl.textContent.match(/v([\d.]+)/);
+                    if (versionMatch && !localStorage.getItem('lastSeenVersion')) {
+                        localStorage.setItem('lastSeenVersion', versionMatch[1]);
+                    }
+                }
+
                 navigator.serviceWorker.register('/sw.js')
                     .then(function(registration) {
                         console.log('[BrickTally:ServiceWorker] ServiceWorker registered');
@@ -259,9 +275,8 @@
                             var newWorker = registration.installing;
                             newWorker.addEventListener('statechange', function() {
                                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    if (confirm('New version available. Reload to update?')) {
-                                        window.location.reload();
-                                    }
+                                    waitingWorker = newWorker;
+                                    showWhatsNewModal();
                                 }
                             });
                         });
@@ -270,6 +285,104 @@
                         console.log('[BrickTally:ServiceWorker] ServiceWorker registration failed:', error);
                     });
             });
+        }
+
+        function showWhatsNewModal() {
+            fetch('/changelog.json')
+                .then(function(response) { return response.json(); })
+                .then(function(changelog) {
+                    var lastSeen = localStorage.getItem('lastSeenVersion') || '0.0.0';
+                    // Collect entries from all versions newer than lastSeen
+                    var newEntries = [];
+                    var latestVersion = changelog.length > 0 ? changelog[0].version : lastSeen;
+
+                    changelog.forEach(function(release) {
+                        if (compareVersions(release.version, lastSeen) > 0) {
+                            newEntries = newEntries.concat(release.entries);
+                        }
+                    });
+
+                    buildWhatsNewModal(latestVersion, newEntries);
+                })
+                .catch(function() {
+                    // changelog.json unavailable — show simple update prompt
+                    buildWhatsNewModal(null, []);
+                });
+        }
+
+        function compareVersions(a, b) {
+            var pa = a.split('.').map(Number);
+            var pb = b.split('.').map(Number);
+            for (var i = 0; i < 3; i++) {
+                if ((pa[i] || 0) > (pb[i] || 0)) return 1;
+                if ((pa[i] || 0) < (pb[i] || 0)) return -1;
+            }
+            return 0;
+        }
+
+        function buildWhatsNewModal(version, entries) {
+            var overlay = document.createElement('div');
+            overlay.className = 'whats-new-overlay';
+
+            var modal = document.createElement('div');
+            modal.className = 'whats-new-modal';
+
+            var title = document.createElement('h2');
+            title.className = 'whats-new-title';
+            title.textContent = '\u2728 What\u2019s New in BrickTally';
+            modal.appendChild(title);
+
+            if (entries.length > 0) {
+                var list = document.createElement('ul');
+                list.className = 'whats-new-entries';
+                entries.forEach(function(entry) {
+                    var li = document.createElement('li');
+                    li.textContent = entry;
+                    list.appendChild(li);
+                });
+                modal.appendChild(list);
+
+                var changelogLink = document.createElement('a');
+                changelogLink.href = '/changelog.html';
+                changelogLink.className = 'whats-new-changelog-link';
+                changelogLink.textContent = 'See full changelog →';
+                modal.appendChild(changelogLink);
+            } else {
+                var msg = document.createElement('p');
+                msg.className = 'whats-new-message';
+                msg.textContent = 'A new version is available.';
+                modal.appendChild(msg);
+            }
+
+            var actions = document.createElement('div');
+            actions.className = 'whats-new-actions';
+
+            var updateBtn = document.createElement('button');
+            updateBtn.className = 'whats-new-update-btn';
+            updateBtn.textContent = 'Update Now';
+            updateBtn.onclick = function() {
+                if (version) localStorage.setItem('lastSeenVersion', version);
+                if (waitingWorker) {
+                    waitingWorker.postMessage({ type: 'SKIP_WAITING' });
+                } else {
+                    window.location.reload();
+                }
+            };
+
+            var laterBtn = document.createElement('button');
+            laterBtn.className = 'whats-new-later-btn';
+            laterBtn.textContent = 'Maybe Later';
+            laterBtn.onclick = function() {
+                if (version) localStorage.setItem('lastSeenVersion', version);
+                overlay.remove();
+            };
+
+            actions.appendChild(updateBtn);
+            actions.appendChild(laterBtn);
+            modal.appendChild(actions);
+
+            overlay.appendChild(modal);
+            document.body.appendChild(overlay);
         }
 
         var partsData = [];
@@ -3285,7 +3398,7 @@
     <footer class="app-footer">
         <span class="footer-tagline">Made with ❤️ for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <span id="versionInfo">v1.19.0 (9495a65)</span>
+        <a href="/changelog.html" id="versionInfo" class="footer-version-link">v1.20.0 (0501821)</a>
     </footer>
 </body>
 

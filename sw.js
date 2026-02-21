@@ -1,6 +1,6 @@
 // BrickTally Service Worker
 // Version: 1
-const CACHE_VERSION = 'v20260221-220111';
+const CACHE_VERSION = 'v20260221-225449';
 const STATIC_CACHE = `bricktally-static-${CACHE_VERSION}`;
 const API_CACHE = `bricktally-api-${CACHE_VERSION}`;
 const IMAGE_CACHE = `bricktally-images-${CACHE_VERSION}`;
@@ -21,7 +21,9 @@ const STATIC_ASSETS = [
     '/assets/og-image.png',
     '/assets/fireworks.json',
     '/js/lottie.min.js',
-    '/js/pako.min.js'
+    '/js/pako.min.js',
+    '/changelog.html',
+    '/changelog.json'
 ];
 
 // Install event - precache static assets
@@ -33,10 +35,6 @@ self.addEventListener('install', (event) => {
             .then((cache) => {
                 console.log('[BrickTally:ServiceWorker] Precaching static assets');
                 return cache.addAll(STATIC_ASSETS);
-            })
-            .then(() => {
-                console.log('[BrickTally:ServiceWorker] Skip waiting');
-                return self.skipWaiting();
             })
             .catch((error) => {
                 console.error('[BrickTally:ServiceWorker] Precaching failed:', error);
@@ -69,6 +67,13 @@ self.addEventListener('activate', (event) => {
                 return self.clients.claim();
             })
     );
+});
+
+// Message event - controlled skipWaiting from page
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
 });
 
 // Fetch event - route requests to appropriate caching strategy
@@ -129,6 +134,11 @@ function isStaticAsset(url) {
 
     // JavaScript files
     if (url.pathname.startsWith('/js/')) {
+        return true;
+    }
+
+    // JSON data files
+    if (url.pathname === '/changelog.json') {
         return true;
     }
 

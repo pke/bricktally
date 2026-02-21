@@ -21,6 +21,8 @@ else
   CACHED_PATTERNS=(
     "index.html"
     "verify.html"
+    "changelog.html"
+    "changelog.json"
     "styles.css"
     "assets/"
     "js/"

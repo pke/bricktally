@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Changelog - BrickTally</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+
+  <!-- Mobile Web App Meta Tags -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="BrickTally">
+
+  <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body class="changelog-page">
+  <div class="container">
+    <button class="theme-toggle" id="themeToggle" onclick="toggleDarkMode()">
+      <span id="themeIcon">🌙</span>
+    </button>
+
+    <h1 class="changelog-title">What’s New in BrickTally</h1>
+    <p class="changelog-subtitle">Every brick-counting improvement, one release at a time.</p>
+
+    <div id="changelogContent">
+    <div class="changelog-release">
+      <div class="changelog-release-header">
+        <span class="changelog-version">v1.18.1</span>
+        <span class="changelog-date">2025-02-21</span>
+      </div>
+      <h2 class="changelog-release-title">Tidying Up</h2>
+      <ul class="changelog-entries">
+        <li>No more awkward backup warnings when you haven't even started counting</li>
+        <li>Images now gracefully retry through a backup route if your browser is feeling overprotective</li>
+      </ul>
+    </div>
+
+    <div class="changelog-release">
+      <div class="changelog-release-header">
+        <span class="changelog-version">v1.18.0</span>
+        <span class="changelog-date">2025-02-21</span>
+      </div>
+      <h2 class="changelog-release-title">Rebrickable BFFs</h2>
+      <ul class="changelog-entries">
+        <li>Export your counted parts as a Rebrickable-compatible CSV — finally, your hard work travels!</li>
+      </ul>
+    </div>
+
+    <div class="changelog-release">
+      <div class="changelog-release-header">
+        <span class="changelog-version">v1.17.0</span>
+        <span class="changelog-date">2025-02-20</span>
+      </div>
+      <h2 class="changelog-release-title">Squeeze Play</h2>
+      <ul class="changelog-entries">
+        <li>Your progress is now compressed before saving — big sets like the Millennium Falcon use way less storage</li>
+      </ul>
+    </div>
+
+    <div class="changelog-release">
+      <div class="changelog-release-header">
+        <span class="changelog-version">v1.16.0</span>
+        <span class="changelog-date">2025-02-19</span>
+      </div>
+      <h2 class="changelog-release-title">Safe &amp; Sound</h2>
+      <ul class="changelog-entries">
+        <li>Backup &amp; restore your sets as .bricktally files — never lose your counting progress again</li>
+        <li>Smart delete dialog warns you about unsaved work before nuking a set</li>
+        <li>Hide-complete toggle now lives in the section headers where it belongs</li>
+      </ul>
+    </div>
+
+    <div class="changelog-release">
+      <div class="changelog-release-header">
+        <span class="changelog-version">v1.15.0</span>
+        <span class="changelog-date">2025-02-18</span>
+      </div>
+      <h2 class="changelog-release-title">Polish &amp; Shine</h2>
+      <ul class="changelog-entries">
+        <li>Compact desktop header puts the set image and info side by side</li>
+        <li>No more layout jiggle when the decrement button appears</li>
+        <li>Parts only show complete for their own count — spare parts don't steal the checkmark</li>
+        <li>Increment button shows a checkmark when you're one piece away from done</li>
+      </ul>
+    </div>
+
+    <div class="changelog-release">
+      <div class="changelog-release-header">
+        <span class="changelog-version">v1.14.0</span>
+        <span class="changelog-date">2025-02-17</span>
+      </div>
+      <h2 class="changelog-release-title">Badge of Honor</h2>
+      <ul class="changelog-entries">
+        <li>Generate a shareable PNG badge showing your set completion — perfect for eBay listings!</li>
+        <li>Search bar simplified — just type and go, no extra button needed</li>
+      </ul>
+    </div>
+
+    <div class="changelog-release">
+      <div class="changelog-release-header">
+        <span class="changelog-version">v1.13.0</span>
+        <span class="changelog-date">2025-02-15</span>
+      </div>
+      <h2 class="changelog-release-title">Spare Parts Party</h2>
+      <ul class="changelog-entries">
+        <li>Spare parts now get their own section — count them separately from the main build</li>
+        <li>Minifigure support landed — track your little people too</li>
+      </ul>
+    </div>
+
+    <div class="changelog-release">
+      <div class="changelog-release-header">
+        <span class="changelog-version">v1.12.0</span>
+        <span class="changelog-date">2025-02-13</span>
+      </div>
+      <h2 class="changelog-release-title">Zoom Zoom</h2>
+      <ul class="changelog-entries">
+        <li>Click any part image to zoom in with a slick lightbox view</li>
+        <li>Parts break out of the table when zoomed — very dramatic</li>
+      </ul>
+    </div>
+
+    <div class="changelog-release">
+      <div class="changelog-release-header">
+        <span class="changelog-version">v1.11.0</span>
+        <span class="changelog-date">2025-02-12</span>
+      </div>
+      <h2 class="changelog-release-title">Going Offline</h2>
+      <ul class="changelog-entries">
+        <li>BrickTally is now a full PWA — install it and count bricks even without internet</li>
+        <li>Your set history shows right on the main page</li>
+      </ul>
+    </div>
+
+    <div class="changelog-release">
+      <div class="changelog-release-header">
+        <span class="changelog-version">v1.10.0</span>
+        <span class="changelog-date">2025-02-10</span>
+      </div>
+      <h2 class="changelog-release-title">The Beginning</h2>
+      <ul class="changelog-entries">
+        <li>Tap quantities to instantly fill your count — no more mashing +</li>
+        <li>Checkmarks for single-quantity items instead of a lonely increment button</li>
+        <li>Color filters to focus on one color at a time</li>
+      </ul>
+    </div>
+    </div>
+
+    <a href="/" class="back-link">← Back to BrickTally</a>
+  </div>
+
+  <script>
+    function loadDarkMode() {
+      var darkMode = localStorage.getItem('darkMode');
+      if (darkMode === 'true') {
+        document.body.classList.add('dark-mode');
+        updateThemeIcon();
+      }
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+      var isDark = document.body.classList.contains('dark-mode');
+      localStorage.setItem('darkMode', isDark);
+      updateThemeIcon();
+    }
+
+    function updateThemeIcon() {
+      var icon = document.getElementById('themeIcon');
+      if (icon) {
+        icon.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+      }
+    }
+
+    loadDarkMode();
+  </script>
+</body>
+
+</html>

@@ -89,7 +89,7 @@ rm -f package.json.bak
 # Update version in index.html
 GIT_HASH=$(git rev-parse --short HEAD)
 if [ -f "index.html" ]; then
-  sed -i.bak "s|<span id=\"versionInfo\">v[^<]*</span>|<span id=\"versionInfo\">v${NEW_VERSION} (${GIT_HASH})</span>|" "index.html"
+  sed -i.bak "s|id=\"versionInfo\"[^>]*>v[^<]*</|id=\"versionInfo\" class=\"footer-version-link\">v${NEW_VERSION} (${GIT_HASH})</|" "index.html"
   rm -f "index.html.bak"
 fi
 

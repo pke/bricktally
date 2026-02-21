@@ -1,0 +1,94 @@
+[
+  {
+    "version": "1.18.1",
+    "date": "2025-02-21",
+    "title": "Tidying Up",
+    "entries": [
+      "No more awkward backup warnings when you haven't even started counting",
+      "Images now gracefully retry through a backup route if your browser is feeling overprotective"
+    ]
+  },
+  {
+    "version": "1.18.0",
+    "date": "2025-02-21",
+    "title": "Rebrickable BFFs",
+    "entries": [
+      "Export your counted parts as a Rebrickable-compatible CSV — finally, your hard work travels!"
+    ]
+  },
+  {
+    "version": "1.17.0",
+    "date": "2025-02-20",
+    "title": "Squeeze Play",
+    "entries": [
+      "Your progress is now compressed before saving — big sets like the Millennium Falcon use way less storage"
+    ]
+  },
+  {
+    "version": "1.16.0",
+    "date": "2025-02-19",
+    "title": "Safe & Sound",
+    "entries": [
+      "Backup & restore your sets as .bricktally files — never lose your counting progress again",
+      "Smart delete dialog warns you about unsaved work before nuking a set",
+      "Hide-complete toggle now lives in the section headers where it belongs"
+    ]
+  },
+  {
+    "version": "1.15.0",
+    "date": "2025-02-18",
+    "title": "Polish & Shine",
+    "entries": [
+      "Compact desktop header puts the set image and info side by side",
+      "No more layout jiggle when the decrement button appears",
+      "Parts only show complete for their own count — spare parts don't steal the checkmark",
+      "Increment button shows a checkmark when you're one piece away from done"
+    ]
+  },
+  {
+    "version": "1.14.0",
+    "date": "2025-02-17",
+    "title": "Badge of Honor",
+    "entries": [
+      "Generate a shareable PNG badge showing your set completion — perfect for eBay listings!",
+      "Search bar simplified — just type and go, no extra button needed"
+    ]
+  },
+  {
+    "version": "1.13.0",
+    "date": "2025-02-15",
+    "title": "Spare Parts Party",
+    "entries": [
+      "Spare parts now get their own section — count them separately from the main build",
+      "Minifigure support landed — track your little people too"
+    ]
+  },
+  {
+    "version": "1.12.0",
+    "date": "2025-02-13",
+    "title": "Zoom Zoom",
+    "entries": [
+      "Click any part image to zoom in with a slick lightbox view",
+      "Parts break out of the table when zoomed — very dramatic"
+    ]
+  },
+  {
+    "version": "1.11.0",
+    "date": "2025-02-12",
+    "title": "Going Offline",
+    "entries": [
+      "BrickTally is now a full PWA — install it and count bricks even without internet",
+      "Your set history shows right on the main page"
+    ]
+  },
+  {
+    "version": "1.10.0",
+    "date": "2025-02-10",
+    "title": "The Beginning",
+    "entries": [
+      "Tap quantities to instantly fill your count — no more mashing +",
+      "Checkmarks for single-quantity items instead of a lonely increment button",
+      "Color filters to focus on one color at a time"
+    ]
+  }
+]
