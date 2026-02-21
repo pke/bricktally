@@ -1,6 +1,6 @@
 // BrickTally Service Worker
 // Version: 1
-const CACHE_VERSION = 'v20260220-183031';
+const CACHE_VERSION = 'v20260221-025144';
 const STATIC_CACHE = `bricktally-static-${CACHE_VERSION}`;
 const API_CACHE = `bricktally-api-${CACHE_VERSION}`;
 const IMAGE_CACHE = `bricktally-images-${CACHE_VERSION}`;
@@ -20,7 +20,8 @@ const STATIC_ASSETS = [
     '/assets/bricktally-icon-maskable-512.png',
     '/assets/og-image.png',
     '/assets/fireworks.json',
-    '/js/lottie.min.js'
+    '/js/lottie.min.js',
+    '/js/pako.min.js'
 ];
 
 // Install event - precache static assets

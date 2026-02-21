@@ -46,6 +46,7 @@
 
     <link rel="stylesheet" href="/styles.css">
     <script src="/js/lottie.min.js"></script>
+    <script src="/js/pako.min.js"></script>
 </head>
 
 <body>
@@ -304,39 +305,271 @@
             // Currently disabled
         };
 
+        // ─── localStorage helpers ────────────────────────────────────────
+
+        function getSetData(fullNumber) {
+            var raw = localStorage.getItem('set_' + fullNumber);
+            if (!raw) return null;
+            try {
+                var data = JSON.parse(raw);
+                if (data && data.fullNumber) return data;
+                return null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function saveSetData(fullNumber, data) {
+            localStorage.setItem('set_' + fullNumber, JSON.stringify(data));
+        }
+
+        function removeSetData(fullNumber) {
+            localStorage.removeItem('set_' + fullNumber);
+            localStorage.removeItem('setInfo_' + fullNumber);
+            localStorage.removeItem('setData_' + fullNumber);
+            localStorage.removeItem('backupInfo_' + fullNumber);
+        }
+
+        function migrateLocalStorage() {
+            var keysToRemove = [];
+            var keysCount = localStorage.length;
+
+            for (var i = 0; i < keysCount; i++) {
+                var key = localStorage.key(i);
+                if (!key || !key.startsWith('setInfo_')) continue;
+
+                var fullNumber = key.substring('setInfo_'.length);
+                var infoStr = localStorage.getItem(key);
+                if (!infoStr) continue;
+
+                try {
+                    var info = JSON.parse(infoStr);
+                } catch (e) {
+                    continue;
+                }
+
+                // Check if set_ already holds new-format JSON
+                var existingSetValue = localStorage.getItem('set_' + fullNumber);
+                if (existingSetValue && existingSetValue.charAt(0) === '{') {
+                    try {
+                        var parsed = JSON.parse(existingSetValue);
+                        if (parsed.fullNumber) {
+                            keysToRemove.push(key);
+                            continue;
+                        }
+                    } catch (e) {
+                        // Not valid JSON, treat as old progress string
+                    }
+                }
+
+                // Build consolidated object
+                var consolidated = {
+                    number: info.number,
+                    fullNumber: info.fullNumber,
+                    name: info.name,
+                    year: info.year,
+                    numParts: info.numParts,
+                    imageUrl: info.imageUrl,
+                    lastAccessed: info.lastAccessed,
+                    progress: existingSetValue || ''
+                };
+
+                localStorage.setItem('set_' + fullNumber, JSON.stringify(consolidated));
+                keysToRemove.push(key);
+                keysToRemove.push('setData_' + fullNumber);
+            }
+
+            keysToRemove.forEach(function(k) {
+                localStorage.removeItem(k);
+            });
+        }
+
+        // ─── Progress compression helpers ──────────────────────────────
+
+        function compressProgress(parts, counts) {
+            var PROGRESS_VERSION = 1;
+            var pickedEntries = [];
+            var remainingEntries = [];
+
+            parts.forEach(function(part) {
+                var key = getPartKey(part);
+                var picked = counts[key] || 0;
+                var type;
+                if (part.type === 'minifig') type = 2;
+                else if (part.isSpare) type = 1;
+                else type = 0;
+
+                if (picked > 0 && picked < part.quantity) {
+                    pickedEntries.push([part.partNum, part.colorId || 0, picked, type]);
+                    remainingEntries.push([part.partNum, part.colorId || 0, part.quantity - picked, type]);
+                } else if (picked >= part.quantity) {
+                    pickedEntries.push([part.partNum, part.colorId || 0, picked, type]);
+                } else {
+                    remainingEntries.push([part.partNum, part.colorId || 0, part.quantity, type]);
+                }
+            });
+
+            var usePicked = pickedEntries.length <= remainingEntries.length;
+            var mode = usePicked ? 0 : 1;
+            var entries = usePicked ? pickedEntries : remainingEntries;
+
+            // Mode 0 with no entries = nothing picked = 0%
+            if (mode === 0 && entries.length === 0) return '';
+
+            var arr = [PROGRESS_VERSION, mode];
+            for (var i = 0; i < entries.length; i++) {
+                arr.push(entries[i]);
+            }
+
+            var json = JSON.stringify(arr);
+            var compressed = pako.deflateRaw(new TextEncoder().encode(json), { level: 9 });
+
+            var binary = '';
+            for (var j = 0; j < compressed.length; j++) {
+                binary += String.fromCharCode(compressed[j]);
+            }
+            return btoa(binary)
+                .replace(/\+/g, '-')
+                .replace(/\//g, '_')
+                .replace(/=+$/, '');
+        }
+
+        function decompressProgress(progressString, parts) {
+            var counts = {};
+
+            if (!progressString) return counts;
+
+            // Old format: contains colon (e.g. "3001_Red:5,3004_Blue:3")
+            if (progressString.indexOf(':') !== -1) {
+                progressString.split(',').forEach(function(part) {
+                    if (!part) return;
+                    var split = part.split(':');
+                    counts[split[0]] = parseInt(split[1]) || 0;
+                });
+                return counts;
+            }
+
+            // New compressed format: base64url -> inflate -> JSON
+            try {
+                var base64 = progressString.replace(/-/g, '+').replace(/_/g, '/');
+                while (base64.length % 4 !== 0) base64 += '=';
+                var binary = atob(base64);
+                var bytes = new Uint8Array(binary.length);
+                for (var i = 0; i < binary.length; i++) {
+                    bytes[i] = binary.charCodeAt(i);
+                }
+
+                var inflated = pako.inflateRaw(bytes, { to: 'string' });
+                var arr = JSON.parse(inflated);
+
+                var mode = arr[1]; // 0 = picked, 1 = remaining
+
+                // Build lookup: partNum|colorId|type -> { key, quantity }
+                var lookup = {};
+                parts.forEach(function(part) {
+                    var key = getPartKey(part);
+                    var type;
+                    if (part.type === 'minifig') type = 2;
+                    else if (part.isSpare) type = 1;
+                    else type = 0;
+                    lookup[part.partNum + '|' + (part.colorId || 0) + '|' + type] = {
+                        key: key,
+                        quantity: part.quantity
+                    };
+                });
+
+                var seenKeys = {};
+                for (var j = 2; j < arr.length; j++) {
+                    var entry = arr[j];
+                    var lookupKey = entry[0] + '|' + entry[1] + '|' + entry[3];
+                    var info = lookup[lookupKey];
+                    if (!info) continue;
+
+                    if (mode === 0) {
+                        counts[info.key] = entry[2];
+                    } else {
+                        counts[info.key] = info.quantity - entry[2];
+                    }
+                    seenKeys[info.key] = true;
+                }
+
+                // Mode 1: parts NOT in list are fully complete
+                if (mode === 1) {
+                    parts.forEach(function(part) {
+                        var key = getPartKey(part);
+                        if (!seenKeys[key] && !counts.hasOwnProperty(key)) {
+                            counts[key] = part.quantity;
+                        }
+                    });
+                }
+
+                return counts;
+            } catch (e) {
+                console.error('Failed to decompress progress:', e);
+                return counts;
+            }
+        }
+
+        function calculateProgressCompressed(numParts, progressString) {
+            if (!progressString) return { completed: 0, total: numParts, percentage: 0 };
+
+            try {
+                var base64 = progressString.replace(/-/g, '+').replace(/_/g, '/');
+                while (base64.length % 4 !== 0) base64 += '=';
+                var binary = atob(base64);
+                var bytes = new Uint8Array(binary.length);
+                for (var i = 0; i < binary.length; i++) {
+                    bytes[i] = binary.charCodeAt(i);
+                }
+                var inflated = pako.inflateRaw(bytes, { to: 'string' });
+                var arr = JSON.parse(inflated);
+
+                var mode = arr[1];
+                var sum = 0;
+                for (var j = 2; j < arr.length; j++) {
+                    sum += arr[j][2];
+                }
+
+                var completed = (mode === 0) ? sum : numParts - sum;
+                var percentage = numParts > 0 ? Math.round((completed / numParts) * 100) : 0;
+                return { completed: completed, total: numParts, percentage: percentage };
+            } catch (e) {
+                return { completed: 0, total: numParts, percentage: 0 };
+            }
+        }
+
         function saveSetInfo(setNumber, setData) {
-            // Save set metadata for set history
-            var setInfo = {
-                number: setNumber.split('-')[0],
-                fullNumber: setNumber,
-                name: setData.name,
-                year: setData.year,
-                numParts: setData.num_parts || 0,
-                imageUrl: setData.set_img_url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="50" height="50"%3E%3Crect width="50" height="50" fill="%23ddd"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="10" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E',
-                lastAccessed: Date.now()
-            };
-            localStorage.setItem('setInfo_' + setNumber, JSON.stringify(setInfo));
+            var existing = getSetData(setNumber) || {};
+            existing.number = setNumber.split('-')[0];
+            existing.fullNumber = setNumber;
+            existing.name = setData.name;
+            existing.year = setData.year;
+            existing.numParts = setData.num_parts || 0;
+            existing.imageUrl = setData.set_img_url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="50" height="50"%3E%3Crect width="50" height="50" fill="%23ddd"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="10" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E';
+            existing.lastAccessed = Date.now();
+            if (!existing.progress) existing.progress = '';
+            saveSetData(setNumber, existing);
         }
 
         function getSetHistory() {
             var sets = [];
 
-            // Scan localStorage for saved set info
             for (var i = 0; i < localStorage.length; i++) {
                 var key = localStorage.key(i);
-                if (key && key.startsWith('setInfo_')) {
+                if (key && key.startsWith('set_')) {
                     try {
-                        var setInfo = JSON.parse(localStorage.getItem(key));
-                        sets.push(setInfo);
+                        var data = JSON.parse(localStorage.getItem(key));
+                        if (data && data.fullNumber && data.name) {
+                            sets.push(data);
+                        }
                     } catch (e) {
-                        // Skip invalid entries
+                        // Skip non-JSON entries
                     }
                 }
             }
 
-            // Sort by last accessed (most recent first)
             sets.sort(function(a, b) {
-                return b.lastAccessed - a.lastAccessed;
+                return (b.lastAccessed || 0) - (a.lastAccessed || 0);
             });
 
             return sets;
@@ -361,20 +594,11 @@
             historyList.innerHTML = '';
 
             sets.forEach(function(setInfo) {
-                // Calculate progress for this set
-                var savedState = localStorage.getItem('set_' + setInfo.fullNumber);
-                var completedCount = 0;
+                // Calculate progress from the consolidated object
                 var totalCount = setInfo.numParts || 0;
-
-                if (savedState) {
-                    savedState.split(',').forEach(function(part) {
-                        if (!part) return;
-                        var split = part.split(':');
-                        completedCount += parseInt(split[1]) || 0;
-                    });
-                }
-
-                var percentage = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+                var prog = calculateProgressFromString(totalCount, setInfo.progress || '');
+                var completedCount = prog.completed;
+                var percentage = prog.percentage;
 
                 // Note: innerHTML used here with app-controlled data only (setInfo from localStorage written by this app)
                 var item = document.createElement('div');
@@ -424,13 +648,11 @@
             event.stopPropagation();
             pendingDeleteSetNumber = setNumber;
 
-            var infoStr = localStorage.getItem('setInfo_' + setNumber);
-            var info = infoStr ? JSON.parse(infoStr) : {};
-            var setName = info.name || setNumber;
-            var setNum = info.number || setNumber.split('-')[0];
+            var data = getSetData(setNumber) || {};
+            var setName = data.name || setNumber;
+            var setNum = data.number || setNumber.split('-')[0];
 
-            var backupStr = localStorage.getItem('backupInfo_' + setNumber);
-            var currentProgress = localStorage.getItem('set_' + setNumber) || '';
+            var currentProgress = data.progress || '';
 
             var titleEl = document.getElementById('deleteModalTitle');
             var messageEl = document.getElementById('deleteModalMessage');
@@ -440,18 +662,20 @@
 
             var actionsHtml = '';
 
-            if (backupStr) {
-                var backup = JSON.parse(backupStr);
-                if (backup.progress === currentProgress) {
+            if (data.backup) {
+                var currentProg = calculateProgressFromString(data.numParts || 0, currentProgress);
+                var backupCompleted = data.backupCompleted || 0;
+                if (backupCompleted === currentProg.completed) {
                     // State 1: Backup is current
-                    messageEl.innerHTML = '<div class="delete-status-safe">✅ Safe to delete — backed up ' + formatDate(backup.lastBackedUp) + ' (' + backup.percentage + '% complete)</div>';
+                    var backupPercentage = data.numParts > 0 ? Math.round(backupCompleted / data.numParts * 100) : 0;
+                    messageEl.innerHTML = '<div class="delete-status-safe">✅ Safe to delete — backed up ' + formatDate(data.backup) + ' (' + backupPercentage + '% complete)</div>';
                     actionsHtml += '<button id="confirmDeleteBtn" onclick="confirmDelete()">Delete</button>';
                 } else {
                     // State 2: Backup is outdated
-                    var currentProg = calculateProgressFromString(info.numParts || 0, currentProgress);
-                    var backupParts = (backup.completed !== undefined ? backup.completed : '?') + '/' + (backup.total !== undefined ? backup.total : '?');
+                    var backupPercentage = data.numParts > 0 ? Math.round(backupCompleted / data.numParts * 100) : 0;
+                    var backupParts = backupCompleted + '/' + (data.numParts || 0);
                     var currentParts = currentProg.completed + '/' + currentProg.total;
-                    messageEl.innerHTML = '<div class="delete-status-warning">⚠️ Backup is outdated — backed up ' + formatDate(backup.lastBackedUp) + ' at ' + backup.percentage + '% (' + backupParts + ' pieces), now ' + currentProg.percentage + '% (' + currentParts + ' pieces)</div>';
+                    messageEl.innerHTML = '<div class="delete-status-warning">⚠️ Backup is outdated — backed up ' + formatDate(data.backup) + ' at ' + backupPercentage + '% (' + backupParts + ' pieces), now ' + currentProg.percentage + '% (' + currentParts + ' pieces)</div>';
                     actionsHtml += '<button id="confirmDeleteBtn" onclick="confirmDelete()">Delete</button>';
                     actionsHtml += '<button id="backupAndDeleteBtn" onclick="backupAndDelete()">Backup & Delete</button>';
                 }
@@ -475,13 +699,7 @@
 
         window.confirmDelete = function() {
             if (!pendingDeleteSetNumber) return;
-            var setNumber = pendingDeleteSetNumber;
-
-            localStorage.removeItem('setInfo_' + setNumber);
-            localStorage.removeItem('set_' + setNumber);
-            localStorage.removeItem('setData_' + setNumber);
-            localStorage.removeItem('backupInfo_' + setNumber);
-
+            removeSetData(pendingDeleteSetNumber);
             document.getElementById('deleteModalOverlay').classList.add('hide');
             pendingDeleteSetNumber = null;
             displaySetHistory();
@@ -497,11 +715,7 @@
             downloadBricktally(data, 'BrickTally-' + baseNumber + '.bricktally');
 
             // Then delete
-            localStorage.removeItem('setInfo_' + setNumber);
-            localStorage.removeItem('set_' + setNumber);
-            localStorage.removeItem('setData_' + setNumber);
-            localStorage.removeItem('backupInfo_' + setNumber);
-
+            removeSetData(setNumber);
             document.getElementById('deleteModalOverlay').classList.add('hide');
             pendingDeleteSetNumber = null;
             displaySetHistory();
@@ -514,8 +728,11 @@
                 return;
             }
 
-            // Remove only the progress data
-            localStorage.removeItem('set_' + setNumber);
+            var data = getSetData(setNumber);
+            if (data) {
+                data.progress = '';
+                saveSetData(setNumber, data);
+            }
 
             // Refresh the display
             displaySetHistory();
@@ -531,14 +748,20 @@
 
         function calculateProgressFromString(numParts, progressString) {
             if (!progressString) return { completed: 0, total: numParts, percentage: 0 };
-            var completed = 0;
-            progressString.split(',').forEach(function(part) {
-                if (!part) return;
-                var split = part.split(':');
-                completed += parseInt(split[1]) || 0;
-            });
-            var percentage = numParts > 0 ? Math.round((completed / numParts) * 100) : 0;
-            return { completed: completed, total: numParts, percentage: percentage };
+
+            // Old format contains colon; new compressed format is base64url only
+            if (progressString.indexOf(':') !== -1) {
+                var completed = 0;
+                progressString.split(',').forEach(function(part) {
+                    if (!part) return;
+                    var split = part.split(':');
+                    completed += parseInt(split[1]) || 0;
+                });
+                var percentage = numParts > 0 ? Math.round((completed / numParts) * 100) : 0;
+                return { completed: completed, total: numParts, percentage: percentage };
+            }
+
+            return calculateProgressCompressed(numParts, progressString);
         }
 
         function formatDate(timestamp) {
@@ -565,28 +788,33 @@
         function buildBackupData(fullNumbers) {
             var sets = [];
             fullNumbers.forEach(function(fullNumber) {
-                var infoStr = localStorage.getItem('setInfo_' + fullNumber);
-                if (!infoStr) return;
-                var info = JSON.parse(infoStr);
-                var progress = localStorage.getItem('set_' + fullNumber) || '';
+                var data = getSetData(fullNumber);
+                if (!data) return;
+                var progress = data.progress || '';
                 sets.push({
                     fullNumber: fullNumber,
-                    info: info,
+                    info: {
+                        number: data.number,
+                        fullNumber: data.fullNumber,
+                        name: data.name,
+                        year: data.year,
+                        numParts: data.numParts,
+                        imageUrl: data.imageUrl,
+                        lastAccessed: data.lastAccessed
+                    },
                     progress: progress,
-                    lastWorkedOn: info.lastAccessed || 0
+                    lastWorkedOn: data.lastAccessed || 0
                 });
             });
 
-            // Record backup state for each included set
+            // Record backup state in consolidated object
             sets.forEach(function(s) {
-                var prog = calculateProgressFromString(s.info.numParts, s.progress);
-                localStorage.setItem('backupInfo_' + s.fullNumber, JSON.stringify({
-                    lastBackedUp: Date.now(),
-                    progress: s.progress,
-                    percentage: prog.percentage,
-                    completed: prog.completed,
-                    total: prog.total
-                }));
+                var data = getSetData(s.fullNumber);
+                if (data) {
+                    data.backup = Date.now();
+                    data.backupCompleted = calculateProgressFromString(data.numParts || 0, s.progress).completed;
+                    saveSetData(s.fullNumber, data);
+                }
             });
 
             return {
@@ -707,8 +935,8 @@
             listEl.innerHTML = '';
 
             restoreData.sets.forEach(function(restoreSet) {
-                var localInfoStr = localStorage.getItem('setInfo_' + restoreSet.fullNumber);
-                var hasConflict = !!localInfoStr;
+                var localData = getSetData(restoreSet.fullNumber);
+                var hasConflict = !!localData;
 
                 var itemEl = document.createElement('div');
                 itemEl.className = 'restore-set-item' + (hasConflict ? ' restore-conflict' : '');
@@ -724,16 +952,15 @@
                     '</div>';
 
                 if (hasConflict) {
-                    var localInfo = JSON.parse(localInfoStr);
                     var localProgress = calculateProgressFromString(
-                        localInfo.numParts,
-                        localStorage.getItem('set_' + restoreSet.fullNumber) || ''
+                        localData.numParts,
+                        localData.progress || ''
                     );
 
-                    var restoreIsNewer = restoreSet.lastWorkedOn > (localInfo.lastAccessed || 0);
+                    var restoreIsNewer = restoreSet.lastWorkedOn > (localData.lastAccessed || 0);
                     html += '<div class="restore-comparison">' +
                         '<div class="restore-local">' +
-                            '<span>Local: ' + localProgress.percentage + '% (' + formatDate(localInfo.lastAccessed) + ')</span>' +
+                            '<span>Local: ' + localProgress.percentage + '% (' + formatDate(localData.lastAccessed) + ')</span>' +
                         '</div>' +
                         '<div class="restore-imported">' +
                             '<span>Restore: ' + restoreProgress.percentage + '% (' + formatDate(restoreSet.lastWorkedOn) + ')</span>' +
@@ -767,23 +994,27 @@
             if (!pendingRestoreData) return;
 
             pendingRestoreData.sets.forEach(function(restoreSet) {
-                var localInfoStr = localStorage.getItem('setInfo_' + restoreSet.fullNumber);
-                var hasConflict = !!localInfoStr;
+                var localData = getSetData(restoreSet.fullNumber);
+                var hasConflict = !!localData;
 
                 if (hasConflict) {
                     var radio = document.querySelector('input[name="restore-' + restoreSet.fullNumber + '"]:checked');
                     if (!radio || radio.value === 'keep') return;
                 }
 
-                // Write restored data to localStorage
-                localStorage.setItem('setInfo_' + restoreSet.fullNumber, JSON.stringify(restoreSet.info));
-                if (restoreSet.progress) {
-                    localStorage.setItem('set_' + restoreSet.fullNumber, restoreSet.progress);
-                } else {
-                    localStorage.removeItem('set_' + restoreSet.fullNumber);
-                }
-                // Clear backup info since local state diverged from last backup
-                localStorage.removeItem('backupInfo_' + restoreSet.fullNumber);
+                // Build consolidated object from restore data
+                var consolidated = {
+                    number: restoreSet.info.number,
+                    fullNumber: restoreSet.info.fullNumber,
+                    name: restoreSet.info.name,
+                    year: restoreSet.info.year,
+                    numParts: restoreSet.info.numParts,
+                    imageUrl: restoreSet.info.imageUrl,
+                    lastAccessed: restoreSet.info.lastAccessed || restoreSet.lastWorkedOn,
+                    progress: restoreSet.progress || ''
+                };
+
+                saveSetData(restoreSet.fullNumber, consolidated);
             });
 
             document.getElementById('restoreModalOverlay').classList.add('hide');
@@ -858,6 +1089,8 @@
         }
 
         window.onload = function () {
+            migrateLocalStorage();
+
             // Detect preview environment and add banner
             if (window.location.hostname === 'preview.bricktally.app') {
                 document.title = 'BrickTally Preview';
@@ -1626,6 +1859,7 @@
                     partNum: item.part.part_num || 'unknown',
                     name: item.part.name || 'Unknown Part',
                     color: (item.color && item.color.name) ? item.color.name : 'Unknown',
+                    colorId: (item.color && item.color.id) ? item.color.id : 0,
                     quantity: item.quantity || 0,
                     imageUrl: item.part.part_img_url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="80" height="80"%3E%3Crect width="80" height="80" fill="%23ddd"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="10" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E',
                     isSpare: item.is_spare || false
@@ -1640,6 +1874,7 @@
                     partNum: item.set_num,
                     name: item.set_name || 'Unknown Minifig',
                     color: '',
+                    colorId: 0,
                     quantity: item.quantity,
                     imageUrl: item.set_img_url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="80" height="80"%3E%3Crect width="80" height="80" fill="%23ddd"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="10" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E',
                     isSpare: false,
@@ -2188,43 +2423,36 @@
 
         function saveState() {
             if (!currentSetNumber) return;
-            var compressed = [];
-            for (var key in userCounts) {
-                if (userCounts[key] > 0) {
-                    compressed.push(key + ':' + userCounts[key]);
-                }
-            }
-            localStorage.setItem('set_' + currentSetNumber, compressed.join(','));
 
-            // Update lastAccessed timestamp
-            var infoKey = 'setInfo_' + currentSetNumber;
-            var info = JSON.parse(localStorage.getItem(infoKey) || '{}');
-            if (info.fullNumber) {
-                info.lastAccessed = Date.now();
-                localStorage.setItem(infoKey, JSON.stringify(info));
+            var data = getSetData(currentSetNumber);
+            if (data) {
+                data.progress = compressProgress(partsData, userCounts);
+                data.lastAccessed = Date.now();
+                saveSetData(currentSetNumber, data);
             }
         }
 
         function loadState() {
             if (!currentSetNumber) return;
-            var saved = localStorage.getItem('set_' + currentSetNumber);
-            if (!saved) return;
+            var data = getSetData(currentSetNumber);
+            if (!data || !data.progress) return;
 
-            saved.split(',').forEach(function (part) {
-                if (!part) return;
-                var split = part.split(':');
-                var key = split[0];
-                var count = parseInt(split[1]);
+            var decoded = decompressProgress(data.progress, partsData);
+            for (var key in decoded) {
                 if (userCounts.hasOwnProperty(key)) {
-                    userCounts[key] = count;
+                    userCounts[key] = decoded[key];
                 }
-            });
+            }
         }
 
         function resetSet() {
             if (!currentSetNumber || !confirm('Are you sure you want to reset all progress for this set?')) return;
 
-            localStorage.removeItem('set_' + currentSetNumber);
+            var data = getSetData(currentSetNumber);
+            if (data) {
+                data.progress = '';
+                saveSetData(currentSetNumber, data);
+            }
 
             // Reset all counts to 0
             partsData.forEach(function (part) {
@@ -2999,7 +3227,7 @@
     <footer class="app-footer">
         <span class="footer-tagline">Made with ❤️ for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <span id="versionInfo">v1.16.6 (9c6689b)</span>
+        <span id="versionInfo">v1.17.0 (4600770)</span>
     </footer>
 </body>
 
