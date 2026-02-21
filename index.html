@@ -179,40 +179,39 @@
 
             <div id="filterSection" class="hide">
                 <div class="filter-headers">
-                    <div class="filter-header" onclick="toggleFilterSection('colorFilterSection')" id="colorFilterHeader">
-                        <span>Colours</span>
-                        <span class="filter-arrow">▼</span>
-                    </div>
-                    <div class="filter-header" onclick="toggleFilterSection('columnsFilterSection')" id="columnsFilterHeader">
-                        <span>Columns</span>
-                        <span class="filter-arrow">▼</span>
-                    </div>
-                    <div class="filter-header" onclick="toggleFilterSection('exportFilterSection')" id="exportFilterHeader">
-                        <span>Export</span>
-                        <span class="filter-arrow">▼</span>
-                    </div>
-                </div>
+                    <details class="filter-section" id="colorFilterSection">
+                        <summary class="filter-header">
+                            <span>Colours</span>
+                            <span class="filter-arrow">▼</span>
+                        </summary>
+                        <div id="colorFilters" class="filters filter-content-flex"></div>
+                    </details>
 
-                <div class="filter-content" id="colorFilterSection" style="display: none;">
-                    <div id="colorFilters" class="filters filter-content-flex"></div>
-                </div>
+                    <details class="filter-section" id="columnsFilterSection">
+                        <summary class="filter-header">
+                            <span>Columns</span>
+                            <span class="filter-arrow">▼</span>
+                        </summary>
+                        <div class="column-toggles filter-content-flex">
+                            <button class="column-toggle" onclick="toggleColumn('color', event)">Color</button>
+                            <button class="column-toggle" onclick="toggleColumn('name', event)">Name</button>
+                            <button class="column-toggle" onclick="toggleColumn('partNum', event)">Part Number</button>
+                        </div>
+                    </details>
 
-                <div class="filter-content" id="columnsFilterSection" style="display: none;">
-                    <div class="column-toggles filter-content-flex">
-                        <button class="column-toggle" onclick="toggleColumn('color', event)">Color</button>
-                        <button class="column-toggle" onclick="toggleColumn('name', event)">Name</button>
-                        <button class="column-toggle" onclick="toggleColumn('partNum', event)">Part Number</button>
-                    </div>
-                </div>
-
-                <div class="filter-content" id="exportFilterSection" style="display: none;">
-                    <div class="filter-content-stack">
-                        <button onclick="generateBadge()" class="export-btn" style="background: var(--green);">🏷️ Generate Badge</button>
-                        <button onclick="exportToBrickLink()" class="export-btn" style="background: var(--orange);">📦 BrickLink XML</button>
-                        <button onclick="exportToPickABrick()" class="export-btn" style="background: var(--red);">🧱 Pick a Brick CSV</button>
-                        <button onclick="exportMissingPartsText()" class="export-btn" style="background: var(--blue);">📄 Text List</button>
-                        <button onclick="exportToRebrickable()" class="export-btn" style="background: #6b5b95;">🧩 Export partlist</button>
-                    </div>
+                    <details class="filter-section" id="exportFilterSection">
+                        <summary class="filter-header">
+                            <span>Export</span>
+                            <span class="filter-arrow">▼</span>
+                        </summary>
+                        <div class="filter-content-stack">
+                            <button onclick="generateBadge()" class="export-btn" style="background: var(--green);">🏷️ Generate Badge</button>
+                            <button onclick="exportToBrickLink()" class="export-btn" style="background: var(--orange);">📦 BrickLink XML</button>
+                            <button onclick="exportToPickABrick()" class="export-btn" style="background: var(--red);">🧱 Pick a Brick CSV</button>
+                            <button onclick="exportMissingPartsText()" class="export-btn" style="background: var(--blue);">📄 Text List</button>
+                            <button onclick="exportToRebrickable()" class="export-btn" style="background: #6b5b95;">🧩 Export partlist</button>
+                        </div>
+                    </details>
                 </div>
             </div>
 
@@ -1563,31 +1562,16 @@
             fullscreenIcon.textContent = isFullscreen ? '✕' : '⛶';
         }
 
-        function toggleFilterSection(sectionId) {
-            var section = document.getElementById(sectionId);
-            var allSections = document.querySelectorAll('.filter-content');
-            var allHeaders = document.querySelectorAll('.filter-header');
-
-            var headerId = sectionId.replace('FilterSection', 'FilterHeader');
-            var header = document.getElementById(headerId);
-
-            // If clicking on already open section, close it
-            if (section.style.display === 'block') {
-                section.style.display = 'none';
-                if (header) header.classList.remove('active');
-            } else {
-                // Close all other sections
-                allSections.forEach(function(s) {
-                    s.style.display = 'none';
-                });
-                allHeaders.forEach(function(h) {
-                    h.classList.remove('active');
-                });
-                // Open clicked section
-                section.style.display = 'block';
-                if (header) header.classList.add('active');
-            }
-        }
+        // Filter accordion: only one section open at a time
+        document.querySelectorAll('.filter-section').forEach(function(details) {
+            details.addEventListener('toggle', function() {
+                if (details.open) {
+                    document.querySelectorAll('.filter-section').forEach(function(other) {
+                        if (other !== details) other.removeAttribute('open');
+                    });
+                }
+            });
+        });
 
         function toggleColumn(column, event) {
             if (event) {
@@ -3413,7 +3397,7 @@
     <footer class="app-footer">
         <span class="footer-tagline">Made with ❤️ for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog.html" id="versionInfo" class="footer-version-link">v1.20.2 (adb2963)</a>
+        <a href="/changelog.html" id="versionInfo" class="footer-version-link">v1.20.3 (a4d9f03)</a>
     </footer>
 </body>
 

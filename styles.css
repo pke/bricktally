@@ -731,12 +731,16 @@ body.dark-mode .complete-toggle {
 
 .filter-headers {
   display: flex;
+  flex-wrap: wrap;
   gap: 15px;
   margin-bottom: 15px;
 }
 
-.filter-header {
+.filter-section {
   flex: 1;
+}
+
+.filter-header {
   cursor: pointer;
   font-weight: bold;
   padding: 10px;
@@ -746,13 +750,18 @@ body.dark-mode .complete-toggle {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  list-style: none;
+}
+
+.filter-header::-webkit-details-marker {
+  display: none;
 }
 
 .filter-header:hover {
   background: var(--border-color);
 }
 
-.filter-header.active {
+.filter-section[open] > .filter-header {
   background: var(--blue);
   color: white;
 }
@@ -762,11 +771,11 @@ body.dark-mode .complete-toggle {
   transition: transform 0.3s ease;
 }
 
-.filter-header.active .filter-arrow {
+.filter-section[open] > .filter-header .filter-arrow {
   transform: rotate(-180deg);
 }
 
-.filter-content {
+.filter-section > :not(summary) {
   width: 100%;
   padding-top: 10px;
 }

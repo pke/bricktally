@@ -344,11 +344,9 @@ export async function getSectionHeader(page, headerId) {
 export async function applyColorFilter(page, colorName) {
   // First, ensure the Colours dropdown is expanded
   const filterSection = page.locator('#colorFilterSection');
-  const isVisible = await filterSection.evaluate((el) => {
-    return window.getComputedStyle(el).display !== 'none';
-  });
+  const isOpen = await filterSection.evaluate((el) => el.open);
 
-  if (!isVisible) {
+  if (!isOpen) {
     // Click the header to expand
     await page.click('.filter-header:has-text("Colours")');
     // Wait for section to expand
@@ -401,11 +399,9 @@ export async function exportToBrickLink(page) {
 export async function generateBadge(page) {
   // First, ensure the Export dropdown is expanded
   const exportSection = page.locator('#exportFilterSection');
-  const isVisible = await exportSection.evaluate((el) => {
-    return window.getComputedStyle(el).display !== 'none';
-  });
+  const isOpen = await exportSection.evaluate((el) => el.open);
 
-  if (!isVisible) {
+  if (!isOpen) {
     // Click the header to expand
     await page.click('.filter-header:has-text("Export")');
     // Wait for section to expand
