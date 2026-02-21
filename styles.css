@@ -131,6 +131,30 @@ body {
   display: none;
 }
 
+.loading-spinner {
+  display: none;
+  width: 32px;
+  height: 32px;
+  margin: 16px auto 0;
+  border: 3px solid var(--border-color);
+  border-top-color: var(--blue);
+  border-radius: 50%;
+  opacity: 0;
+  animation: spin 0.8s linear infinite, showAfterDelay 0s 4s forwards;
+}
+
+#loading:not(.hide) .loading-spinner {
+  display: block;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes showAfterDelay {
+  to { opacity: 1; }
+}
+
 /* Headers & Typography
    ========================================================================== */
 

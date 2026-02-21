@@ -1,6 +1,6 @@
 // BrickTally Service Worker
 // Version: 1
-const CACHE_VERSION = 'v20260222-003751';
+const CACHE_VERSION = 'v20260222-005721';
 const STATIC_CACHE = `bricktally-static-${CACHE_VERSION}`;
 const API_CACHE = `bricktally-api-${CACHE_VERSION}`;
 const IMAGE_CACHE = `bricktally-images-${CACHE_VERSION}`;
@@ -87,7 +87,7 @@ self.addEventListener('fetch', (event) => {
 
     // Handle API requests (Network First with timeout)
     if (url.pathname.startsWith('/api/rebrickable')) {
-        event.respondWith(networkFirstWithTimeout(request, API_CACHE, 5000));
+        event.respondWith(networkFirstWithTimeout(request, API_CACHE, 15000));
         return;
     }
 

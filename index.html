@@ -137,7 +137,7 @@
 
     <div class="main-content">
         <div class="content-area">
-            <div id="loading" class="text-center p-20 hide">Loading set data...</div>
+            <div id="loading" class="text-center p-20 hide">Loading set data...<div class="loading-spinner"></div></div>
             <div id="error" class="error text-center p-20 hide"></div>
 
             <!-- Set History Section -->
@@ -1742,9 +1742,8 @@
             // Remove any existing suffix to get base number
             var baseNumber = setNumberBase.split('-')[0];
 
-            return fetch('/api/rebrickable?endpoint=/lego/sets/&search=' + encodeURIComponent(baseNumber))
+            return fetchWithRetry('/api/rebrickable?endpoint=/lego/sets/&search=' + encodeURIComponent(baseNumber))
                 .then(function (response) {
-                    if (!response.ok) throw new Error('Error fetching set versions');
                     return response.json();
                 })
                 .then(function (data) {
@@ -1801,9 +1800,8 @@
         function continueLoadSet(setNumber) {
             hideSetHistory();
 
-            fetch('/api/rebrickable?endpoint=/lego/sets/' + encodeURIComponent(setNumber) + '/')
+            fetchWithRetry('/api/rebrickable?endpoint=/lego/sets/' + encodeURIComponent(setNumber) + '/')
                 .then(function (response) {
-                    if (!response.ok) throw new Error('Set not found. Please check the set number');
                     return response.json();
                 })
                 .then(function (setData) {
@@ -1884,13 +1882,29 @@
             continueLoadSet(setNumber);
         }
 
+        function fetchWithRetry(url, retries, delay) {
+            retries = retries || 3;
+            delay = delay || 1000;
+            return fetch(url).then(function (response) {
+                if (response.status === 429 && retries > 0) {
+                    console.warn('[BrickTally:API] Rate limited, retrying in ' + delay + 'ms...');
+                    return new Promise(function (resolve) {
+                        setTimeout(resolve, delay);
+                    }).then(function () {
+                        return fetchWithRetry(url, retries - 1, delay * 2);
+                    });
+                }
+                if (!response.ok) throw new Error('API error (HTTP ' + response.status + ')');
+                return response;
+            });
+        }
+
         function loadAllParts(setNumber) {
             var allParts = [];
 
             function fetchPage(page) {
-                return fetch('/api/rebrickable?endpoint=/lego/sets/' + encodeURIComponent(setNumber) + '/parts/&page_size=1000&page=' + page)
+                return fetchWithRetry('/api/rebrickable?endpoint=/lego/sets/' + encodeURIComponent(setNumber) + '/parts/&page_size=1000&page=' + page)
                     .then(function (response) {
-                        if (!response.ok) throw new Error('Error fetching parts data');
                         return response.json();
                     })
                     .then(function (data) {
@@ -1910,12 +1924,8 @@
         }
 
         function loadMinifigures(setNumber) {
-            return fetch('/api/rebrickable?endpoint=/lego/sets/' + encodeURIComponent(setNumber) + '/minifigs/')
+            return fetchWithRetry('/api/rebrickable?endpoint=/lego/sets/' + encodeURIComponent(setNumber) + '/minifigs/')
                 .then(function (response) {
-                    if (!response.ok) {
-                        console.warn('Minifigures API returned non-OK status:', response.status);
-                        return { results: [] };  // Return empty results instead of throwing
-                    }
                     return response.json();
                 })
                 .then(function (data) {
@@ -3352,7 +3362,7 @@
     <footer class="app-footer">
         <span class="footer-tagline">Made with ❤️ for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog.html" id="versionInfo" class="footer-version-link">v1.20.6 (3dcf77c)</a>
+        <a href="/changelog.html" id="versionInfo" class="footer-version-link">v1.20.7 (e02f964)</a>
     </footer>
 </body>
 
