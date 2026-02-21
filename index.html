@@ -63,7 +63,7 @@
                 <span id="fullscreenIcon">⛶</span>
             </button>
             <button class="theme-toggle" id="themeToggle" onclick="toggleDarkMode()">
-                <span id="themeIcon">🌙</span>
+                <span id="themeIcon"></span>
             </button>
 
             <div class="header-top">
@@ -145,8 +145,8 @@
                 <div class="backup-restore-toolbar">
                     <button onclick="restoreSets()" class="restore-btn" title="Restore sets">📥 Restore</button>
                     <button id="backupAllBtn" onclick="startBackupAll()" class="backup-all-btn hide" title="Backup all sets">📤 Backup All</button>
-                    <button id="backupSelectedBtn" onclick="executeBackupAll()" class="backup-selected-btn hide" title="Backup selected sets">📤 Backup Selected</button>
-                    <button id="cancelBackupBtn" onclick="cancelBackupAll()" class="cancel-backup-btn hide" title="Cancel backup">Cancel</button>
+                    <button id="backupSelectedBtn" onclick="executeBackupAll()" class="backup-selected-btn" title="Backup selected sets">📤 Backup Selected</button>
+                    <button id="cancelBackupBtn" onclick="cancelBackupAll()" class="cancel-backup-btn" title="Cancel backup">Cancel</button>
                     <input type="file" id="restoreFileInput" accept=".bricktally,.json" class="hide" onchange="handleRestoreFile(event)">
                 </div>
                 <div id="setHistoryList" class="set-history-list"></div>
@@ -157,7 +157,7 @@
             </div>
 
             <!-- Restore Modal -->
-            <div id="restoreModalOverlay" class="restore-modal-overlay hide">
+            <div id="restoreModalOverlay" class="restore-modal-overlay">
                 <div class="restore-modal">
                     <h3>Restore Sets</h3>
                     <div id="restoreSetList" class="restore-set-list"></div>
@@ -169,7 +169,7 @@
             </div>
 
             <!-- Delete Confirmation Modal -->
-            <div id="deleteModalOverlay" class="delete-modal-overlay hide">
+            <div id="deleteModalOverlay" class="delete-modal-overlay">
                 <div class="delete-modal">
                     <h3 id="deleteModalTitle">Delete Set?</h3>
                     <div id="deleteModalMessage"></div>
@@ -835,18 +835,18 @@
             actionsHtml += '<button id="cancelDeleteBtn" onclick="cancelDelete()">Cancel</button>';
 
             actionsEl.innerHTML = actionsHtml;
-            document.getElementById('deleteModalOverlay').classList.remove('hide');
+            document.getElementById('deleteModalOverlay').setAttribute('data-visible', '');
         }
 
         window.cancelDelete = function() {
-            document.getElementById('deleteModalOverlay').classList.add('hide');
+            document.getElementById('deleteModalOverlay').removeAttribute('data-visible');
             pendingDeleteSetNumber = null;
         };
 
         window.confirmDelete = function() {
             if (!pendingDeleteSetNumber) return;
             removeSetData(pendingDeleteSetNumber);
-            document.getElementById('deleteModalOverlay').classList.add('hide');
+            document.getElementById('deleteModalOverlay').removeAttribute('data-visible');
             pendingDeleteSetNumber = null;
             displaySetHistory();
         };
@@ -862,7 +862,7 @@
 
             // Then delete
             removeSetData(setNumber);
-            document.getElementById('deleteModalOverlay').classList.add('hide');
+            document.getElementById('deleteModalOverlay').removeAttribute('data-visible');
             pendingDeleteSetNumber = null;
             displaySetHistory();
         };
@@ -992,9 +992,7 @@
 
         window.startBackupAll = function() {
             // Enter backup selection mode
-            document.getElementById('backupAllBtn').classList.add('hide');
-            document.getElementById('backupSelectedBtn').classList.remove('hide');
-            document.getElementById('cancelBackupBtn').classList.remove('hide');
+            document.querySelector('.backup-restore-toolbar').setAttribute('data-backup-mode', '');
 
             // Add checkboxes to each set card
             var items = document.querySelectorAll('.set-history-item');
@@ -1015,9 +1013,7 @@
 
         window.cancelBackupAll = function() {
             // Exit backup selection mode
-            document.getElementById('backupAllBtn').classList.remove('hide');
-            document.getElementById('backupSelectedBtn').classList.add('hide');
-            document.getElementById('cancelBackupBtn').classList.add('hide');
+            document.querySelector('.backup-restore-toolbar').removeAttribute('data-backup-mode');
 
             // Remove checkboxes and selection styling
             document.querySelectorAll('.set-history-item').forEach(function(item) {
@@ -1128,11 +1124,11 @@
                 listEl.appendChild(itemEl);
             });
 
-            document.getElementById('restoreModalOverlay').classList.remove('hide');
+            document.getElementById('restoreModalOverlay').setAttribute('data-visible', '');
         }
 
         window.cancelRestore = function() {
-            document.getElementById('restoreModalOverlay').classList.add('hide');
+            document.getElementById('restoreModalOverlay').removeAttribute('data-visible');
             pendingRestoreData = null;
         };
 
@@ -1163,7 +1159,7 @@
                 saveSetData(restoreSet.fullNumber, consolidated);
             });
 
-            document.getElementById('restoreModalOverlay').classList.add('hide');
+            document.getElementById('restoreModalOverlay').removeAttribute('data-visible');
             pendingRestoreData = null;
             displaySetHistory();
         };
@@ -1252,7 +1248,6 @@
             var darkMode = localStorage.getItem('darkMode');
             if (darkMode === 'true') {
                 document.body.classList.add('dark-mode');
-                updateThemeIcon();
             }
 
             // Load show complete parts preference
@@ -1435,11 +1430,9 @@
 
                     // Show collapsed header when progress bar is scrolled past top
                     if (progressBarBottom < 0) {
-                        collapsedHeader.classList.add('visible');
-                        document.body.classList.add('collapsed-visible');
+                        document.body.setAttribute('data-collapsed-header', '');
                     } else {
-                        collapsedHeader.classList.remove('visible');
-                        document.body.classList.remove('collapsed-visible');
+                        document.body.removeAttribute('data-collapsed-header');
                     }
                 }
 
@@ -1454,7 +1447,7 @@
                     var colorFilterCollapsed = document.getElementById('colorFilterCollapsed');
 
                     // Show collapsed color filter when bottom of color filter section scrolls under collapsed header
-                    if (collapsedHeader.classList.contains('visible') && colorFilterBottom < collapsedHeaderBottom) {
+                    if (document.body.hasAttribute('data-collapsed-header') && colorFilterBottom < collapsedHeaderBottom) {
                         if (colorFilterCollapsed && !colorFilterCollapsed.classList.contains('visible')) {
                             colorFilterCollapsed.classList.remove('hide');
                             // Force reflow to ensure display:block is applied before transition
@@ -1485,7 +1478,7 @@
                     var infoFilterCollapsed = document.getElementById('infoFilterCollapsed');
 
                     // Show collapsed info filter when bottom of show information section scrolls under collapsed header
-                    if (collapsedHeader.classList.contains('visible') && showInfoBottom < collapsedHeaderBottom) {
+                    if (document.body.hasAttribute('data-collapsed-header') && showInfoBottom < collapsedHeaderBottom) {
                         if (infoFilterCollapsed && !infoFilterCollapsed.classList.contains('visible')) {
                             infoFilterCollapsed.classList.remove('hide');
                             // Force reflow to ensure display:block is applied before transition
@@ -1511,15 +1504,6 @@
             document.body.classList.toggle('dark-mode');
             var isDark = document.body.classList.contains('dark-mode');
             localStorage.setItem('darkMode', isDark);
-            updateThemeIcon();
-        }
-
-        function updateThemeIcon() {
-            var isDark = document.body.classList.contains('dark-mode');
-            var themeIcon = document.getElementById('themeIcon');
-            // When dark mode is active, show sun (to switch to light)
-            // When light mode is active, show moon (to switch to dark)
-            themeIcon.textContent = isDark ? '☀️' : '🌙';
         }
 
         function toggleFullscreen() {
@@ -2132,12 +2116,12 @@
 
                 var altText = (part.color + ' ' + part.name + ' (' + part.partNum + ')').replace(/"/g, '&quot;');
                 var fallbackInfo = part.color + ' ' + part.name + '<br>' + part.partNum;
-                var decrementStyle = currentCount === 0 ? ' style="visibility: hidden;"' : '';
+                var decrementHidden = currentCount === 0 ? ' data-hidden-when-zero' : '';
                 html += '<tr id="row-' + part.id + '" data-complete="' + isComplete + '" data-color="' + part.color + '" data-fallback-info="' + fallbackInfo.replace(/"/g, '&quot;') + '">' +
                     '<td class="col-img"><img src="' + part.imageUrl + '" alt="' + altText + '" class="part-image" data-part-id="' + part.id + '" onerror="handleImageError(this)" onload="handleImageLoad(this)"></td>' +
                     '<td class="col-info" id="info-' + part.id + '">' + infoText + '</td>' +
                     '<td class="col-controls"><div class="controls">' +
-                    '<button id="dec-' + part.id + '" onclick="decrementPart(' + part.id + ')"' + decrementStyle + '>-</button>' +
+                    '<button id="dec-' + part.id + '" onclick="decrementPart(' + part.id + ')"' + decrementHidden + '>-</button>' +
                     '<span class="count-display" id="count-' + part.id + '"><span class="counted">' + currentCount + '</span>/<span class="qty-click" onclick="fillQuantity(' + part.id + ')" title="Click to mark all as counted">' + part.quantity + '</span></span>' +
                     '<button id="inc-' + part.id + '" class="increment-btn' + incrementBtnClass + '" onclick="incrementPart(' + part.id + ')"' + incrementBtnDisabled + '>' + incrementButtonText + '</button>' +
                     '</div></td></tr>';
@@ -2205,12 +2189,12 @@
 
                 var altText = (part.color + ' ' + part.name + ' (' + part.partNum + ')').replace(/"/g, '&quot;');
                 var fallbackInfo = part.color + ' ' + part.name + '<br>' + part.partNum;
-                var decrementStyle = currentCount === 0 ? ' style="visibility: hidden;"' : '';
+                var decrementHidden = currentCount === 0 ? ' data-hidden-when-zero' : '';
                 html += '<tr id="row-' + part.id + '" data-complete="' + isComplete + '" data-color="' + part.color + '" data-fallback-info="' + fallbackInfo.replace(/"/g, '&quot;') + '">' +
                     '<td class="col-img"><img src="' + part.imageUrl + '" alt="' + altText + '" class="part-image" data-part-id="' + part.id + '" onerror="handleImageError(this)" onload="handleImageLoad(this)"></td>' +
                     '<td class="col-info" id="info-' + part.id + '">' + infoText + '</td>' +
                     '<td class="col-controls"><div class="controls">' +
-                    '<button id="dec-' + part.id + '" onclick="decrementPart(' + part.id + ')"' + decrementStyle + '>-</button>' +
+                    '<button id="dec-' + part.id + '" onclick="decrementPart(' + part.id + ')"' + decrementHidden + '>-</button>' +
                     '<span class="count-display" id="count-' + part.id + '"><span class="counted">' + currentCount + '</span>/<span class="qty-click" onclick="fillQuantity(' + part.id + ')" title="Click to mark all as counted">' + part.quantity + '</span></span>' +
                     '<button id="inc-' + part.id + '" class="increment-btn' + incrementBtnClass + '" onclick="incrementPart(' + part.id + ')"' + incrementBtnDisabled + '>' + incrementButtonText + '</button>' +
                     '</div></td></tr>';
@@ -2259,10 +2243,7 @@
                     }
                 }
 
-                var checkmarkHtml = isComplete ? '<div class="minifig-checkmark">✓</div>' : '';
-
                 html += '<div class="minifig-card' + (isComplete ? ' complete' : '') + '" data-complete="' + isComplete + '" id="minifig-' + minifig.id + '" onclick="toggleMinifig(' + minifig.id + ')">' +
-                    checkmarkHtml +
                     '<img src="' + minifig.imageUrl + '" alt="' + minifig.name + '" class="minifig-image" data-part-id="' + minifig.id + '" onclick="event.stopPropagation(); openMinifigLightbox(this)" onerror="handleImageError(this)" onload="handleImageLoad(this)">' +
                     '<div class="minifig-name">' + title + '</div>' +
                     '<div class="minifig-id">' + description + '</div>' +
@@ -2402,19 +2383,6 @@
                 card.classList.toggle('complete', isComplete);
                 card.setAttribute('data-complete', isComplete ? 'true' : 'false');
 
-                // Update checkmark visibility
-                var existingCheckmark = card.querySelector('.minifig-checkmark');
-                if (isComplete && !existingCheckmark) {
-                    // Add checkmark
-                    var checkmark = document.createElement('div');
-                    checkmark.className = 'minifig-checkmark';
-                    checkmark.textContent = '✓';
-                    card.insertBefore(checkmark, card.firstChild);
-                } else if (!isComplete && existingCheckmark) {
-                    // Remove checkmark
-                    existingCheckmark.remove();
-                }
-
                 return;
             }
 
@@ -2449,9 +2417,9 @@
             // Show/hide decrement button based on count
             if (decrementBtn) {
                 if (userCounts[key] === 0) {
-                    decrementBtn.style.visibility = 'hidden';
+                    decrementBtn.setAttribute('data-hidden-when-zero', '');
                 } else {
-                    decrementBtn.style.visibility = '';
+                    decrementBtn.removeAttribute('data-hidden-when-zero');
                 }
             }
 
@@ -3384,7 +3352,7 @@
     <footer class="app-footer">
         <span class="footer-tagline">Made with ❤️ for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog.html" id="versionInfo" class="footer-version-link">v1.20.4 (ab41920)</a>
+        <a href="/changelog.html" id="versionInfo" class="footer-version-link">v1.20.5 (10f4337)</a>
     </footer>
 </body>
 

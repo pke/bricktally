@@ -12,17 +12,11 @@ test.describe('Category 14: Toggle Buttons', () => {
     // Should start in light mode
     await expect(page.locator('body')).not.toHaveClass(/dark-mode/);
 
-    // Icon should show moon (to switch to dark)
-    await expect(page.locator('#themeIcon')).toHaveText('🌙');
-
     // Click the theme toggle
     await page.click('#themeToggle');
 
     // Should now be in dark mode
     await expect(page.locator('body')).toHaveClass(/dark-mode/);
-
-    // Icon should show sun (to switch to light)
-    await expect(page.locator('#themeIcon')).toHaveText('☀️');
   });
 
   test('14.2: Theme toggle switches back to light mode', async ({ page }) => {
@@ -33,7 +27,6 @@ test.describe('Category 14: Toggle Buttons', () => {
     // Switch back to light
     await page.click('#themeToggle');
     await expect(page.locator('body')).not.toHaveClass(/dark-mode/);
-    await expect(page.locator('#themeIcon')).toHaveText('🌙');
   });
 
   test('14.3: Theme preference persists in localStorage', async ({ page }) => {

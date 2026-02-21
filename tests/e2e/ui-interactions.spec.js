@@ -294,7 +294,7 @@ test.describe('Category 5: Section Headers & Hide Complete', () => {
       window.scrollTo(0, document.body.scrollHeight);
       window.dispatchEvent(new Event('scroll'));
     });
-    await expect(page.locator('#collapsedHeader')).toHaveClass(/visible/, { timeout: 5000 });
+    await expect(page.locator('body')).toHaveAttribute('data-collapsed-header', '', { timeout: 5000 });
 
     // Hide-complete toggle should be in the collapsed header
     await expect(page.locator('#collapsedHeader #completeToggleCollapsed')).toBeVisible();
