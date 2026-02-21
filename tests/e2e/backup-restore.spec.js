@@ -792,4 +792,30 @@ test.describe('Category 15: Backup/Restore', () => {
     await expect(page.locator('.delete-modal')).toBeHidden();
     await expect(page.locator('.set-history-item[data-set-number="99001-1"]')).toBeVisible();
   });
+
+  test('15.29: Delete with no progress skips backup info', async ({ page }) => {
+    await page.goto('/');
+    await clearLocalStorage(page);
+    // Seed a set with empty progress (no parts counted)
+    await seedSet(page, '99001-1', 'Basic Parts Set', 2024, 10, '', Date.now());
+    await page.reload();
+
+    await page.waitForSelector('#setHistorySection:not(.hide)', { timeout: 5000 });
+
+    await page.click('.set-history-item[data-set-number="99001-1"] .delete');
+
+    await expect(page.locator('.delete-modal')).toBeVisible({ timeout: 5000 });
+
+    // Should NOT show backup warnings when nothing has been counted
+    await expect(page.locator('.delete-modal')).not.toContainText('never been backed up');
+    await expect(page.locator('.delete-modal')).not.toContainText('Safe to delete');
+    await expect(page.locator('.delete-modal')).not.toContainText('outdated');
+
+    // Should NOT have "Backup & Delete" button
+    await expect(page.locator('#backupAndDeleteBtn')).toBeHidden();
+
+    // Should have Delete and Cancel buttons
+    await expect(page.locator('#confirmDeleteBtn')).toBeVisible();
+    await expect(page.locator('#cancelDeleteBtn')).toBeVisible();
+  });
 });

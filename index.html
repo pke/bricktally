@@ -662,8 +662,13 @@
             titleEl.textContent = 'Delete "' + setName + '" (Set ' + setNum + ')?';
 
             var actionsHtml = '';
+            var hasProgress = currentProgress !== '';
 
-            if (data.backup) {
+            if (!hasProgress) {
+                // No parts counted — nothing to lose, simple delete
+                messageEl.innerHTML = '';
+                actionsHtml += '<button id="confirmDeleteBtn" onclick="confirmDelete()">Delete</button>';
+            } else if (data.backup) {
                 var currentProg = calculateProgressFromString(data.numParts || 0, currentProgress);
                 var backupCompleted = data.backupCompleted || 0;
                 if (backupCompleted === currentProg.completed) {
@@ -681,7 +686,7 @@
                     actionsHtml += '<button id="backupAndDeleteBtn" onclick="backupAndDelete()">Backup & Delete</button>';
                 }
             } else {
-                // State 3: Never backed up
+                // State 3: Never backed up but has progress
                 messageEl.innerHTML = '<div class="delete-status-warning">⚠️ This set has never been backed up!</div>';
                 actionsHtml += '<button id="confirmDeleteBtn" onclick="confirmDelete()">Delete</button>';
                 actionsHtml += '<button id="backupAndDeleteBtn" onclick="backupAndDelete()">Backup & Delete</button>';
@@ -3275,7 +3280,7 @@
     <footer class="app-footer">
         <span class="footer-tagline">Made with ❤️ for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <span id="versionInfo">v1.18.0 (f5cec0e)</span>
+        <span id="versionInfo">v1.18.1 (0a9bf25)</span>
     </footer>
 </body>
 
