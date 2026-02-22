@@ -1392,6 +1392,38 @@
                 }
             });
 
+            // Easter egg: long-press set image to launch memory game
+            (function() {
+                var longPressTimer = null;
+                var startX = 0;
+                var startY = 0;
+                var container = document.getElementById('setImageContainer');
+
+                container.addEventListener('pointerdown', function(e) {
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    longPressTimer = setTimeout(function() {
+                        longPressTimer = null;
+                        if (partsData.length > 0) startMemoryGame();
+                    }, 1000);
+                });
+
+                container.addEventListener('pointermove', function(e) {
+                    if (longPressTimer && (Math.abs(e.clientX - startX) > 10 || Math.abs(e.clientY - startY) > 10)) {
+                        clearTimeout(longPressTimer);
+                        longPressTimer = null;
+                    }
+                });
+
+                container.addEventListener('pointerup', function() {
+                    if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+                });
+
+                container.addEventListener('pointercancel', function() {
+                    if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+                });
+            })();
+
             var savedSetNumber = localStorage.getItem('currentSetNumber');
             if (savedSetNumber) {
                 // Extract base number without version suffix for display
@@ -1545,6 +1577,190 @@
             // When in fullscreen, show X to exit
             // When not in fullscreen, show expand icon to enter
             fullscreenIcon.textContent = isFullscreen ? '✕' : '⛶';
+        }
+
+        // Memory Game (Easter Egg)
+        function shuffleArray(arr) {
+            for (var i = arr.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+            return arr;
+        }
+
+        function startMemoryGame() {
+            // Collect unique images
+            var seen = {};
+            var candidates = [];
+            for (var i = 0; i < partsData.length; i++) {
+                var p = partsData[i];
+                if (p.imageUrl && !seen[p.imageUrl]) {
+                    seen[p.imageUrl] = true;
+                    candidates.push(p);
+                }
+            }
+
+            if (candidates.length < 6) return;
+
+            shuffleArray(candidates);
+            // Scale pairs based on set size
+            var totalParts = partsData.length;
+            var maxPairs = totalParts <= 30 ? 6 : totalParts <= 60 ? 8 : totalParts <= 150 ? 10 : 12;
+            var pairCount = Math.min(maxPairs, candidates.length);
+            var selected = candidates.slice(0, pairCount);
+
+            // Create pairs
+            var cards = [];
+            for (var i = 0; i < selected.length; i++) {
+                cards.push({ imageUrl: selected[i].imageUrl, pairId: i });
+                cards.push({ imageUrl: selected[i].imageUrl, pairId: i });
+            }
+            shuffleArray(cards);
+
+            // Game state
+            var flipped = [];
+            var matched = {};
+            var moves = 0;
+            var locked = false;
+            var totalPairs = selected.length;
+
+            // Build overlay
+            var overlay = document.createElement('div');
+            overlay.className = 'memory-overlay';
+
+            var modal = document.createElement('div');
+            modal.className = 'memory-modal';
+
+            // Header
+            var header = document.createElement('div');
+            header.className = 'memory-header';
+            header.innerHTML = '<span class="memory-title">\uD83E\uDDE9 Memory Game</span><span class="memory-moves">Moves: <span id="memoryMoveCount">0</span></span>';
+
+            var closeBtn = document.createElement('button');
+            closeBtn.className = 'memory-close';
+            closeBtn.textContent = '\u2715';
+            closeBtn.onclick = function() { overlay.remove(); };
+            header.appendChild(closeBtn);
+            modal.appendChild(header);
+
+            // Grid
+            var grid = document.createElement('div');
+            grid.className = 'memory-grid';
+            var cols = cards.length <= 12 ? 3 : cards.length <= 16 ? 4 : 4;
+            grid.style.gridTemplateColumns = 'repeat(' + cols + ', 1fr)';
+
+            var cardElements = [];
+            for (var i = 0; i < cards.length; i++) {
+                (function(index) {
+                    var card = document.createElement('div');
+                    card.className = 'memory-card';
+
+                    var inner = document.createElement('div');
+                    inner.className = 'memory-card-inner';
+
+                    var back = document.createElement('div');
+                    back.className = 'memory-card-back';
+                    back.textContent = '\uD83E\uDDF1';
+
+                    var front = document.createElement('div');
+                    front.className = 'memory-card-front';
+                    var img = document.createElement('img');
+                    img.src = cards[index].imageUrl;
+                    img.alt = 'Part';
+                    img.onerror = function() {
+                        this.style.display = 'none';
+                        front.textContent = '?';
+                        front.style.fontSize = '28px';
+                        front.style.display = 'flex';
+                        front.style.alignItems = 'center';
+                        front.style.justifyContent = 'center';
+                    };
+                    front.appendChild(img);
+
+                    inner.appendChild(back);
+                    inner.appendChild(front);
+                    card.appendChild(inner);
+
+                    card.onclick = function() {
+                        if (locked || matched[index] || flipped.indexOf(index) !== -1) return;
+
+                        card.classList.add('flipped');
+                        flipped.push(index);
+
+                        if (flipped.length === 2) {
+                            moves++;
+                            document.getElementById('memoryMoveCount').textContent = moves;
+
+                            var idx1 = flipped[0];
+                            var idx2 = flipped[1];
+
+                            if (cards[idx1].pairId === cards[idx2].pairId) {
+                                // Match
+                                matched[idx1] = true;
+                                matched[idx2] = true;
+                                cardElements[idx1].classList.add('matched');
+                                cardElements[idx2].classList.add('matched');
+                                flipped = [];
+
+                                // Check win
+                                if (Object.keys(matched).length === cards.length) {
+                                    setTimeout(function() { showWin(); }, 600);
+                                }
+                            } else {
+                                // No match
+                                locked = true;
+                                setTimeout(function() {
+                                    cardElements[idx1].classList.remove('flipped');
+                                    cardElements[idx2].classList.remove('flipped');
+                                    flipped = [];
+                                    locked = false;
+                                }, 800);
+                            }
+                        }
+                    };
+
+                    cardElements.push(card);
+                    grid.appendChild(card);
+                })(i);
+            }
+
+            modal.appendChild(grid);
+
+            // Win message container
+            var winMsg = document.createElement('div');
+            winMsg.id = 'memoryWinMsg';
+            winMsg.className = 'memory-win hide';
+            modal.appendChild(winMsg);
+
+            overlay.appendChild(modal);
+            document.body.appendChild(overlay);
+
+            // Close on Escape
+            function onEscape(e) {
+                if (e.key === 'Escape') {
+                    overlay.remove();
+                    document.removeEventListener('keydown', onEscape);
+                }
+            }
+            document.addEventListener('keydown', onEscape);
+
+            // Close on overlay click
+            overlay.onclick = function(e) {
+                if (e.target === overlay) overlay.remove();
+            };
+
+            function showWin() {
+                winMsg.classList.remove('hide');
+                winMsg.innerHTML = '<div class="memory-win-text">\uD83C\uDF89 You won!</div>' +
+                    '<div class="memory-win-stats">' + totalPairs + ' pairs in ' + moves + ' moves</div>' +
+                    '<button class="memory-play-again">Play Again</button>';
+                winMsg.querySelector('.memory-play-again').addEventListener('click', function() {
+                    overlay.remove();
+                    startMemoryGame();
+                });
+            }
         }
 
         // Filter accordion: only one section open at a time
@@ -3362,7 +3578,7 @@
     <footer class="app-footer">
         <span class="footer-tagline">Made with ❤️ for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog.html" id="versionInfo" class="footer-version-link">v1.20.7 (e02f964)</a>
+        <a href="/changelog.html" id="versionInfo" class="footer-version-link">v1.21.0 (c67ea31)</a>
     </footer>
 </body>
 
