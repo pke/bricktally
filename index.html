@@ -1424,14 +1424,20 @@
                 });
             })();
 
-            var savedSetNumber = localStorage.getItem('currentSetNumber');
+            var urlSet = new URLSearchParams(window.location.search).get('set');
+            var savedSetNumber = urlSet || localStorage.getItem('currentSetNumber');
             if (savedSetNumber) {
                 // Extract base number without version suffix for display
                 var baseNumber = savedSetNumber.split('-')[0];
                 document.getElementById('setNumber').value = baseNumber;
 
-                // Load the set directly with the full version number
-                loadSetDirect(savedSetNumber);
+                if (urlSet && !urlSet.includes('-')) {
+                    // Deep link with bare number — go through version search
+                    loadSet();
+                } else {
+                    // Full version number from localStorage — load directly
+                    loadSetDirect(savedSetNumber);
+                }
             } else {
                 // Show set history if no current set
                 showSetHistory();
@@ -3578,7 +3584,7 @@
     <footer class="app-footer">
         <span class="footer-tagline">Made with ❤️ for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog.html" id="versionInfo" class="footer-version-link">v1.21.0 (c67ea31)</a>
+        <a href="/changelog.html" id="versionInfo" class="footer-version-link">v1.22.0 (b524976)</a>
     </footer>
 </body>
 
