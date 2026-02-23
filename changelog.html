@@ -22,13 +22,24 @@
 <body class="changelog-page">
   <div class="container">
     <button class="theme-toggle" id="themeToggle" onclick="toggleDarkMode()">
-      <span id="themeIcon"></span>
+      <span id="themeIcon">🌙</span>
     </button>
 
     <h1 class="changelog-title">What’s New in BrickTally</h1>
     <p class="changelog-subtitle">Every brick-counting improvement, one release at a time.</p>
 
     <div id="changelogContent">
+    <div class="changelog-release">
+      <div class="changelog-release-header">
+        <span class="changelog-version">v1.19.0</span>
+        <span class="changelog-date">2026-02-23</span>
+      </div>
+      <h2 class="changelog-release-title">Hello, Google!</h2>
+      <ul class="changelog-entries">
+        <li>BrickTally is now easier to find on the web — the red carpet has been rolled out for search engines with better SEO</li>
+      </ul>
+    </div>
+
     <div class="changelog-release">
       <div class="changelog-release-header">
         <span class="changelog-version">v1.18.1</span>
@@ -160,6 +171,7 @@
       var darkMode = localStorage.getItem('darkMode');
       if (darkMode === 'true') {
         document.body.classList.add('dark-mode');
+        updateThemeIcon();
       }
     }
 
@@ -167,6 +179,14 @@
       document.body.classList.toggle('dark-mode');
       var isDark = document.body.classList.contains('dark-mode');
       localStorage.setItem('darkMode', isDark);
+      updateThemeIcon();
+    }
+
+    function updateThemeIcon() {
+      var icon = document.getElementById('themeIcon');
+      if (icon) {
+        icon.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+      }
     }
 
     loadDarkMode();

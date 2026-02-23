@@ -31,6 +31,32 @@
         content="LEGO®, set verification, brick counting, complete set checker, LEGO® inventory, sell LEGO®, used LEGO® sets">
     <meta name="theme-color" content="#0055BF">
 
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://bricktally.app/">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "BrickTally",
+        "url": "https://bricktally.app",
+        "description": "Verify your LEGO® sets are complete before selling or storing. Count every piece and track multiple sets with BrickTally.",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "image": "https://bricktally.app/assets/og-image.png",
+        "author": {
+            "@type": "Organization",
+            "name": "BrickTally"
+        }
+    }
+    </script>
+
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json">
 
@@ -3584,7 +3610,7 @@
     <footer class="app-footer">
         <span class="footer-tagline">Made with ❤️ for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog.html" id="versionInfo" class="footer-version-link">v1.22.0 (b524976)</a>
+        <a href="/changelog.html" id="versionInfo" class="footer-version-link">v1.23.0 (8d57540)</a>
     </footer>
 </body>
 
