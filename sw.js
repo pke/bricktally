@@ -25,9 +25,13 @@ const STATIC_ASSETS = [
     '/changelog.json'
 ];
 
-// Install event - precache static assets
+// Install event - precache static assets and activate immediately
 self.addEventListener('install', (event) => {
     console.log('[BrickTally:ServiceWorker] Installing...');
+
+    // Skip waiting so the new SW activates immediately, replacing the old one.
+    // This ensures users get the network-first caching fix without manual intervention.
+    self.skipWaiting();
 
     event.waitUntil(
         caches.open(STATIC_CACHE)
