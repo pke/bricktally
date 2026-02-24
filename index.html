@@ -1068,22 +1068,26 @@
             input.click();
         };
 
+        function openBricktally(text) {
+            try {
+                var data = JSON.parse(text);
+                if (!validateBricktally(data)) {
+                    alert('Invalid .bricktally file: does not match expected format.');
+                    return;
+                }
+                showRestoreDialog(data);
+            } catch (err) {
+                alert('Invalid .bricktally file: could not parse JSON.');
+            }
+        }
+
         window.handleRestoreFile = function(event) {
             var file = event.target.files[0];
             if (!file) return;
 
             var reader = new FileReader();
             reader.onload = function(e) {
-                try {
-                    var data = JSON.parse(e.target.result);
-                    if (!validateBricktally(data)) {
-                        alert('Invalid .bricktally file: does not match expected format.');
-                        return;
-                    }
-                    showRestoreDialog(data);
-                } catch (err) {
-                    alert('Invalid .bricktally file: could not parse JSON.');
-                }
+                openBricktally(e.target.result);
             };
             reader.readAsText(file);
         };
@@ -1190,14 +1194,7 @@
                 if (!launchParams.files || !launchParams.files.length) return;
                 launchParams.files[0].getFile().then(function(file) {
                     return file.text();
-                }).then(function(text) {
-                    var data = JSON.parse(text);
-                    if (validateBricktally(data)) {
-                        showRestoreDialog(data);
-                    } else {
-                        alert('Invalid .bricktally file');
-                    }
-                }).catch(function() {
+                }).then(openBricktally).catch(function() {
                     alert('Invalid .bricktally file');
                 });
             });
@@ -3602,7 +3599,7 @@
     <footer class="app-footer">
         <span class="footer-tagline">Made with ❤️ for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.24.3 (787266a)</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.24.4 (3b10520)</a>
     </footer>
 </body>
 
