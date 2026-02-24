@@ -85,18 +85,18 @@
     <!-- Full header that scrolls normally -->
     <div class="full-header">
         <div class="header-wrapper" style="position: relative;">
-            <button class="fullscreen-toggle" id="fullscreenToggle" onclick="toggleFullscreen()">
+            <button class="fullscreen-toggle" id="fullscreenToggle" onclick="toggleFullscreen()" aria-label="Toggle fullscreen">
                 <span id="fullscreenIcon">⛶</span>
             </button>
-            <button class="theme-toggle" id="themeToggle" onclick="toggleDarkMode()">
+            <button class="theme-toggle" id="themeToggle" onclick="toggleDarkMode()" aria-label="Toggle dark mode">
                 <span id="themeIcon"></span>
             </button>
 
             <div class="header-top">
                 <div class="header-left">
-                    <h1 onclick="goToSetHistory()">🧱 BrickTally</h1>
+                    <h1><a href="#" onclick="goToSetHistory(); return false;">🧱 BrickTally</a></h1>
                     <div class="input-group">
-                        <input type="number" id="setNumber" placeholder="Enter set number (e.g., 10294)" autocomplete="off" />
+                        <input type="number" id="setNumber" placeholder="Enter set number…" aria-label="LEGO set number" autocomplete="off" />
                     </div>
                 </div>
             </div>
@@ -110,7 +110,7 @@
                         <div id="statsSection" class="hide">
                             <div class="stats text-center">
                                 <span id="completedPieces">0</span> / <span id="totalPieces">0</span> pieces checked
-                                <button id="resetButton" class="reset-inline hide" onclick="resetSet()" title="Reset progress">↻</button>
+                                <button id="resetButton" class="reset-inline hide" onclick="resetSet()" title="Reset progress" aria-label="Reset progress">↻</button>
                             </div>
                             <div class="progress-bar" id="progressBar" data-percentage="0%" data-pieces="0/0">
                                 <div id="progressFill" class="progress-fill" style="width: 0%;"></div>
@@ -132,7 +132,7 @@
     <div id="collapsedHeader" class="collapsed-header">
         <div class="header-wrapper">
             <div class="collapsed-row">
-                <div class="collapsed-app-name" onclick="goToSetHistory()">🧱 BrickTally</div>
+                <a href="#" class="collapsed-app-name" onclick="goToSetHistory(); return false;">🧱 BrickTally</a>
                 <div class="collapsed-set-name" id="collapsedSetName"></div>
             </div>
             <div class="collapsed-progress">
@@ -140,7 +140,7 @@
                     <div id="progressFillCollapsed" class="progress-fill" style="width: 0%;"></div>
                 </div>
                 <div class="complete-toggle-container collapsed-toggle">
-                    <button class="complete-toggle" id="completeToggleCollapsed" onclick="toggleCompleteParts()" title="Hide Complete Parts"></button>
+                    <button class="complete-toggle" id="completeToggleCollapsed" onclick="toggleCompleteParts()" title="Hide Complete Parts" aria-label="Hide complete parts"></button>
                     <span class="complete-toggle-label">Hide complete</span>
                 </div>
             </div>
@@ -163,7 +163,7 @@
 
     <div class="main-content">
         <div class="content-area">
-            <div id="loading" class="text-center p-20 hide">Loading set data...<div class="loading-spinner"></div></div>
+            <div id="loading" class="text-center p-20 hide">Loading set data…<div class="loading-spinner"></div></div>
             <div id="error" class="error text-center p-20 hide"></div>
 
             <!-- Set History Section -->
@@ -263,7 +263,7 @@
             </div>
 
             <div class="complete-toggle-container" id="completeToggleContainer" style="display: none;">
-                <button class="complete-toggle" id="completeToggle" onclick="toggleCompleteParts()" title="Hide Complete Parts"></button>
+                <button class="complete-toggle" id="completeToggle" onclick="toggleCompleteParts()" title="Hide complete parts" aria-label="Hide complete parts"></button>
                 <span class="complete-toggle-label">Hide complete</span>
             </div>
 
@@ -3169,7 +3169,7 @@
                     var moreY = listY + 10 * partRowHeight + 5;
                     ctx.font = '14px Arial, sans-serif';
                     ctx.fillStyle = 'rgba(255,255,255,0.7)';
-                    ctx.fillText('... and ' + (data.missingParts.length - 10) + ' more missing pieces', 20, moreY);
+                    ctx.fillText('\u2026 and ' + (data.missingParts.length - 10) + ' more missing pieces', 20, moreY);
                 }
             }
 
@@ -3610,7 +3610,7 @@
     <footer class="app-footer">
         <span class="footer-tagline">Made with ❤️ for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.24.1 (9b79b0b)</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.24.2 (edeed90)</a>
     </footer>
 </body>
 
