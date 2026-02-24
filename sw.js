@@ -1,6 +1,6 @@
 // BrickTally Service Worker
 // Version: 1
-const CACHE_VERSION = 'v20260223-103621';
+const CACHE_VERSION = 'v20260224-121507';
 const STATIC_CACHE = `bricktally-static-${CACHE_VERSION}`;
 const API_CACHE = `bricktally-api-${CACHE_VERSION}`;
 const IMAGE_CACHE = `bricktally-images-${CACHE_VERSION}`;
@@ -21,7 +21,7 @@ const STATIC_ASSETS = [
     '/assets/fireworks.json',
     '/js/lottie.min.js',
     '/js/pako.min.js',
-    '/changelog.html',
+    '/changelog',
     '/changelog.json'
 ];
 
@@ -103,6 +103,15 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
+    // Handle HTML pages (Network First) — always serve fresh content on reload
+    // Matches /, *.html, and clean URLs like /changelog (no extension, no dot in last segment)
+    if (url.origin === self.location.origin &&
+        (url.pathname === '/' || url.pathname.endsWith('.html') ||
+         !url.pathname.split('/').pop().includes('.'))) {
+        event.respondWith(networkFirst(request, STATIC_CACHE));
+        return;
+    }
+
     // Handle static assets (Cache First)
     if (isStaticAsset(url)) {
         event.respondWith(cacheFirst(request, STATIC_CACHE));
@@ -123,12 +132,6 @@ self.addEventListener('fetch', (event) => {
 
 // Helper: Check if request is for a static asset
 function isStaticAsset(url) {
-    // Local HTML files
-    if (url.origin === self.location.origin &&
-        (url.pathname === '/' || url.pathname.endsWith('.html'))) {
-        return true;
-    }
-
     // CSS files
     if (url.pathname.endsWith('.css')) {
         return true;
@@ -192,6 +195,34 @@ async function cacheFirst(request, cacheName) {
 
         // For non-images, throw the error
         throw error;
+    }
+}
+
+// Strategy: Network First (for HTML pages)
+async function networkFirst(request, cacheName) {
+    const cache = await caches.open(cacheName);
+
+    try {
+        const networkResponse = await fetch(request);
+
+        if (networkResponse.ok && request.method === 'GET') {
+            cache.put(request, networkResponse.clone());
+        }
+
+        return networkResponse;
+    } catch (error) {
+        console.log('[BrickTally:Network] Network failed, trying cache:', request.url);
+        const cachedResponse = await cache.match(request);
+
+        if (cachedResponse) {
+            return cachedResponse;
+        }
+
+        return new Response('Network unavailable', {
+            status: 503,
+            statusText: 'Service Unavailable',
+            headers: { 'Content-Type': 'text/plain' }
+        });
     }
 }
 
