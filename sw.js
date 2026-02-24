@@ -1,6 +1,6 @@
 // BrickTally Service Worker
 // Version: 1
-const CACHE_VERSION = 'v20260224-133223';
+const CACHE_VERSION = 'v20260224-134846';
 const STATIC_CACHE = `bricktally-static-${CACHE_VERSION}`;
 const API_CACHE = `bricktally-api-${CACHE_VERSION}`;
 const IMAGE_CACHE = `bricktally-images-${CACHE_VERSION}`;
@@ -72,12 +72,9 @@ self.addEventListener('activate', (event) => {
     );
 });
 
-// Message event - controlled skipWaiting from page
-self.addEventListener('message', (event) => {
-    if (event.data && event.data.type === 'SKIP_WAITING') {
-        self.skipWaiting();
-    }
-});
+// Note: skipWaiting() is called unconditionally during install, so the
+// SKIP_WAITING message from the client is no longer needed. The SW will
+// always activate immediately.
 
 // Fetch event - route requests to appropriate caching strategy
 self.addEventListener('fetch', (event) => {

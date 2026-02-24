@@ -99,6 +99,11 @@ export default async function handler(req, res) {
     const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
     const url = new URL(cleanEndpoint, baseUrl + '/');
 
+    // Prevent SSRF — ensure the resolved URL stays within the Rebrickable API
+    if (!url.href.startsWith(baseUrl)) {
+      return res.status(400).json({ error: 'Invalid endpoint' });
+    }
+
     // Add any additional query parameters (like page, page_size)
     Object.keys(otherParams).forEach(key => {
       url.searchParams.append(key, otherParams[key]);

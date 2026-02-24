@@ -273,15 +273,11 @@
 
     <script>
         // Service Worker Registration
-        var waitingWorker = null;
-        var userRequestedUpdate = false;
-
         if ('serviceWorker' in navigator) {
-            // Reload once the new SW takes control (only if user clicked "Update Now")
+            // The SW calls skipWaiting() on install, so it activates immediately.
+            // On controllerchange (new SW took over), show the changelog modal.
             navigator.serviceWorker.addEventListener('controllerchange', function() {
-                if (userRequestedUpdate) {
-                    window.location.reload();
-                }
+                showWhatsNewModal();
             });
 
             window.addEventListener('load', function() {
@@ -295,20 +291,6 @@
                 }
 
                 navigator.serviceWorker.register('/sw.js')
-                    .then(function(registration) {
-                        console.log('[BrickTally:ServiceWorker] ServiceWorker registered');
-
-                        // Handle updates
-                        registration.addEventListener('updatefound', function() {
-                            var newWorker = registration.installing;
-                            newWorker.addEventListener('statechange', function() {
-                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    waitingWorker = newWorker;
-                                    showWhatsNewModal();
-                                }
-                            });
-                        });
-                    })
                     .catch(function(error) {
                         console.log('[BrickTally:ServiceWorker] ServiceWorker registration failed:', error);
                     });
@@ -390,12 +372,7 @@
             updateBtn.textContent = 'Update Now';
             updateBtn.onclick = function() {
                 if (version) localStorage.setItem('lastSeenVersion', version);
-                userRequestedUpdate = true;
-                if (waitingWorker) {
-                    waitingWorker.postMessage({ type: 'SKIP_WAITING' });
-                } else {
-                    window.location.reload();
-                }
+                window.location.reload();
             };
 
             var laterBtn = document.createElement('button');
@@ -458,6 +435,13 @@
             return url;
         }
 
+        // Escape HTML to prevent XSS when interpolating into innerHTML
+        function escapeHtml(str) {
+            var div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
         // Handle image load errors — retry through proxy if CDN is blocked (e.g. uMatrix)
         window.handleImageError = function(img) {
             var src = img.getAttribute('src');
@@ -470,6 +454,14 @@
 
         window.handleImageLoad = function(img) {
             // Currently unused
+        };
+
+        window.retryImageLoad = function(img) {
+            var src = img.getAttribute('src');
+            if (!src) return;
+            // Force reload by appending a cache-busting param
+            var separator = src.includes('?') ? '&' : '?';
+            img.src = src + separator + '_retry=' + Date.now();
         };
 
         // ─── localStorage helpers ────────────────────────────────────────
@@ -772,11 +764,12 @@
                 item.className = 'set-history-item';
                 item.setAttribute('data-set-number', setInfo.fullNumber);
 
+                // innerHTML with escapeHtml() to prevent XSS from restored backup data
                 item.innerHTML =
-                    '<img src="' + setInfo.imageUrl + '" alt="' + setInfo.name + '" class="set-history-item-image" onerror="handleImageError(this)" onclick="retryImageLoad(this)">' +
+                    '<img src="' + escapeHtml(setInfo.imageUrl || '') + '" alt="' + escapeHtml(setInfo.name || '') + '" class="set-history-item-image" onerror="handleImageError(this)" onclick="retryImageLoad(this)">' +
                     '<div class="set-history-item-content">' +
-                        '<div class="set-history-item-title">' + setInfo.name + '</div>' +
-                        '<div class="set-history-item-number">Set ' + setInfo.number + ' (' + setInfo.year + ')</div>' +
+                        '<div class="set-history-item-title">' + escapeHtml(setInfo.name || '') + '</div>' +
+                        '<div class="set-history-item-number">Set ' + escapeHtml(setInfo.number || '') + ' (' + escapeHtml(String(setInfo.year || '')) + ')</div>' +
                         '<div class="set-history-item-stats">' + completedCount + ' / ' + totalCount + ' pieces</div>' +
                         '<div class="progress-bar" data-percentage="' + percentage + '%">' +
                             '<div class="progress-fill" style="width: ' + percentage + '%;"></div>' +
@@ -1113,10 +1106,11 @@
                 var restoreProgress = calculateProgressFromString(restoreSet.info.numParts, restoreSet.progress);
 
                 var imgUrl = restoreSet.info.imageUrl || '/assets/favicon.svg';
-                var html = '<img src="' + imgUrl + '" class="restore-set-image" onerror="handleImageError(this)">' +
+                // escapeHtml() prevents XSS from crafted backup files
+                var html = '<img src="' + escapeHtml(imgUrl) + '" class="restore-set-image" onerror="handleImageError(this)">' +
                     '<div class="restore-set-info">' +
-                    '<strong>' + restoreSet.info.name + '</strong>' +
-                    '<span>Set ' + restoreSet.info.number + ' (' + restoreSet.info.year + ')</span>' +
+                    '<strong>' + escapeHtml(restoreSet.info.name || '') + '</strong>' +
+                    '<span>Set ' + escapeHtml(restoreSet.info.number || '') + ' (' + escapeHtml(String(restoreSet.info.year || '')) + ')</span>' +
                     '</div>';
 
                 if (hasConflict) {
@@ -2078,6 +2072,7 @@
 
         function showVersionSelector(versions) {
             var modal = document.createElement('div');
+            modal.className = 'version-selector-overlay';
             modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px;';
 
             var content = document.createElement('div');
@@ -2095,8 +2090,8 @@
                     'border-radius: 8px; cursor: pointer; text-align: left; width: 100%;">' +
                     '<img src="' + imgUrl + '" style="width: 100px; height: 80px; object-fit: contain; border-radius: 4px;" class="version-selector-image" onerror="handleImageError(this)" onclick="event.stopPropagation(); retryImageLoad(this);">' +
                     '<div style="flex: 1;">' +
-                    '<div style="font-weight: bold; color: var(--text-primary); margin-bottom: 5px;">' + version.name + '</div>' +
-                    '<div style="color: var(--text-secondary); font-size: 14px;">Set: ' + version.set_num + ' | Year: ' + version.year + ' | Parts: ' + version.num_parts + '</div>' +
+                    '<div style="font-weight: bold; color: var(--text-primary); margin-bottom: 5px;">' + escapeHtml(version.name || '') + '</div>' +
+                    '<div style="color: var(--text-secondary); font-size: 14px;">Set: ' + escapeHtml(version.set_num || '') + ' | Year: ' + escapeHtml(String(version.year || '')) + ' | Parts: ' + version.num_parts + '</div>' +
                     '</div>' +
                     '</button>';
             });
@@ -2114,13 +2109,9 @@
         }
 
         function selectVersion(setNumber) {
-            // Close modal
-            var modals = document.querySelectorAll('body > div');
-            modals.forEach(function (modal) {
-                if (modal.style.position === 'fixed') {
-                    modal.remove();
-                }
-            });
+            // Close version selector modal
+            var modal = document.querySelector('.version-selector-overlay');
+            if (modal) modal.remove();
 
             // Update input field to show selected version
             document.getElementById('setNumber').value = setNumber.split('-')[0];
@@ -2195,7 +2186,7 @@
 
             document.getElementById('setName').textContent = setData.name;
             document.getElementById('setImageContainer').innerHTML =
-                '<img src="' + setImageUrl + '" alt="' + setData.name + '" class="set-detail-image" onerror="handleImageError(this)" onclick="retryImageLoad(this)">';
+                '<img src="' + escapeHtml(setImageUrl || '') + '" alt="' + escapeHtml(setData.name || '') + '" class="set-detail-image" onerror="handleImageError(this)" onclick="retryImageLoad(this)">';
             document.getElementById('setDetails').innerHTML =
                 'Set Number: ' + displaySetNumber + versionInfo + ' | Year: ' + setData.year + ' | Parts: ' + setData.num_parts;
 
@@ -2283,10 +2274,10 @@
                 totalPieces += colorCounts[color];
             }
 
-            var html = '<button class="filter active" onclick="toggleColorFilter(\'all\')">All <span class="count">(' + totalPieces + ')</span></button>';
+            var html = '<button class="filter active" onclick="toggleColorFilter(\'all\', event)">All <span class="count">(' + totalPieces + ')</span></button>';
 
             Object.keys(colorCounts).sort().forEach(function (color) {
-                html += '<button class="filter" onclick="toggleColorFilter(\'' + color.replace(/'/g, "\\'") + '\')">' +
+                html += '<button class="filter" onclick="toggleColorFilter(\'' + color.replace(/'/g, "\\'") + '\', event)">' +
                     color + ' <span class="count">(' + colorCounts[color] + ')</span></button>';
             });
 
@@ -2296,7 +2287,7 @@
             activeColorFilters = [];
         }
 
-        function toggleColorFilter(color) {
+        function toggleColorFilter(color, e) {
             var buttons = document.querySelectorAll('.filter');
 
             if (color === 'all') {
@@ -2306,13 +2297,14 @@
             } else {
                 buttons[0].classList.remove('active');
 
+                var btn = e ? e.target.closest('.filter') : null;
                 var index = activeColorFilters.indexOf(color);
                 if (index > -1) {
                     activeColorFilters.splice(index, 1);
-                    event.target.classList.remove('active');
+                    if (btn) btn.classList.remove('active');
                 } else {
                     activeColorFilters.push(color);
-                    event.target.classList.add('active');
+                    if (btn) btn.classList.add('active');
                 }
 
                 if (activeColorFilters.length === 0) {
@@ -3610,7 +3602,7 @@
     <footer class="app-footer">
         <span class="footer-tagline">Made with ❤️ for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.24.2 (edeed90)</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.24.3 (787266a)</a>
     </footer>
 </body>
 
