@@ -241,6 +241,19 @@ export async function waitForFireworks(page, timeout = 5000) {
 }
 
 /**
+ * Wait for fireworks to disappear (after animation completes)
+ */
+export async function waitForFireworksDismissed(page, timeout = 15000) {
+  await page.waitForFunction(
+    () => {
+      const el = document.getElementById('fireworksContainer');
+      return !el || window.getComputedStyle(el).display === 'none';
+    },
+    { timeout }
+  );
+}
+
+/**
  * Get localStorage value
  */
 export async function getLocalStorage(page, key) {

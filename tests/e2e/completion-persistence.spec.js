@@ -7,6 +7,7 @@ import {
   decrementPart,
   fillQuantity,
   waitForFireworks,
+  waitForFireworksDismissed,
   isFireworksVisible,
   getLocalStorage,
   setLocalStorage,
@@ -167,8 +168,8 @@ test.describe('Category 6: Completion & Celebration', () => {
     // Dismiss the completion modal
     await page.click('button:has-text("Awesome!")');
 
-    // Wait for fireworks to disappear
-    await page.waitForTimeout(5000);
+    // Wait for fireworks animation to finish
+    await waitForFireworksDismissed(page);
 
     // Add spare parts (going from 100% to 102%)
     const spareParts = await page.locator('#spareTableContainer table tr[id^="row-"]').all();
