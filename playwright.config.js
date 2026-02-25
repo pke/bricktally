@@ -75,7 +75,9 @@ export default defineConfig({
 
   // Run your local dev server before starting the tests
   webServer: {
-    command: 'vercel dev --listen 8080',
+    command: process.env.VERCEL_TOKEN
+      ? `vercel dev --listen 8080 --token=${process.env.VERCEL_TOKEN}`
+      : 'vercel dev --listen 8080',
     url: 'http://localhost:8080',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
