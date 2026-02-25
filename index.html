@@ -274,20 +274,21 @@
     <script>
         // Service Worker Registration
         if ('serviceWorker' in navigator) {
-            // The SW calls skipWaiting() on install, so it activates immediately.
-            // On controllerchange (new SW took over), show the changelog modal.
-            navigator.serviceWorker.addEventListener('controllerchange', function() {
-                showWhatsNewModal();
-            });
-
             window.addEventListener('load', function() {
-                // Store current version for changelog comparison
                 var versionEl = document.getElementById('versionInfo');
+                var currentVersion = null;
                 if (versionEl) {
                     var versionMatch = versionEl.textContent.match(/v([\d.]+)/);
-                    if (versionMatch && !localStorage.getItem('lastSeenVersion')) {
-                        localStorage.setItem('lastSeenVersion', versionMatch[1]);
-                    }
+                    if (versionMatch) currentVersion = versionMatch[1];
+                }
+
+                // First visit: store version, no modal
+                var lastSeen = localStorage.getItem('lastSeenVersion');
+                if (!lastSeen && currentVersion) {
+                    localStorage.setItem('lastSeenVersion', currentVersion);
+                } else if (lastSeen && currentVersion && compareVersions(currentVersion, lastSeen) > 0) {
+                    // Version changed since last visit — show what's new
+                    showWhatsNewModal();
                 }
 
                 navigator.serviceWorker.register('/sw.js')
@@ -3599,7 +3600,7 @@
     <footer class="app-footer">
         <span class="footer-tagline">Made with ❤️ for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.24.9 (249c14e)</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.24.10 (6958976)</a>
     </footer>
 </body>
 
