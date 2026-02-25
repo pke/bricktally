@@ -5,9 +5,19 @@ import { test, expect } from '@playwright/test';
  *
  * Tests that the API proxy correctly rejects attempts to escape
  * the Rebrickable API base URL (SSRF prevention).
+ *
+ * Requires Vercel serverless functions (skipped on plain static servers in CI).
  */
 
 test.describe('API Security', () => {
+  test.beforeEach(async ({ request }) => {
+    // Skip if the server doesn't support serverless functions
+    const res = await request.get('/api/rebrickable?endpoint=/lego/sets/');
+    if (res.status() === 404 && res.headers()['server']?.includes('SimpleHTTP')) {
+      test.skip(true, 'No serverless runtime available');
+    }
+  });
+
   test('SSRF: rejects protocol-relative URL that escapes base URL', async ({ page }) => {
     await page.goto('/');
 
