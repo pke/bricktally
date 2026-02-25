@@ -24,8 +24,8 @@ export default defineConfig({
   // Retry on CI only
   retries: process.env.CI ? 2 : 0,
 
-  // Use half of available CPUs (Playwright default)
-  workers: '50%',
+  // Use all available CPUs — tests are I/O-bound, not CPU-bound
+  workers: '100%',
 
   // Reporter to use
   reporter: 'html',
