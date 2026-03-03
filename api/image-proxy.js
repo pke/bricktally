@@ -35,10 +35,18 @@ export default async function handler(req, res) {
       return res.status(response.status).json({ error: 'Failed to fetch image' });
     }
 
-    const contentType = response.headers.get('content-type');
+    const contentType = response.headers.get('content-type') || '';
+    const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml'];
+    const mimeType = contentType.split(';')[0].trim();
+
+    if (!ALLOWED_TYPES.includes(mimeType)) {
+      return res.status(415).json({ error: 'Unsupported content type' });
+    }
+
     const buffer = await response.arrayBuffer();
 
-    res.setHeader('Content-Type', contentType || 'image/jpeg');
+    res.setHeader('Content-Type', mimeType);
+    res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('Cache-Control', 'public, max-age=86400'); // Cache for 1 day
     return res.send(Buffer.from(buffer));
 

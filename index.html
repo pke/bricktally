@@ -492,20 +492,20 @@
 
         function migrateLocalStorage() {
             var keysToRemove = [];
-            var keysCount = localStorage.length;
+            var allKeys = [];
+            for (var i = 0; i < localStorage.length; i++) allKeys.push(localStorage.key(i));
 
-            for (var i = 0; i < keysCount; i++) {
-                var key = localStorage.key(i);
-                if (!key || !key.startsWith('setInfo_')) continue;
+            allKeys.forEach(function(key) {
+                if (!key || !key.startsWith('setInfo_')) return;
 
                 var fullNumber = key.substring('setInfo_'.length);
                 var infoStr = localStorage.getItem(key);
-                if (!infoStr) continue;
+                if (!infoStr) return;
 
                 try {
                     var info = JSON.parse(infoStr);
                 } catch (e) {
-                    continue;
+                    return;
                 }
 
                 // Check if set_ already holds new-format JSON
@@ -515,7 +515,7 @@
                         var parsed = JSON.parse(existingSetValue);
                         if (parsed.fullNumber) {
                             keysToRemove.push(key);
-                            continue;
+                            return;
                         }
                     } catch (e) {
                         // Not valid JSON, treat as old progress string
@@ -537,7 +537,7 @@
                 localStorage.setItem('set_' + fullNumber, JSON.stringify(consolidated));
                 keysToRemove.push(key);
                 keysToRemove.push('setData_' + fullNumber);
-            }
+            });
 
             keysToRemove.forEach(function(k) {
                 localStorage.removeItem(k);
@@ -713,9 +713,10 @@
 
         function getSetHistory() {
             var sets = [];
+            var allKeys = [];
+            for (var i = 0; i < localStorage.length; i++) allKeys.push(localStorage.key(i));
 
-            for (var i = 0; i < localStorage.length; i++) {
-                var key = localStorage.key(i);
+            allKeys.forEach(function(key) {
                 if (key && key.startsWith('set_')) {
                     try {
                         var data = JSON.parse(localStorage.getItem(key));
@@ -726,7 +727,7 @@
                         // Skip non-JSON entries
                     }
                 }
-            }
+            });
 
             sets.sort(function(a, b) {
                 return (b.lastAccessed || 0) - (a.lastAccessed || 0);
@@ -2186,7 +2187,7 @@
             document.getElementById('setImageContainer').innerHTML =
                 '<img src="' + escapeHtml(setImageUrl || '') + '" alt="' + escapeHtml(setData.name || '') + '" class="set-detail-image" onerror="handleImageError(this)" onclick="retryImageLoad(this)">';
             document.getElementById('setDetails').innerHTML =
-                'Set Number: ' + displaySetNumber + versionInfo + ' | Year: ' + setData.year + ' | Parts: ' + setData.num_parts;
+                'Set Number: ' + escapeHtml(displaySetNumber) + versionInfo + ' | Year: ' + escapeHtml(String(setData.year)) + ' | Parts: ' + escapeHtml(String(setData.num_parts));
 
             // Update collapsed header set name
             var collapsedVersionInfo = versionNumber !== '1' ? ' (v' + versionNumber + ')' : '';
@@ -2275,8 +2276,8 @@
             var html = '<button class="filter active" onclick="toggleColorFilter(\'all\', event)">All <span class="count">(' + totalPieces + ')</span></button>';
 
             Object.keys(colorCounts).sort().forEach(function (color) {
-                html += '<button class="filter" onclick="toggleColorFilter(\'' + color.replace(/'/g, "\\'") + '\', event)">' +
-                    color + ' <span class="count">(' + colorCounts[color] + ')</span></button>';
+                html += '<button class="filter" data-color="' + escapeHtml(color) + '" onclick="toggleColorFilter(this.dataset.color, event)">' +
+                    escapeHtml(color) + ' <span class="count">(' + colorCounts[color] + ')</span></button>';
             });
 
             // Render in both locations
@@ -2332,11 +2333,11 @@
                 var infoContent = [];
 
                 if (visibleColumns.color) {
-                    infoContent.push(part.color);
+                    infoContent.push(escapeHtml(part.color));
                 }
 
                 if (visibleColumns.name) {
-                    infoContent.push(part.name);
+                    infoContent.push(escapeHtml(part.name));
                 }
 
                 // Build the info text
@@ -2345,9 +2346,9 @@
                 // Add part number on a new line if enabled (only add <br> if there's content before it)
                 if (visibleColumns.partNum) {
                     if (infoText) {
-                        infoText += '<br>' + part.partNum;
+                        infoText += '<br>' + escapeHtml(part.partNum);
                     } else {
-                        infoText = part.partNum;
+                        infoText = escapeHtml(part.partNum);
                     }
                 }
 
@@ -2362,11 +2363,11 @@
                 var incrementBtnClass = isComplete ? ' complete' : '';
                 var incrementBtnDisabled = isComplete ? ' disabled' : '';
 
-                var altText = (part.color + ' ' + part.name + ' (' + part.partNum + ')').replace(/"/g, '&quot;');
-                var fallbackInfo = part.color + ' ' + part.name + '<br>' + part.partNum;
+                var altText = escapeHtml(part.color + ' ' + part.name + ' (' + part.partNum + ')');
+                var fallbackInfo = escapeHtml(part.color) + ' ' + escapeHtml(part.name) + '<br>' + escapeHtml(part.partNum);
                 var decrementHidden = currentCount === 0 ? ' data-hidden-when-zero' : '';
-                html += '<tr id="row-' + part.id + '" data-complete="' + isComplete + '" data-color="' + part.color + '" data-fallback-info="' + fallbackInfo.replace(/"/g, '&quot;') + '">' +
-                    '<td class="col-img"><img src="' + part.imageUrl + '" alt="' + altText + '" class="part-image" data-part-id="' + part.id + '" onerror="handleImageError(this)" onload="handleImageLoad(this)"></td>' +
+                html += '<tr id="row-' + part.id + '" data-complete="' + isComplete + '" data-color="' + escapeHtml(part.color) + '" data-fallback-info="' + fallbackInfo.replace(/"/g, '&quot;') + '">' +
+                    '<td class="col-img"><img src="' + escapeHtml(part.imageUrl) + '" alt="' + altText + '" class="part-image" data-part-id="' + part.id + '" onerror="handleImageError(this)" onload="handleImageLoad(this)"></td>' +
                     '<td class="col-info" id="info-' + part.id + '">' + infoText + '</td>' +
                     '<td class="col-controls"><div class="controls">' +
                     '<button id="dec-' + part.id + '" onclick="decrementPart(' + part.id + ')"' + decrementHidden + '>-</button>' +
@@ -2405,11 +2406,11 @@
                 var infoContent = [];
 
                 if (visibleColumns.color) {
-                    infoContent.push(part.color);
+                    infoContent.push(escapeHtml(part.color));
                 }
 
                 if (visibleColumns.name) {
-                    infoContent.push(part.name);
+                    infoContent.push(escapeHtml(part.name));
                 }
 
                 // Build the info text
@@ -2418,9 +2419,9 @@
                 // Add part number on a new line if enabled
                 if (visibleColumns.partNum) {
                     if (infoText) {
-                        infoText += '<br>' + part.partNum;
+                        infoText += '<br>' + escapeHtml(part.partNum);
                     } else {
-                        infoText = part.partNum;
+                        infoText = escapeHtml(part.partNum);
                     }
                 }
 
@@ -2435,11 +2436,11 @@
                 var incrementBtnClass = isComplete ? ' complete' : '';
                 var incrementBtnDisabled = isComplete ? ' disabled' : '';
 
-                var altText = (part.color + ' ' + part.name + ' (' + part.partNum + ')').replace(/"/g, '&quot;');
-                var fallbackInfo = part.color + ' ' + part.name + '<br>' + part.partNum;
+                var altText = escapeHtml(part.color + ' ' + part.name + ' (' + part.partNum + ')');
+                var fallbackInfo = escapeHtml(part.color) + ' ' + escapeHtml(part.name) + '<br>' + escapeHtml(part.partNum);
                 var decrementHidden = currentCount === 0 ? ' data-hidden-when-zero' : '';
-                html += '<tr id="row-' + part.id + '" data-complete="' + isComplete + '" data-color="' + part.color + '" data-fallback-info="' + fallbackInfo.replace(/"/g, '&quot;') + '">' +
-                    '<td class="col-img"><img src="' + part.imageUrl + '" alt="' + altText + '" class="part-image" data-part-id="' + part.id + '" onerror="handleImageError(this)" onload="handleImageLoad(this)"></td>' +
+                html += '<tr id="row-' + part.id + '" data-complete="' + isComplete + '" data-color="' + escapeHtml(part.color) + '" data-fallback-info="' + fallbackInfo.replace(/"/g, '&quot;') + '">' +
+                    '<td class="col-img"><img src="' + escapeHtml(part.imageUrl) + '" alt="' + altText + '" class="part-image" data-part-id="' + part.id + '" onerror="handleImageError(this)" onload="handleImageLoad(this)"></td>' +
                     '<td class="col-info" id="info-' + part.id + '">' + infoText + '</td>' +
                     '<td class="col-controls"><div class="controls">' +
                     '<button id="dec-' + part.id + '" onclick="decrementPart(' + part.id + ')"' + decrementHidden + '>-</button>' +
@@ -2492,9 +2493,9 @@
                 }
 
                 html += '<div class="minifig-card' + (isComplete ? ' complete' : '') + '" data-complete="' + isComplete + '" id="minifig-' + minifig.id + '" onclick="toggleMinifig(' + minifig.id + ')">' +
-                    '<img src="' + minifig.imageUrl + '" alt="' + minifig.name + '" class="minifig-image" data-part-id="' + minifig.id + '" onclick="event.stopPropagation(); openMinifigLightbox(this)" onerror="handleImageError(this)" onload="handleImageLoad(this)">' +
-                    '<div class="minifig-name">' + title + '</div>' +
-                    '<div class="minifig-id">' + description + '</div>' +
+                    '<img src="' + escapeHtml(minifig.imageUrl) + '" alt="' + escapeHtml(minifig.name) + '" class="minifig-image" data-part-id="' + minifig.id + '" onclick="event.stopPropagation(); openMinifigLightbox(this)" onerror="handleImageError(this)" onload="handleImageLoad(this)">' +
+                    '<div class="minifig-name">' + escapeHtml(title) + '</div>' +
+                    '<div class="minifig-id">' + escapeHtml(description) + '</div>' +
                 '</div>';
             });
 
@@ -3005,9 +3006,9 @@
                 var imgW = img.naturalWidth || img.width;
                 var imgH = img.naturalHeight || img.height;
                 var boxSize = setImgSize - 10;
-                var scale = Math.min(boxSize / imgW, boxSize / imgH);
-                var drawW = imgW * scale;
-                var drawH = imgH * scale;
+                var imgScale = Math.min(boxSize / imgW, boxSize / imgH);
+                var drawW = imgW * imgScale;
+                var drawH = imgH * imgScale;
                 var drawX = 15 + (boxSize - drawW) / 2;
                 var drawY = 15 + (boxSize - drawH) / 2;
                 ctx.drawImage(img, drawX, drawY, drawW, drawH);
@@ -3600,7 +3601,7 @@
     <footer class="app-footer">
         <span class="footer-tagline">Made with ❤️ for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.24.12 (d24b02e)</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.24.13 (a114502)</a>
     </footer>
 </body>
 
