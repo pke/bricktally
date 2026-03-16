@@ -73,6 +73,7 @@
     <link rel="stylesheet" href="/styles.css">
     <script src="/js/lottie.min.js"></script>
     <script src="/js/pako.min.js"></script>
+    <script src="/js/i18next.min.js"></script>
 </head>
 
 <body>
@@ -289,6 +290,39 @@
     </main>
 
     <script>
+        // i18n initialization — translations embedded at build time, fallback to fetch
+        (function initI18n() {
+            var locale = window.__LOCALE__ || 'en';
+            var translations = window.__TRANSLATIONS__;
+
+            if (translations) {
+                var resources = {};
+                resources[locale] = { translation: translations };
+                i18next.init({
+                    lng: locale,
+                    fallbackLng: 'en',
+                    resources: resources,
+                    interpolation: { escapeValue: false }
+                });
+            } else {
+                // Dev mode: fetch locale file synchronously
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', '/locales/' + locale + '.json', false);
+                xhr.send();
+                if (xhr.status === 200) {
+                    var res = {};
+                    res[locale] = { translation: JSON.parse(xhr.responseText) };
+                    i18next.init({
+                        lng: locale,
+                        fallbackLng: 'en',
+                        resources: res,
+                        interpolation: { escapeValue: false }
+                    });
+                }
+            }
+        })();
+        var t = i18next.t.bind(i18next);
+
         // Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
@@ -3593,7 +3627,7 @@
     <footer class="app-footer">
         <span class="footer-tagline">Made with ❤️ between building sessions for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.26.0 (66a2453)</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.27.0 (65eea57)</a>
         <span class="footer-disclaimer">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise, or endorse this app.</span>
     </footer>
 </body>
