@@ -2221,6 +2221,38 @@ body.verify-page {
    Footer
    ========================================================================== */
 
+/* Static landing content (visible before JS loads, hidden after) */
+.landing-content {
+  padding: 30px 20px;
+  max-width: 600px;
+  margin: 0 auto;
+  color: var(--text-primary);
+}
+
+.landing-content h2 {
+  margin-bottom: 12px;
+}
+
+.landing-content p {
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.landing-content ul {
+  padding-left: 20px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+.landing-content a {
+  color: var(--blue);
+}
+
+.landing-content .restore-btn {
+  margin-top: 20px;
+}
+
 .app-footer {
   padding: 4px 12px;
   background: var(--bg-secondary);
@@ -2241,6 +2273,13 @@ body.verify-page {
   color: var(--text-secondary);
   text-decoration: none;
   font-size: inherit;
+}
+
+.footer-disclaimer {
+  display: block;
+  font-size: 9px;
+  opacity: 0.7;
+  margin-top: 2px;
 }
 
 .footer-version-link:hover {

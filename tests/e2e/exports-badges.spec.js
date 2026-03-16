@@ -450,9 +450,10 @@ test.describe('Category 10: Badge Generation', () => {
 
     await page.waitForSelector('text=BrickTally Badge', { timeout: 5000 });
 
-    // Check modal shows instructions about sharing
-    await expect(page.locator('text=eBay')).toBeVisible();
-    await expect(page.locator('text=Facebook Marketplace')).toBeVisible();
-    await expect(page.locator('text=Download Badge')).toBeVisible();
+    // Check modal shows instructions about sharing (scope to badge modal to avoid landing content matches)
+    const modal = page.locator('div:has(> h2:has-text("BrickTally Badge"))');
+    await expect(modal.locator('text=eBay')).toBeVisible();
+    await expect(modal.locator('text=Facebook Marketplace')).toBeVisible();
+    await expect(modal.locator('text=Download Badge')).toBeVisible();
   });
 });

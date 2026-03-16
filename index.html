@@ -92,14 +92,14 @@
                 <span id="themeIcon"></span>
             </button>
 
-            <div class="header-top">
+            <nav class="header-top">
                 <div class="header-left">
                     <h1><a href="#" onclick="goToSetHistory(); return false;">🧱 BrickTally</a></h1>
                     <div class="input-group">
                         <input type="number" id="setNumber" placeholder="Enter set number…" aria-label="LEGO set number" autocomplete="off" />
                     </div>
                 </div>
-            </div>
+            </nav>
 
             <div id="setInfo" class="hide">
                 <div class="set-info-layout">
@@ -161,26 +161,43 @@
         </div>
     </div>
 
-    <div class="main-content">
+    <main class="main-content">
         <div class="content-area">
+            <!-- Landing content shown when no sets are in progress -->
+            <section id="landingContent" class="landing-content">
+                <h2>Verify Your LEGO Sets Are Complete</h2>
+                <p>BrickTally helps you count every piece in your LEGO® sets before selling, storing, or building. Enter a set number to get a full parts checklist powered by the <a href="https://rebrickable.com/" target="_blank" rel="noopener">Rebrickable</a> database.</p>
+                <ul>
+                    <li>Track parts, spare parts, and minifigures separately</li>
+                    <li>Filter by colour to focus on one group at a time</li>
+                    <li>Export missing parts to BrickLink, Pick a Brick, Rebrickable, or as a plain text list</li>
+                    <li>Generate a completion badge for eBay or marketplace listings</li>
+                    <li>Optimised for tablets and phones — always at your fingertips when sorting pieces</li>
+                    <li>Works offline as a PWA — install it on your device</li>
+                    <li>Backup and restore your progress across devices</li>
+                </ul>
+                <button onclick="restoreSets()" class="restore-btn landing-restore-btn" title="Restore a previous backup">📥 Restore a backup</button>
+            </section>
+
             <div id="loading" class="text-center p-20 hide">Loading set data…<div class="loading-spinner"></div></div>
             <div id="error" class="error text-center p-20 hide"></div>
 
             <!-- Set History Section -->
-            <div id="setHistorySection" class="set-history hide">
+            <section id="setHistorySection" class="set-history hide">
                 <div class="backup-restore-toolbar">
                     <button onclick="restoreSets()" class="restore-btn" title="Restore sets">📥 Restore</button>
                     <button id="backupAllBtn" onclick="startBackupAll()" class="backup-all-btn hide" title="Backup all sets">📤 Backup All</button>
                     <button id="backupSelectedBtn" onclick="executeBackupAll()" class="backup-selected-btn" title="Backup selected sets">📤 Backup Selected</button>
                     <button id="cancelBackupBtn" onclick="cancelBackupAll()" class="cancel-backup-btn" title="Cancel backup">Cancel</button>
-                    <input type="file" id="restoreFileInput" accept=".bricktally,.json" class="hide" onchange="handleRestoreFile(event)">
                 </div>
                 <div id="setHistoryList" class="set-history-list"></div>
                 <div id="setHistoryEmpty" class="set-history-empty hide">
                     <p>No sets worked on yet</p>
                     <p style="font-size: 14px;">Enter a set number above to get started</p>
                 </div>
-            </div>
+            </section>
+
+            <input type="file" id="restoreFileInput" accept=".bricktally,.json" class="hide" onchange="handleRestoreFile(event)">
 
             <!-- Restore Modal -->
             <div id="restoreModalOverlay" class="restore-modal-overlay">
@@ -241,26 +258,26 @@
                 </div>
             </div>
 
-            <div id="minifigSection" class="hide m-20">
+            <section id="minifigSection" class="hide m-20">
                 <div class="section-header-row">
                     <h3 id="minifigHeader" style="margin: 0;">Minifigures</h3>
                 </div>
                 <div id="minifigContainer"></div>
-            </div>
+            </section>
 
-            <div id="partsSection" class="hide m-20">
+            <section id="partsSection" class="hide m-20">
                 <div class="section-header-row">
                     <h3 id="partsHeader" style="margin: 0;">Parts</h3>
                 </div>
-            </div>
+            </section>
 
             <div id="tableContainer"></div>
 
-            <div id="sparePartsSection" class="hide m-20">
+            <section id="sparePartsSection" class="hide m-20">
                 <div class="section-header-row">
                     <h3 id="sparePartsHeader" style="margin: 0;">Spare Parts</h3>
                 </div>
-            </div>
+            </section>
 
             <div class="complete-toggle-container" id="completeToggleContainer" style="display: none;">
                 <button class="complete-toggle" id="completeToggle" onclick="toggleCompleteParts()" title="Hide complete parts" aria-label="Hide complete parts"></button>
@@ -269,7 +286,7 @@
 
             <div id="spareTableContainer"></div>
         </div>
-    </div>
+    </main>
 
     <script>
         // Service Worker Registration
@@ -442,6 +459,19 @@
             div.textContent = str;
             return div.innerHTML;
         }
+
+        // Tagged template literal that auto-escapes all interpolated values.
+        // Usage: el.innerHTML = html`<span>${userValue}</span>`
+        // To embed already-safe HTML snippets: html`<div>${html.raw(safeHtml)}</div>`
+        function html(strings, ...values) {
+            return strings.reduce(function(result, str, i) {
+                var value = values[i];
+                if (value === undefined) return result + str;
+                if (value !== null && typeof value === 'object' && '__raw' in value) return result + str + value.__raw;
+                return result + str + escapeHtml(String(value));
+            }, '');
+        }
+        html.raw = function(safeHtml) { return { __raw: safeHtml }; };
 
         // Handle image load errors — retry through proxy if CDN is blocked (e.g. uMatrix)
         window.handleImageError = function(img) {
@@ -742,16 +772,24 @@
             var historyList = document.getElementById('setHistoryList');
             var historyEmpty = document.getElementById('setHistoryEmpty');
             var backupAllBtn = document.getElementById('backupAllBtn');
+            var landing = document.getElementById('landingContent');
 
             if (sets.length === 0) {
                 historyList.innerHTML = '';
                 historyEmpty.classList.remove('hide');
                 if (backupAllBtn) backupAllBtn.classList.add('hide');
+                // Show landing content instead of empty set history
+                if (landing) {
+                    landing.style.display = '';
+                    historySection.classList.add('hide');
+                }
                 return;
             }
 
             historyEmpty.classList.add('hide');
             if (backupAllBtn) backupAllBtn.classList.remove('hide');
+            if (landing) landing.style.display = 'none';
+            historySection.classList.remove('hide');
             historyList.innerHTML = '';
 
             sets.forEach(function(setInfo) {
@@ -767,21 +805,21 @@
                 item.setAttribute('data-set-number', setInfo.fullNumber);
 
                 // innerHTML with escapeHtml() to prevent XSS from restored backup data
-                item.innerHTML =
-                    '<img src="' + escapeHtml(setInfo.imageUrl || '') + '" alt="' + escapeHtml(setInfo.name || '') + '" class="set-history-item-image" onerror="handleImageError(this)" onclick="retryImageLoad(this)">' +
-                    '<div class="set-history-item-content">' +
-                        '<div class="set-history-item-title">' + escapeHtml(setInfo.name || '') + '</div>' +
-                        '<div class="set-history-item-number">Set ' + escapeHtml(setInfo.number || '') + ' (' + escapeHtml(String(setInfo.year || '')) + ')</div>' +
-                        '<div class="set-history-item-stats">' + completedCount + ' / ' + totalCount + ' pieces</div>' +
-                        '<div class="progress-bar" data-percentage="' + percentage + '%">' +
-                            '<div class="progress-fill" style="width: ' + percentage + '%;"></div>' +
-                        '</div>' +
-                    '</div>' +
-                    '<div class="set-history-item-actions">' +
-                        '<button class="backup" onclick="backupSingleSet(event, \'' + setInfo.fullNumber + '\')" title="Backup set">📤</button>' +
-                        '<button class="reset" onclick="resetSetHistory(event, \'' + setInfo.fullNumber + '\')" title="Reset progress">↻</button>' +
-                        '<button class="delete" onclick="deleteSetHistory(event, \'' + setInfo.fullNumber + '\')" title="Delete set">✕</button>' +
-                    '</div>';
+                item.innerHTML = html`
+                    <img src="${setInfo.imageUrl || ''}" alt="${setInfo.name || ''}" class="set-history-item-image" onerror="handleImageError(this)" onclick="retryImageLoad(this)">
+                    <div class="set-history-item-content">
+                        <div class="set-history-item-title">${setInfo.name || ''}</div>
+                        <div class="set-history-item-number">Set ${setInfo.number || ''} (${String(setInfo.year || '')})</div>
+                        <div class="set-history-item-stats">${completedCount} / ${totalCount} pieces</div>
+                        <div class="progress-bar" data-percentage="${percentage}%">
+                            <div class="progress-fill" style="width: ${percentage}%;"></div>
+                        </div>
+                    </div>
+                    <div class="set-history-item-actions">
+                        <button class="backup" onclick="backupSingleSet(event, '${setInfo.fullNumber}')" title="Backup set">📤</button>
+                        <button class="reset" onclick="resetSetHistory(event, '${setInfo.fullNumber}')" title="Reset progress">↻</button>
+                        <button class="delete" onclick="deleteSetHistory(event, '${setInfo.fullNumber}')" title="Delete set">✕</button>
+                    </div>`;
 
                 // Click on row to load set or toggle backup checkbox
                 item.addEventListener('click', function(e) {
@@ -1112,12 +1150,7 @@
                 var restoreProgress = calculateProgressFromString(restoreSet.info.numParts, restoreSet.progress);
 
                 var imgUrl = restoreSet.info.imageUrl || '/assets/favicon.svg';
-                // escapeHtml() prevents XSS from crafted backup files
-                var html = '<img src="' + escapeHtml(imgUrl) + '" class="restore-set-image" onerror="handleImageError(this)">' +
-                    '<div class="restore-set-info">' +
-                    '<strong>' + escapeHtml(restoreSet.info.name || '') + '</strong>' +
-                    '<span>Set ' + escapeHtml(restoreSet.info.number || '') + ' (' + escapeHtml(String(restoreSet.info.year || '')) + ')</span>' +
-                    '</div>';
+                var itemHtml = html`<img src="${imgUrl}" class="restore-set-image" onerror="handleImageError(this)"><div class="restore-set-info"><strong>${restoreSet.info.name || ''}</strong><span>Set ${restoreSet.info.number || ''} (${String(restoreSet.info.year || '')})</span></div>`;
 
                 if (hasConflict) {
                     var localProgress = calculateProgressFromString(
@@ -1126,27 +1159,12 @@
                     );
 
                     var restoreIsNewer = restoreSet.lastWorkedOn > (localData.lastAccessed || 0);
-                    html += '<div class="restore-comparison">' +
-                        '<div class="restore-local">' +
-                            '<span>Local: ' + localProgress.percentage + '% (' + formatDate(localData.lastAccessed) + ')</span>' +
-                        '</div>' +
-                        '<div class="restore-imported">' +
-                            '<span>Restore: ' + restoreProgress.percentage + '% (' + formatDate(restoreSet.lastWorkedOn) + ')</span>' +
-                        '</div>' +
-                        '<div class="restore-choice">' +
-                            '<input type="radio" name="restore-' + restoreSet.fullNumber + '" id="restore-keep-' + restoreSet.fullNumber + '" value="keep" ' + (!restoreIsNewer ? 'checked' : '') + '>' +
-                            '<label for="restore-keep-' + restoreSet.fullNumber + '" class="restore-choice-btn">Keep local</label>' +
-                            '<input type="radio" name="restore-' + restoreSet.fullNumber + '" id="restore-import-' + restoreSet.fullNumber + '" value="import" ' + (restoreIsNewer ? 'checked' : '') + '>' +
-                            '<label for="restore-import-' + restoreSet.fullNumber + '" class="restore-choice-btn">Overwrite</label>' +
-                        '</div>' +
-                    '</div>';
+                    itemHtml += html`<div class="restore-comparison"><div class="restore-local"><span>Local: ${localProgress.percentage}% (${formatDate(localData.lastAccessed)})</span></div><div class="restore-imported"><span>Restore: ${restoreProgress.percentage}% (${formatDate(restoreSet.lastWorkedOn)})</span></div><div class="restore-choice"><input type="radio" name="restore-${restoreSet.fullNumber}" id="restore-keep-${restoreSet.fullNumber}" value="keep" ${html.raw(!restoreIsNewer ? 'checked' : '')}><label for="restore-keep-${restoreSet.fullNumber}" class="restore-choice-btn">Keep local</label><input type="radio" name="restore-${restoreSet.fullNumber}" id="restore-import-${restoreSet.fullNumber}" value="import" ${html.raw(restoreIsNewer ? 'checked' : '')}><label for="restore-import-${restoreSet.fullNumber}" class="restore-choice-btn">Overwrite</label></div></div>`;
                 } else {
-                    html += '<div class="restore-new">' +
-                        '<span>' + restoreProgress.percentage + '% complete (' + formatDate(restoreSet.lastWorkedOn) + ')</span>' +
-                    '</div>';
+                    itemHtml += html`<div class="restore-new"><span>${restoreProgress.percentage}% complete (${formatDate(restoreSet.lastWorkedOn)})</span></div>`;
                 }
 
-                itemEl.innerHTML = html;
+                itemEl.innerHTML = itemHtml;
                 listEl.appendChild(itemEl);
             });
 
@@ -1218,6 +1236,8 @@
 
         function hideSetHistory() {
             hide('setHistorySection');
+            var landing = document.getElementById('landingContent');
+            if (landing) landing.style.display = 'none';
         }
 
         function goToSetHistory() {
@@ -2077,28 +2097,19 @@
             var content = document.createElement('div');
             content.style.cssText = 'background: var(--bg-secondary); padding: 30px; border-radius: 8px; max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto;';
 
-            var html = '<h2 style="margin-bottom: 20px; color: var(--text-primary);">Multiple Set Versions Found</h2>' +
+            var htmlStr = '<h2 style="margin-bottom: 20px; color: var(--text-primary);">Multiple Set Versions Found</h2>' +
                 '<p style="margin-bottom: 20px; color: var(--text-secondary);">This set has ' + versions.length + ' versions. Please select one:</p>' +
                 '<div style="display: flex; flex-direction: column; gap: 15px;">';
 
             versions.forEach(function (version) {
                 var imgUrl = version.set_img_url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="80"%3E%3Crect width="100" height="80" fill="%23ddd"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="12" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E';
-                html += '<button onclick="selectVersion(\'' + version.set_num + '\')" style="' +
-                    'display: flex; align-items: center; gap: 15px; padding: 15px; ' +
-                    'background: var(--bg-tertiary); border: 2px solid var(--border-color); ' +
-                    'border-radius: 8px; cursor: pointer; text-align: left; width: 100%;">' +
-                    '<img src="' + imgUrl + '" style="width: 100px; height: 80px; object-fit: contain; border-radius: 4px;" class="version-selector-image" onerror="handleImageError(this)" onclick="event.stopPropagation(); retryImageLoad(this);">' +
-                    '<div style="flex: 1;">' +
-                    '<div style="font-weight: bold; color: var(--text-primary); margin-bottom: 5px;">' + escapeHtml(version.name || '') + '</div>' +
-                    '<div style="color: var(--text-secondary); font-size: 14px;">Set: ' + escapeHtml(version.set_num || '') + ' | Year: ' + escapeHtml(String(version.year || '')) + ' | Parts: ' + version.num_parts + '</div>' +
-                    '</div>' +
-                    '</button>';
+                htmlStr += html`<button onclick="selectVersion('${version.set_num}')" style="display: flex; align-items: center; gap: 15px; padding: 15px; background: var(--bg-tertiary); border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer; text-align: left; width: 100%;"><img src="${imgUrl}" style="width: 100px; height: 80px; object-fit: contain; border-radius: 4px;" class="version-selector-image" onerror="handleImageError(this)" onclick="event.stopPropagation(); retryImageLoad(this);"><div style="flex: 1;"><div style="font-weight: bold; color: var(--text-primary); margin-bottom: 5px;">${version.name || ''}</div><div style="color: var(--text-secondary); font-size: 14px;">Set: ${version.set_num || ''} | Year: ${String(version.year || '')} | Parts: ${version.num_parts}</div></div></button>`;
             });
 
-            html += '</div>' +
+            htmlStr += '</div>' +
                 '<button onclick="this.parentElement.parentElement.remove()" style="margin-top: 20px; width: 100%; background: var(--text-secondary);">Cancel</button>';
 
-            content.innerHTML = html;
+            content.innerHTML = htmlStr;
             modal.appendChild(content);
             document.body.appendChild(modal);
 
@@ -2185,9 +2196,9 @@
 
             document.getElementById('setName').textContent = setData.name;
             document.getElementById('setImageContainer').innerHTML =
-                '<img src="' + escapeHtml(setImageUrl || '') + '" alt="' + escapeHtml(setData.name || '') + '" class="set-detail-image" onerror="handleImageError(this)" onclick="retryImageLoad(this)">';
+                html`<img src="${setImageUrl || ''}" alt="${setData.name || ''}" class="set-detail-image" onerror="handleImageError(this)" onclick="retryImageLoad(this)">`;
             document.getElementById('setDetails').innerHTML =
-                'Set Number: ' + escapeHtml(displaySetNumber) + versionInfo + ' | Year: ' + escapeHtml(String(setData.year)) + ' | Parts: ' + escapeHtml(String(setData.num_parts));
+                html`Set Number: ${displaySetNumber}${html.raw(versionInfo)} | Year: ${String(setData.year)} | Parts: ${String(setData.num_parts)}`;
 
             // Update collapsed header set name
             var collapsedVersionInfo = versionNumber !== '1' ? ' (v' + versionNumber + ')' : '';
@@ -2273,16 +2284,15 @@
                 totalPieces += colorCounts[color];
             }
 
-            var html = '<button class="filter active" onclick="toggleColorFilter(\'all\', event)">All <span class="count">(' + totalPieces + ')</span></button>';
+            var htmlStr = '<button class="filter active" onclick="toggleColorFilter(\'all\', event)">All <span class="count">(' + totalPieces + ')</span></button>';
 
             Object.keys(colorCounts).sort().forEach(function (color) {
-                html += '<button class="filter" data-color="' + escapeHtml(color) + '" onclick="toggleColorFilter(this.dataset.color, event)">' +
-                    escapeHtml(color) + ' <span class="count">(' + colorCounts[color] + ')</span></button>';
+                htmlStr += html`<button class="filter" data-color="${color}" onclick="toggleColorFilter(this.dataset.color, event)">${color} <span class="count">(${colorCounts[color]})</span></button>`;
             });
 
             // Render in both locations
-            document.getElementById('colorFilters').innerHTML = html;
-            document.getElementById('colorFiltersCollapsed').innerHTML = html;
+            document.getElementById('colorFilters').innerHTML = htmlStr;
+            document.getElementById('colorFiltersCollapsed').innerHTML = htmlStr;
             activeColorFilters = [];
         }
 
@@ -2319,7 +2329,7 @@
         }
 
         function renderTable() {
-            var html = '<table><tbody>';
+            var htmlStr = '<table><tbody>';
 
             partsData.forEach(function (part) {
                 // Skip minifigs and spare parts
@@ -2363,21 +2373,14 @@
                 var incrementBtnClass = isComplete ? ' complete' : '';
                 var incrementBtnDisabled = isComplete ? ' disabled' : '';
 
-                var altText = escapeHtml(part.color + ' ' + part.name + ' (' + part.partNum + ')');
+                var altText = part.color + ' ' + part.name + ' (' + part.partNum + ')';
                 var fallbackInfo = escapeHtml(part.color) + ' ' + escapeHtml(part.name) + '<br>' + escapeHtml(part.partNum);
                 var decrementHidden = currentCount === 0 ? ' data-hidden-when-zero' : '';
-                html += '<tr id="row-' + part.id + '" data-complete="' + isComplete + '" data-color="' + escapeHtml(part.color) + '" data-fallback-info="' + fallbackInfo.replace(/"/g, '&quot;') + '">' +
-                    '<td class="col-img"><img src="' + escapeHtml(part.imageUrl) + '" alt="' + altText + '" class="part-image" data-part-id="' + part.id + '" onerror="handleImageError(this)" onload="handleImageLoad(this)"></td>' +
-                    '<td class="col-info" id="info-' + part.id + '">' + infoText + '</td>' +
-                    '<td class="col-controls"><div class="controls">' +
-                    '<button id="dec-' + part.id + '" onclick="decrementPart(' + part.id + ')"' + decrementHidden + '>-</button>' +
-                    '<span class="count-display" id="count-' + part.id + '"><span class="counted">' + currentCount + '</span>/<span class="qty-click" onclick="fillQuantity(' + part.id + ')" title="Click to mark all as counted">' + part.quantity + '</span></span>' +
-                    '<button id="inc-' + part.id + '" class="increment-btn' + incrementBtnClass + '" onclick="incrementPart(' + part.id + ')"' + incrementBtnDisabled + '>' + incrementButtonText + '</button>' +
-                    '</div></td></tr>';
+                htmlStr += html`<tr id="row-${part.id}" data-complete="${isComplete}" data-color="${part.color}" data-fallback-info="${fallbackInfo}"><td class="col-img"><img src="${part.imageUrl}" alt="${altText}" class="part-image" data-part-id="${part.id}" onerror="handleImageError(this)" onload="handleImageLoad(this)"></td><td class="col-info" id="info-${part.id}">${html.raw(infoText)}</td><td class="col-controls"><div class="controls"><button id="dec-${part.id}" onclick="decrementPart(${part.id})"${html.raw(decrementHidden)}>-</button><span class="count-display" id="count-${part.id}"><span class="counted">${currentCount}</span>/<span class="qty-click" onclick="fillQuantity(${part.id})" title="Click to mark all as counted">${part.quantity}</span></span><button id="inc-${part.id}" class="increment-btn${html.raw(incrementBtnClass)}" onclick="incrementPart(${part.id})"${html.raw(incrementBtnDisabled)}>${html.raw(incrementButtonText)}</button></div></td></tr>`;
             });
 
-            html += '</tbody></table>';
-            document.getElementById('tableContainer').innerHTML = html;
+            htmlStr += '</tbody></table>';
+            document.getElementById('tableContainer').innerHTML = htmlStr;
             document.getElementById('tableContainer').style.display = 'block';
 
             // Update column toggle states
@@ -2395,7 +2398,7 @@
                 return;
             }
 
-            var html = '<table><tbody>';
+            var htmlStr = '<table><tbody>';
 
             spareParts.forEach(function (part) {
                 var key = getPartKey(part);
@@ -2436,21 +2439,14 @@
                 var incrementBtnClass = isComplete ? ' complete' : '';
                 var incrementBtnDisabled = isComplete ? ' disabled' : '';
 
-                var altText = escapeHtml(part.color + ' ' + part.name + ' (' + part.partNum + ')');
+                var altText = part.color + ' ' + part.name + ' (' + part.partNum + ')';
                 var fallbackInfo = escapeHtml(part.color) + ' ' + escapeHtml(part.name) + '<br>' + escapeHtml(part.partNum);
                 var decrementHidden = currentCount === 0 ? ' data-hidden-when-zero' : '';
-                html += '<tr id="row-' + part.id + '" data-complete="' + isComplete + '" data-color="' + escapeHtml(part.color) + '" data-fallback-info="' + fallbackInfo.replace(/"/g, '&quot;') + '">' +
-                    '<td class="col-img"><img src="' + escapeHtml(part.imageUrl) + '" alt="' + altText + '" class="part-image" data-part-id="' + part.id + '" onerror="handleImageError(this)" onload="handleImageLoad(this)"></td>' +
-                    '<td class="col-info" id="info-' + part.id + '">' + infoText + '</td>' +
-                    '<td class="col-controls"><div class="controls">' +
-                    '<button id="dec-' + part.id + '" onclick="decrementPart(' + part.id + ')"' + decrementHidden + '>-</button>' +
-                    '<span class="count-display" id="count-' + part.id + '"><span class="counted">' + currentCount + '</span>/<span class="qty-click" onclick="fillQuantity(' + part.id + ')" title="Click to mark all as counted">' + part.quantity + '</span></span>' +
-                    '<button id="inc-' + part.id + '" class="increment-btn' + incrementBtnClass + '" onclick="incrementPart(' + part.id + ')"' + incrementBtnDisabled + '>' + incrementButtonText + '</button>' +
-                    '</div></td></tr>';
+                htmlStr += html`<tr id="row-${part.id}" data-complete="${isComplete}" data-color="${part.color}" data-fallback-info="${fallbackInfo}"><td class="col-img"><img src="${part.imageUrl}" alt="${altText}" class="part-image" data-part-id="${part.id}" onerror="handleImageError(this)" onload="handleImageLoad(this)"></td><td class="col-info" id="info-${part.id}">${html.raw(infoText)}</td><td class="col-controls"><div class="controls"><button id="dec-${part.id}" onclick="decrementPart(${part.id})"${html.raw(decrementHidden)}>-</button><span class="count-display" id="count-${part.id}"><span class="counted">${currentCount}</span>/<span class="qty-click" onclick="fillQuantity(${part.id})" title="Click to mark all as counted">${part.quantity}</span></span><button id="inc-${part.id}" class="increment-btn${html.raw(incrementBtnClass)}" onclick="incrementPart(${part.id})"${html.raw(incrementBtnDisabled)}>${html.raw(incrementButtonText)}</button></div></td></tr>`;
             });
 
-            html += '</tbody></table>';
-            document.getElementById('spareTableContainer').innerHTML = html;
+            htmlStr += '</tbody></table>';
+            document.getElementById('spareTableContainer').innerHTML = htmlStr;
             document.getElementById('spareTableContainer').style.display = 'block';
             show('sparePartsSection');
         }
@@ -2465,7 +2461,7 @@
                 return;
             }
 
-            var html = '<div class="minifig-grid">';
+            var htmlStr = '<div class="minifig-grid">';
 
             minifigs.forEach(function(minifig) {
                 var key = getPartKey(minifig);
@@ -2492,16 +2488,12 @@
                     }
                 }
 
-                html += '<div class="minifig-card' + (isComplete ? ' complete' : '') + '" data-complete="' + isComplete + '" id="minifig-' + minifig.id + '" onclick="toggleMinifig(' + minifig.id + ')">' +
-                    '<img src="' + escapeHtml(minifig.imageUrl) + '" alt="' + escapeHtml(minifig.name) + '" class="minifig-image" data-part-id="' + minifig.id + '" onclick="event.stopPropagation(); openMinifigLightbox(this)" onerror="handleImageError(this)" onload="handleImageLoad(this)">' +
-                    '<div class="minifig-name">' + escapeHtml(title) + '</div>' +
-                    '<div class="minifig-id">' + escapeHtml(description) + '</div>' +
-                '</div>';
+                htmlStr += html`<div class="minifig-card${isComplete ? ' complete' : ''}" data-complete="${isComplete}" id="minifig-${minifig.id}" onclick="toggleMinifig(${minifig.id})"><img src="${minifig.imageUrl}" alt="${minifig.name}" class="minifig-image" data-part-id="${minifig.id}" onclick="event.stopPropagation(); openMinifigLightbox(this)" onerror="handleImageError(this)" onload="handleImageLoad(this)"><div class="minifig-name">${title}</div><div class="minifig-id">${description}</div></div>`;
             });
 
-            html += '</div>';
+            htmlStr += '</div>';
 
-            document.getElementById('minifigContainer').innerHTML = html;
+            document.getElementById('minifigContainer').innerHTML = htmlStr;
             show('minifigSection');
         }
 
@@ -3599,9 +3591,10 @@
     <div id="fireworksContainer"></div>
 
     <footer class="app-footer">
-        <span class="footer-tagline">Made with ❤️ for LEGO® enthusiasts</span>
+        <span class="footer-tagline">Made with ❤️ between building sessions for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.24.13 (a114502)</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.25.0 (647b237)</a>
+        <span class="footer-disclaimer">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise, or endorse this app.</span>
     </footer>
 </body>
 

@@ -64,11 +64,11 @@ test.describe('Category 15: Backup/Restore', () => {
     await clearLocalStorage(page);
     await page.reload();
 
-    // Wait for the set history section to be visible
-    await page.waitForSelector('#setHistorySection:not(.hide)', { timeout: 5000 });
+    // With no sets, landing content is shown instead of set history
+    await page.waitForSelector('#landingContent', { timeout: 5000 });
 
-    // Restore button should be visible even with no sets
-    const restoreBtn = page.locator('.restore-btn');
+    // Restore button should be visible in the landing content
+    const restoreBtn = page.locator('#landingContent .restore-btn');
     await expect(restoreBtn).toBeVisible();
   });
 
@@ -80,7 +80,8 @@ test.describe('Category 15: Backup/Restore', () => {
 
     await page.waitForSelector('#setHistorySection:not(.hide)', { timeout: 5000 });
 
-    const restoreBtn = page.locator('.restore-btn');
+    // Scope to set history section since landing also has a restore button
+    const restoreBtn = page.locator('#setHistorySection .restore-btn');
     await expect(restoreBtn).toBeVisible();
   });
 
@@ -89,7 +90,8 @@ test.describe('Category 15: Backup/Restore', () => {
     await clearLocalStorage(page);
     await page.reload();
 
-    await page.waitForSelector('#setHistorySection:not(.hide)', { timeout: 5000 });
+    // With no sets, landing content is shown instead of set history
+    await page.waitForSelector('#landingContent', { timeout: 5000 });
 
     const backupAllBtn = page.locator('#backupAllBtn');
     await expect(backupAllBtn).toBeHidden();
@@ -244,7 +246,8 @@ test.describe('Category 15: Backup/Restore', () => {
     await clearLocalStorage(page);
     await page.reload();
 
-    await page.waitForSelector('#setHistorySection:not(.hide)', { timeout: 5000 });
+    // With no sets, landing content is shown instead of set history
+    await page.waitForSelector('#landingContent', { timeout: 5000 });
 
     // Build restore data
     const restoreData = buildBricktally([
@@ -430,7 +433,8 @@ test.describe('Category 15: Backup/Restore', () => {
     await clearLocalStorage(page);
     await page.reload();
 
-    await page.waitForSelector('#setHistorySection:not(.hide)', { timeout: 5000 });
+    // With no sets, landing content is shown instead of set history
+    await page.waitForSelector('#landingContent', { timeout: 5000 });
 
     // Set up dialog handler to capture alert message
     let alertMessage = '';
@@ -481,7 +485,8 @@ test.describe('Category 15: Backup/Restore', () => {
     await clearLocalStorage(page);
     await page.reload();
 
-    await page.waitForSelector('#setHistorySection:not(.hide)', { timeout: 5000 });
+    // With no sets, landing content is shown instead of set history
+    await page.waitForSelector('#landingContent', { timeout: 5000 });
 
     const restoreData = buildBricktally([
       { fullNumber: '10294-1', name: 'Titanic', year: 2021, numParts: 9090, progress: '0:5', lastWorkedOn: Date.now() }
@@ -708,7 +713,8 @@ test.describe('Category 15: Backup/Restore', () => {
     await clearLocalStorage(page);
     await page.reload();
 
-    await page.waitForSelector('#setHistorySection:not(.hide)', { timeout: 5000 });
+    // With no sets, landing content is shown instead of set history
+    await page.waitForSelector('#landingContent', { timeout: 5000 });
 
     const restoreData = buildBricktally([
       { fullNumber: '10294-1', name: 'Titanic', year: 2021, numParts: 9090, progress: '0:5', lastWorkedOn: Date.now(), imageUrl: '/assets/favicon.svg' }

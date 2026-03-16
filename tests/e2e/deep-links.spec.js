@@ -50,12 +50,12 @@ test.describe('Category 17: Deep Links', () => {
     await expect(page.locator('#setName')).toContainText(mockSet.setName);
   });
 
-  test('17.4: No ?set= and no localStorage shows set history', async ({ page }) => {
+  test('17.4: No ?set= and no localStorage shows landing content', async ({ page }) => {
     await page.goto('/');
 
-    // Should show history screen, not set info
+    // Should show landing content, not set info
     await expect(page.locator('#setInfo')).toHaveClass(/hide/);
-    await expect(page.locator('text=No sets worked on yet')).toBeVisible();
+    await expect(page.locator('#landingContent')).toBeVisible();
   });
 
   test('17.5: ?set= parameter populates the input field', async ({ page }) => {
