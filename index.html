@@ -963,7 +963,7 @@
         function resetSetHistory(event, setNumber) {
             event.stopPropagation();
 
-            if (!confirm('Are you sure you want to reset all progress for this set?')) {
+            if (!confirm(t('confirm.resetSet'))) {
                 return;
             }
 
@@ -1126,7 +1126,7 @@
             });
 
             if (selected.length === 0) {
-                alert('No sets selected for backup.');
+                alert(t('error.noSetsSelected'));
                 return;
             }
 
@@ -1146,12 +1146,12 @@
             try {
                 var data = JSON.parse(text);
                 if (!validateBricktally(data)) {
-                    alert('Invalid .bricktally file: does not match expected format.');
+                    alert(t('error.invalidFormat'));
                     return;
                 }
                 showRestoreDialog(data);
             } catch (err) {
-                alert('Invalid .bricktally file: could not parse JSON.');
+                alert(t('error.invalidJson'));
             }
         }
 
@@ -1249,7 +1249,7 @@
                 launchParams.files[0].getFile().then(function(file) {
                     return file.text();
                 }).then(openBricktally).catch(function() {
-                    alert('Invalid .bricktally file');
+                    alert(t('error.invalidFile'));
                 });
             });
         }
@@ -2062,7 +2062,7 @@
             var setNumber = document.getElementById('setNumber').value.trim();
 
             if (!setNumber) {
-                showError('Please enter a set number');
+                showError(t('error.setNumberRequired'));
                 return;
             }
 
@@ -2116,7 +2116,7 @@
                 })
                 .catch(function (error) {
                     console.error('[BrickTally:API] Error:', error);
-                    showError(error.message || 'Error loading set data. Please try again.');
+                    showError(error.message || t('error.loadFailed'));
                 })
                 .finally(function () {
                     hide('loading');
@@ -2807,7 +2807,7 @@
         }
 
         function resetSet() {
-            if (!currentSetNumber || !confirm('Are you sure you want to reset all progress for this set?')) return;
+            if (!currentSetNumber || !confirm(t('confirm.resetSet'))) return;
 
             var data = getSetData(currentSetNumber);
             if (data) {
@@ -2852,7 +2852,7 @@
 
         function generateBadge() {
             if (!currentSetNumber) {
-                alert('Please load a set first');
+                alert(t('error.noSetLoaded'));
                 return;
             }
 
@@ -3266,7 +3266,7 @@
 
         function exportToBrickLink() {
             if (!currentSetNumber) {
-                alert('Please load a set first');
+                alert(t('error.noSetLoaded'));
                 return;
             }
 
@@ -3307,7 +3307,7 @@
             });
 
             if (missingParts.length === 0 && missingMinifigs.length === 0) {
-                alert('No missing pieces! Your set is complete.');
+                alert(t('export.noMissingPieces'));
                 return;
             }
 
@@ -3346,12 +3346,12 @@
             document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
 
-            alert('BrickLink XML file downloaded!\n\nTo use:\n1. Go to BrickLink.com\n2. Navigate to "Want" > "Upload"\n3. Select "BrickLink XML" format\n4. Upload the downloaded file');
+            alert(t('export.brickLinkInstructions'));
         }
 
         function exportToPickABrick() {
             if (!currentSetNumber) {
-                alert('Please load a set first');
+                alert(t('error.noSetLoaded'));
                 return;
             }
 
@@ -3382,7 +3382,7 @@
             });
 
             if (missingParts.length === 0) {
-                alert('No missing pieces! Your set is complete.');
+                alert(t('export.noMissingPieces'));
                 return;
             }
 
@@ -3407,12 +3407,12 @@
             document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
 
-            alert('Pick a Brick CSV file downloaded!\n\nNote: This is a reference list. You\'ll need to manually search and add items on LEGO.com/pick-a-brick as they don\'t support bulk import.');
+            alert(t('export.pickABrickInstructions'));
         }
 
         function exportMissingPartsText() {
             if (!currentSetNumber) {
-                alert('Please load a set first');
+                alert(t('error.noSetLoaded'));
                 return;
             }
 
@@ -3453,7 +3453,7 @@
             });
 
             if (missingParts.length === 0 && missingMinifigs.length === 0) {
-                alert('No missing pieces! Your set is complete.');
+                alert(t('export.noMissingPieces'));
                 return;
             }
 
@@ -3499,7 +3499,7 @@
 
         function exportToRebrickable() {
             if (!currentSetNumber) {
-                alert('Please load a set first');
+                alert(t('error.noSetLoaded'));
                 return;
             }
 
@@ -3524,7 +3524,7 @@
             });
 
             if (Object.keys(partCounts).length === 0) {
-                alert('No parts counted yet.');
+                alert(t('error.noPartsCounted'));
                 return;
             }
 
@@ -3627,7 +3627,7 @@
     <footer class="app-footer">
         <span class="footer-tagline">Made with ❤️ between building sessions for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.27.0 (65eea57)</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.28.0 (b17de1b)</a>
         <span class="footer-disclaimer">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise, or endorse this app.</span>
     </footer>
 </body>
