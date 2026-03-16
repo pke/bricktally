@@ -86,10 +86,10 @@
     <!-- Full header that scrolls normally -->
     <div class="full-header">
         <div class="header-wrapper" style="position: relative;">
-            <button class="fullscreen-toggle" id="fullscreenToggle" onclick="toggleFullscreen()" aria-label="Toggle fullscreen">
+            <button class="fullscreen-toggle" id="fullscreenToggle" onclick="toggleFullscreen()" aria-label="Toggle fullscreen" data-i18n="[aria-label]button.toggleFullscreen">
                 <span id="fullscreenIcon">⛶</span>
             </button>
-            <button class="theme-toggle" id="themeToggle" onclick="toggleDarkMode()" aria-label="Toggle dark mode">
+            <button class="theme-toggle" id="themeToggle" onclick="toggleDarkMode()" aria-label="Toggle dark mode" data-i18n="[aria-label]button.toggleDarkMode">
                 <span id="themeIcon"></span>
             </button>
 
@@ -97,7 +97,7 @@
                 <div class="header-left">
                     <h1><a href="#" onclick="goToSetHistory(); return false;">🧱 BrickTally</a></h1>
                     <div class="input-group">
-                        <input type="number" id="setNumber" placeholder="Enter set number…" aria-label="LEGO set number" autocomplete="off" />
+                        <input type="number" id="setNumber" placeholder="Enter set number…" aria-label="LEGO set number" autocomplete="off" data-i18n="[placeholder]input.setNumberPlaceholder;[aria-label]input.setNumberLabel" />
                     </div>
                 </div>
             </nav>
@@ -110,14 +110,14 @@
                         <p id="setDetails"></p>
                         <div id="statsSection" class="hide">
                             <div class="stats text-center">
-                                <span id="completedPieces">0</span> / <span id="totalPieces">0</span> pieces checked
+                                <span id="completedPieces">0</span> / <span id="totalPieces">0</span> <span data-i18n="display.piecesChecked">pieces checked</span>
                                 <button id="resetButton" class="reset-inline hide" onclick="resetSet()" title="Reset progress" aria-label="Reset progress">↻</button>
                             </div>
                             <div class="progress-bar" id="progressBar" data-percentage="0%" data-pieces="0/0">
                                 <div id="progressFill" class="progress-fill" style="width: 0%;"></div>
                             </div>
                             <div id="spareProgressContainer" class="spare-progress-container hide">
-                                <div class="spare-progress-label">Extra Spare Parts</div>
+                                <div class="spare-progress-label" data-i18n="section.extraSpareParts">Extra Spare Parts</div>
                                 <div class="progress-bar spare-progress-bar" id="spareProgressBar" data-percentage="0%">
                                     <div id="spareProgressFill" class="progress-fill spare-progress-fill" style="width: 0%;"></div>
                                 </div>
@@ -141,21 +141,21 @@
                     <div id="progressFillCollapsed" class="progress-fill" style="width: 0%;"></div>
                 </div>
                 <div class="complete-toggle-container collapsed-toggle">
-                    <button class="complete-toggle" id="completeToggleCollapsed" onclick="toggleCompleteParts()" title="Hide Complete Parts" aria-label="Hide complete parts"></button>
-                    <span class="complete-toggle-label">Hide complete</span>
+                    <button class="complete-toggle" id="completeToggleCollapsed" onclick="toggleCompleteParts()" title="Hide Complete Parts" aria-label="Hide complete parts" data-i18n="[title]button.hideCompleteParts;[aria-label]button.hideCompleteParts"></button>
+                    <span class="complete-toggle-label" data-i18n="button.hideComplete">Hide complete</span>
                 </div>
             </div>
             <div class="collapsed-filters">
                 <details id="colorFilterCollapsed" class="hide">
-                    <summary>Colours</summary>
+                    <summary data-i18n="section.colours">Colours</summary>
                     <div id="colorFiltersCollapsed" class="filters"></div>
                 </details>
                 <details id="infoFilterCollapsed" class="hide">
-                    <summary>Columns</summary>
+                    <summary data-i18n="section.columns">Columns</summary>
                     <div class="column-toggles" style="margin: 10px 0 0 0;">
-                        <button class="column-toggle" onclick="toggleColumn('color', event)">Color</button>
-                        <button class="column-toggle" onclick="toggleColumn('name', event)">Name</button>
-                        <button class="column-toggle" onclick="toggleColumn('partNum', event)">Part Number</button>
+                        <button class="column-toggle" onclick="toggleColumn('color', event)" data-i18n="column.color">Color</button>
+                        <button class="column-toggle" onclick="toggleColumn('name', event)" data-i18n="column.name">Name</button>
+                        <button class="column-toggle" onclick="toggleColumn('partNum', event)" data-i18n="column.partNumber">Part Number</button>
                     </div>
                 </details>
             </div>
@@ -166,35 +166,35 @@
         <div class="content-area">
             <!-- Landing content shown when no sets are in progress -->
             <section id="landingContent" class="landing-content">
-                <h2>Verify Your LEGO Sets Are Complete</h2>
-                <p>BrickTally helps you count every piece in your LEGO® sets before selling, storing, or building. Enter a set number to get a full parts checklist powered by the <a href="https://rebrickable.com/" target="_blank" rel="noopener">Rebrickable</a> database.</p>
+                <h2 data-i18n="landing.heading">Verify Your LEGO Sets Are Complete</h2>
+                <p data-i18n="[html]landing.description">BrickTally helps you count every piece in your LEGO® sets before selling, storing, or building. Enter a set number to get a full parts checklist powered by the <a href="https://rebrickable.com/" target="_blank" rel="noopener">Rebrickable</a> database.</p>
                 <ul>
-                    <li>Track parts, spare parts, and minifigures separately</li>
-                    <li>Filter by colour to focus on one group at a time</li>
-                    <li>Export missing parts to BrickLink, Pick a Brick, Rebrickable, or as a plain text list</li>
-                    <li>Generate a completion badge for eBay or marketplace listings</li>
-                    <li>Optimised for tablets and phones — always at your fingertips when sorting pieces</li>
-                    <li>Works offline as a PWA — install it on your device</li>
-                    <li>Backup and restore your progress across devices</li>
+                    <li data-i18n="landing.featureTrack">Track parts, spare parts, and minifigures separately</li>
+                    <li data-i18n="landing.featureFilter">Filter by colour to focus on one group at a time</li>
+                    <li data-i18n="landing.featureExport">Export missing parts to BrickLink, Pick a Brick, Rebrickable, or as a plain text list</li>
+                    <li data-i18n="landing.featureBadge">Generate a completion badge for eBay or marketplace listings</li>
+                    <li data-i18n="landing.featureMobile">Optimised for tablets and phones — always at your fingertips when sorting pieces</li>
+                    <li data-i18n="landing.featurePwa">Works offline as a PWA — install it on your device</li>
+                    <li data-i18n="landing.featureBackup">Backup and restore your progress across devices</li>
                 </ul>
-                <button onclick="restoreSets()" class="restore-btn landing-restore-btn" title="Restore a previous backup">📥 Restore a backup</button>
+                <button onclick="restoreSets()" class="restore-btn landing-restore-btn" title="Restore a previous backup" data-i18n="button.restoreBackup;[title]tooltip.restoreBackup">📥 Restore a backup</button>
             </section>
 
-            <div id="loading" class="text-center p-20 hide">Loading set data…<div class="loading-spinner"></div></div>
+            <div id="loading" class="text-center p-20 hide"><span data-i18n="display.loading">Loading set data…</span><div class="loading-spinner"></div></div>
             <div id="error" class="error text-center p-20 hide"></div>
 
             <!-- Set History Section -->
             <section id="setHistorySection" class="set-history hide">
                 <div class="backup-restore-toolbar">
-                    <button onclick="restoreSets()" class="restore-btn" title="Restore sets">📥 Restore</button>
-                    <button id="backupAllBtn" onclick="startBackupAll()" class="backup-all-btn hide" title="Backup all sets">📤 Backup All</button>
-                    <button id="backupSelectedBtn" onclick="executeBackupAll()" class="backup-selected-btn" title="Backup selected sets">📤 Backup Selected</button>
-                    <button id="cancelBackupBtn" onclick="cancelBackupAll()" class="cancel-backup-btn" title="Cancel backup">Cancel</button>
+                    <button onclick="restoreSets()" class="restore-btn" title="Restore sets" data-i18n="button.restore;[title]tooltip.restoreSets">📥 Restore</button>
+                    <button id="backupAllBtn" onclick="startBackupAll()" class="backup-all-btn hide" title="Backup all sets" data-i18n="button.backupAll;[title]tooltip.backupAll">📤 Backup All</button>
+                    <button id="backupSelectedBtn" onclick="executeBackupAll()" class="backup-selected-btn" title="Backup selected sets" data-i18n="button.backupSelected;[title]tooltip.backupSelected">📤 Backup Selected</button>
+                    <button id="cancelBackupBtn" onclick="cancelBackupAll()" class="cancel-backup-btn" title="Cancel backup" data-i18n="button.cancel;[title]tooltip.cancelBackup">Cancel</button>
                 </div>
                 <div id="setHistoryList" class="set-history-list"></div>
                 <div id="setHistoryEmpty" class="set-history-empty hide">
-                    <p>No sets worked on yet</p>
-                    <p style="font-size: 14px;">Enter a set number above to get started</p>
+                    <p data-i18n="history.noSets">No sets worked on yet</p>
+                    <p style="font-size: 14px;" data-i18n="history.getStarted">Enter a set number above to get started</p>
                 </div>
             </section>
 
@@ -203,11 +203,11 @@
             <!-- Restore Modal -->
             <div id="restoreModalOverlay" class="restore-modal-overlay">
                 <div class="restore-modal">
-                    <h3>Restore Sets</h3>
+                    <h3 data-i18n="modal.restoreTitle">Restore Sets</h3>
                     <div id="restoreSetList" class="restore-set-list"></div>
                     <div class="restore-modal-actions">
-                        <button id="cancelRestoreBtn" onclick="cancelRestore()">Cancel</button>
-                        <button id="executeRestoreBtn" onclick="executeRestore()">Restore Selected</button>
+                        <button id="cancelRestoreBtn" onclick="cancelRestore()" data-i18n="button.cancel">Cancel</button>
+                        <button id="executeRestoreBtn" onclick="executeRestore()" data-i18n="button.restoreSelected">Restore Selected</button>
                     </div>
                 </div>
             </div>
@@ -215,7 +215,7 @@
             <!-- Delete Confirmation Modal -->
             <div id="deleteModalOverlay" class="delete-modal-overlay">
                 <div class="delete-modal">
-                    <h3 id="deleteModalTitle">Delete Set?</h3>
+                    <h3 id="deleteModalTitle" data-i18n="modal.deleteTitle">Delete Set?</h3>
                     <div id="deleteModalMessage"></div>
                     <div id="deleteModalActions" class="delete-modal-actions"></div>
                 </div>
@@ -225,7 +225,7 @@
                 <div class="filter-headers">
                     <details class="filter-section" id="colorFilterSection">
                         <summary class="filter-header">
-                            <span>Colours</span>
+                            <span data-i18n="section.colours">Colours</span>
                             <span class="filter-arrow">▼</span>
                         </summary>
                         <div id="colorFilters" class="filters filter-content-flex"></div>
@@ -233,27 +233,27 @@
 
                     <details class="filter-section" id="columnsFilterSection">
                         <summary class="filter-header">
-                            <span>Columns</span>
+                            <span data-i18n="section.columns">Columns</span>
                             <span class="filter-arrow">▼</span>
                         </summary>
                         <div class="column-toggles filter-content-flex">
-                            <button class="column-toggle" onclick="toggleColumn('color', event)">Color</button>
-                            <button class="column-toggle" onclick="toggleColumn('name', event)">Name</button>
-                            <button class="column-toggle" onclick="toggleColumn('partNum', event)">Part Number</button>
+                            <button class="column-toggle" onclick="toggleColumn('color', event)" data-i18n="column.color">Color</button>
+                            <button class="column-toggle" onclick="toggleColumn('name', event)" data-i18n="column.name">Name</button>
+                            <button class="column-toggle" onclick="toggleColumn('partNum', event)" data-i18n="column.partNumber">Part Number</button>
                         </div>
                     </details>
 
                     <details class="filter-section" id="exportFilterSection">
                         <summary class="filter-header">
-                            <span>Export</span>
+                            <span data-i18n="section.export">Export</span>
                             <span class="filter-arrow">▼</span>
                         </summary>
                         <div class="filter-content-stack">
-                            <button onclick="generateBadge()" class="export-btn" style="background: var(--green);">🏷️ Generate Badge</button>
-                            <button onclick="exportToBrickLink()" class="export-btn" style="background: var(--orange);">📦 BrickLink XML</button>
-                            <button onclick="exportToPickABrick()" class="export-btn" style="background: var(--red);">🧱 Pick a Brick CSV</button>
-                            <button onclick="exportMissingPartsText()" class="export-btn" style="background: var(--blue);">📄 Text List</button>
-                            <button onclick="exportToRebrickable()" class="export-btn" style="background: #6b5b95;">🧩 Export partlist</button>
+                            <button onclick="generateBadge()" class="export-btn" style="background: var(--green);" data-i18n="button.generateBadge">🏷️ Generate Badge</button>
+                            <button onclick="exportToBrickLink()" class="export-btn" style="background: var(--orange);" data-i18n="button.exportBrickLink">📦 BrickLink XML</button>
+                            <button onclick="exportToPickABrick()" class="export-btn" style="background: var(--red);" data-i18n="button.exportPickABrick">🧱 Pick a Brick CSV</button>
+                            <button onclick="exportMissingPartsText()" class="export-btn" style="background: var(--blue);" data-i18n="button.exportTextList">📄 Text List</button>
+                            <button onclick="exportToRebrickable()" class="export-btn" style="background: #6b5b95;" data-i18n="button.exportPartlist">🧩 Export partlist</button>
                         </div>
                     </details>
                 </div>
@@ -261,14 +261,14 @@
 
             <section id="minifigSection" class="hide m-20">
                 <div class="section-header-row">
-                    <h3 id="minifigHeader" style="margin: 0;">Minifigures</h3>
+                    <h3 id="minifigHeader" style="margin: 0;" data-i18n="section.minifigures">Minifigures</h3>
                 </div>
                 <div id="minifigContainer"></div>
             </section>
 
             <section id="partsSection" class="hide m-20">
                 <div class="section-header-row">
-                    <h3 id="partsHeader" style="margin: 0;">Parts</h3>
+                    <h3 id="partsHeader" style="margin: 0;" data-i18n="section.parts">Parts</h3>
                 </div>
             </section>
 
@@ -276,13 +276,13 @@
 
             <section id="sparePartsSection" class="hide m-20">
                 <div class="section-header-row">
-                    <h3 id="sparePartsHeader" style="margin: 0;">Spare Parts</h3>
+                    <h3 id="sparePartsHeader" style="margin: 0;" data-i18n="section.spareParts">Spare Parts</h3>
                 </div>
             </section>
 
             <div class="complete-toggle-container" id="completeToggleContainer" style="display: none;">
-                <button class="complete-toggle" id="completeToggle" onclick="toggleCompleteParts()" title="Hide complete parts" aria-label="Hide complete parts"></button>
-                <span class="complete-toggle-label">Hide complete</span>
+                <button class="complete-toggle" id="completeToggle" onclick="toggleCompleteParts()" title="Hide complete parts" aria-label="Hide complete parts" data-i18n="[title]button.hideCompleteParts;[aria-label]button.hideCompleteParts"></button>
+                <span class="complete-toggle-label" data-i18n="button.hideComplete">Hide complete</span>
             </div>
 
             <div id="spareTableContainer"></div>
@@ -3629,10 +3629,10 @@
     <div id="fireworksContainer"></div>
 
     <footer class="app-footer">
-        <span class="footer-tagline">Made with ❤️ between building sessions for LEGO® enthusiasts</span>
+        <span class="footer-tagline" data-i18n="footer.tagline">Made with ❤️ between building sessions for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.29.0 (eccfacf)</a>
-        <span class="footer-disclaimer">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise, or endorse this app.</span>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.30.0 (bfbd9a1)</a>
+        <span class="footer-disclaimer" data-i18n="footer.disclaimer">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise, or endorse this app.</span>
     </footer>
 </body>
 
