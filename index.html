@@ -391,7 +391,7 @@
 
             var title = document.createElement('h2');
             title.className = 'whats-new-title';
-            title.textContent = '\u2728 What\u2019s New in BrickTally';
+            title.textContent = t('modal.whatsNewTitle');
             modal.appendChild(title);
 
             if (entries.length > 0) {
@@ -407,12 +407,12 @@
                 var changelogLink = document.createElement('a');
                 changelogLink.href = '/changelog';
                 changelogLink.className = 'whats-new-changelog-link';
-                changelogLink.textContent = 'See full changelog →';
+                changelogLink.textContent = t('modal.whatsNewChangelog');
                 modal.appendChild(changelogLink);
             } else {
                 var msg = document.createElement('p');
                 msg.className = 'whats-new-message';
-                msg.textContent = 'A new version is available.';
+                msg.textContent = t('modal.whatsNewFallback');
                 modal.appendChild(msg);
             }
 
@@ -421,7 +421,7 @@
 
             var updateBtn = document.createElement('button');
             updateBtn.className = 'whats-new-update-btn';
-            updateBtn.textContent = 'Update Now';
+            updateBtn.textContent = t('button.updateNow');
             updateBtn.onclick = function() {
                 if (version) localStorage.setItem('lastSeenVersion', version);
                 window.location.reload();
@@ -429,7 +429,7 @@
 
             var laterBtn = document.createElement('button');
             laterBtn.className = 'whats-new-later-btn';
-            laterBtn.textContent = 'Maybe Later';
+            laterBtn.textContent = t('button.maybeLater');
             laterBtn.onclick = function() {
                 if (version) localStorage.setItem('lastSeenVersion', version);
                 overlay.remove();
@@ -843,16 +843,16 @@
                     <img src="${setInfo.imageUrl || ''}" alt="${setInfo.name || ''}" class="set-history-item-image" onerror="handleImageError(this)" onclick="retryImageLoad(this)">
                     <div class="set-history-item-content">
                         <div class="set-history-item-title">${setInfo.name || ''}</div>
-                        <div class="set-history-item-number">Set ${setInfo.number || ''} (${String(setInfo.year || '')})</div>
-                        <div class="set-history-item-stats">${completedCount} / ${totalCount} pieces</div>
+                        <div class="set-history-item-number">${t('display.setYear', { number: setInfo.number || '', year: String(setInfo.year || '') })}</div>
+                        <div class="set-history-item-stats">${t('display.pieces', { completed: completedCount, total: totalCount })}</div>
                         <div class="progress-bar" data-percentage="${percentage}%">
                             <div class="progress-fill" style="width: ${percentage}%;"></div>
                         </div>
                     </div>
                     <div class="set-history-item-actions">
-                        <button class="backup" onclick="backupSingleSet(event, '${setInfo.fullNumber}')" title="Backup set">📤</button>
-                        <button class="reset" onclick="resetSetHistory(event, '${setInfo.fullNumber}')" title="Reset progress">↻</button>
-                        <button class="delete" onclick="deleteSetHistory(event, '${setInfo.fullNumber}')" title="Delete set">✕</button>
+                        <button class="backup" onclick="backupSingleSet(event, '${setInfo.fullNumber}')" title="${t('button.backupSet')}">📤</button>
+                        <button class="reset" onclick="resetSetHistory(event, '${setInfo.fullNumber}')" title="${t('button.resetProgress')}">↻</button>
+                        <button class="delete" onclick="deleteSetHistory(event, '${setInfo.fullNumber}')" title="${t('button.deleteSet')}">✕</button>
                     </div>`;
 
                 // Click on row to load set or toggle backup checkbox
@@ -892,7 +892,7 @@
             var messageEl = document.getElementById('deleteModalMessage');
             var actionsEl = document.getElementById('deleteModalActions');
 
-            titleEl.textContent = 'Delete "' + setName + '" (Set ' + setNum + ')?';
+            titleEl.textContent = t('modal.deleteSetTitle', { name: setName, number: setNum });
 
             var actionsHtml = '';
             var hasProgress = currentProgress !== '';
@@ -900,32 +900,32 @@
             if (!hasProgress) {
                 // No parts counted — nothing to lose, simple delete
                 messageEl.innerHTML = '';
-                actionsHtml += '<button id="confirmDeleteBtn" onclick="confirmDelete()">Delete</button>';
+                actionsHtml += '<button id="confirmDeleteBtn" onclick="confirmDelete()">' + t('button.delete') + '</button>';
             } else if (data.backup) {
                 var currentProg = calculateProgressFromString(data.numParts || 0, currentProgress);
                 var backupCompleted = data.backupCompleted || 0;
                 if (backupCompleted === currentProg.completed) {
                     // State 1: Backup is current
                     var backupPercentage = data.numParts > 0 ? Math.round(backupCompleted / data.numParts * 100) : 0;
-                    messageEl.innerHTML = '<div class="delete-status-safe">✅ Safe to delete — backed up ' + formatDate(data.backup) + ' (' + backupPercentage + '% complete)</div>';
-                    actionsHtml += '<button id="confirmDeleteBtn" onclick="confirmDelete()">Delete</button>';
+                    messageEl.innerHTML = '<div class="delete-status-safe">' + t('modal.deleteSafe', { date: formatDate(data.backup), percentage: backupPercentage }) + '</div>';
+                    actionsHtml += '<button id="confirmDeleteBtn" onclick="confirmDelete()">' + t('button.delete') + '</button>';
                 } else {
                     // State 2: Backup is outdated
                     var backupPercentage = data.numParts > 0 ? Math.round(backupCompleted / data.numParts * 100) : 0;
                     var backupParts = backupCompleted + '/' + (data.numParts || 0);
                     var currentParts = currentProg.completed + '/' + currentProg.total;
-                    messageEl.innerHTML = '<div class="delete-status-warning">⚠️ Backup is outdated — backed up ' + formatDate(data.backup) + ' at ' + backupPercentage + '% (' + backupParts + ' pieces), now ' + currentProg.percentage + '% (' + currentParts + ' pieces)</div>';
-                    actionsHtml += '<button id="confirmDeleteBtn" onclick="confirmDelete()">Delete</button>';
-                    actionsHtml += '<button id="backupAndDeleteBtn" onclick="backupAndDelete()">Backup & Delete</button>';
+                    messageEl.innerHTML = '<div class="delete-status-warning">' + t('modal.deleteOutdated', { date: formatDate(data.backup), backupPercentage: backupPercentage, backupPieces: backupParts, currentPercentage: currentProg.percentage, currentPieces: currentParts }) + '</div>';
+                    actionsHtml += '<button id="confirmDeleteBtn" onclick="confirmDelete()">' + t('button.delete') + '</button>';
+                    actionsHtml += '<button id="backupAndDeleteBtn" onclick="backupAndDelete()">' + t('button.backupAndDelete') + '</button>';
                 }
             } else {
                 // State 3: Never backed up but has progress
-                messageEl.innerHTML = '<div class="delete-status-warning">⚠️ This set has never been backed up!</div>';
-                actionsHtml += '<button id="confirmDeleteBtn" onclick="confirmDelete()">Delete</button>';
-                actionsHtml += '<button id="backupAndDeleteBtn" onclick="backupAndDelete()">Backup & Delete</button>';
+                messageEl.innerHTML = '<div class="delete-status-warning">' + t('modal.deleteNeverBackedUp') + '</div>';
+                actionsHtml += '<button id="confirmDeleteBtn" onclick="confirmDelete()">' + t('button.delete') + '</button>';
+                actionsHtml += '<button id="backupAndDeleteBtn" onclick="backupAndDelete()">' + t('button.backupAndDelete') + '</button>';
             }
 
-            actionsHtml += '<button id="cancelDeleteBtn" onclick="cancelDelete()">Cancel</button>';
+            actionsHtml += '<button id="cancelDeleteBtn" onclick="cancelDelete()">' + t('button.cancel') + '</button>';
 
             actionsEl.innerHTML = actionsHtml;
             document.getElementById('deleteModalOverlay').setAttribute('data-visible', '');
@@ -1184,7 +1184,7 @@
                 var restoreProgress = calculateProgressFromString(restoreSet.info.numParts, restoreSet.progress);
 
                 var imgUrl = restoreSet.info.imageUrl || '/assets/favicon.svg';
-                var itemHtml = html`<img src="${imgUrl}" class="restore-set-image" onerror="handleImageError(this)"><div class="restore-set-info"><strong>${restoreSet.info.name || ''}</strong><span>Set ${restoreSet.info.number || ''} (${String(restoreSet.info.year || '')})</span></div>`;
+                var itemHtml = html`<img src="${imgUrl}" class="restore-set-image" onerror="handleImageError(this)"><div class="restore-set-info"><strong>${restoreSet.info.name || ''}</strong><span>${t('display.setYear', { number: restoreSet.info.number || '', year: String(restoreSet.info.year || '') })}</span></div>`;
 
                 if (hasConflict) {
                     var localProgress = calculateProgressFromString(
@@ -1193,7 +1193,7 @@
                     );
 
                     var restoreIsNewer = restoreSet.lastWorkedOn > (localData.lastAccessed || 0);
-                    itemHtml += html`<div class="restore-comparison"><div class="restore-local"><span>Local: ${localProgress.percentage}% (${formatDate(localData.lastAccessed)})</span></div><div class="restore-imported"><span>Restore: ${restoreProgress.percentage}% (${formatDate(restoreSet.lastWorkedOn)})</span></div><div class="restore-choice"><input type="radio" name="restore-${restoreSet.fullNumber}" id="restore-keep-${restoreSet.fullNumber}" value="keep" ${html.raw(!restoreIsNewer ? 'checked' : '')}><label for="restore-keep-${restoreSet.fullNumber}" class="restore-choice-btn">Keep local</label><input type="radio" name="restore-${restoreSet.fullNumber}" id="restore-import-${restoreSet.fullNumber}" value="import" ${html.raw(restoreIsNewer ? 'checked' : '')}><label for="restore-import-${restoreSet.fullNumber}" class="restore-choice-btn">Overwrite</label></div></div>`;
+                    itemHtml += html`<div class="restore-comparison"><div class="restore-local"><span>${t('restore.localProgress', { percentage: localProgress.percentage, date: formatDate(localData.lastAccessed) })}</span></div><div class="restore-imported"><span>${t('restore.restoreProgress', { percentage: restoreProgress.percentage, date: formatDate(restoreSet.lastWorkedOn) })}</span></div><div class="restore-choice"><input type="radio" name="restore-${restoreSet.fullNumber}" id="restore-keep-${restoreSet.fullNumber}" value="keep" ${html.raw(!restoreIsNewer ? 'checked' : '')}><label for="restore-keep-${restoreSet.fullNumber}" class="restore-choice-btn">${t('restore.keepLocal')}</label><input type="radio" name="restore-${restoreSet.fullNumber}" id="restore-import-${restoreSet.fullNumber}" value="import" ${html.raw(restoreIsNewer ? 'checked' : '')}><label for="restore-import-${restoreSet.fullNumber}" class="restore-choice-btn">${t('restore.overwrite')}</label></div></div>`;
                 } else {
                     itemHtml += html`<div class="restore-new"><span>${restoreProgress.percentage}% complete (${formatDate(restoreSet.lastWorkedOn)})</span></div>`;
                 }
@@ -1313,7 +1313,7 @@
                 // Create preview banner
                 var banner = document.createElement('div');
                 banner.className = 'preview-banner';
-                banner.textContent = 'PREVIEW';
+                banner.textContent = t('display.preview');
                 document.body.appendChild(banner);
             }
 
@@ -1715,7 +1715,7 @@
             // Header
             var header = document.createElement('div');
             header.className = 'memory-header';
-            header.innerHTML = '<span class="memory-title">\uD83E\uDDE9 Memory Game</span><span class="memory-moves">Moves: <span id="memoryMoveCount">0</span></span>';
+            header.innerHTML = '<span class="memory-title">' + t('game.title') + '</span><span class="memory-moves">' + t('game.moves') + ' <span id="memoryMoveCount">0</span></span>';
 
             var closeBtn = document.createElement('button');
             closeBtn.className = 'memory-close';
@@ -1832,9 +1832,9 @@
 
             function showWin() {
                 winMsg.classList.remove('hide');
-                winMsg.innerHTML = '<div class="memory-win-text">\uD83C\uDF89 You won!</div>' +
-                    '<div class="memory-win-stats">' + totalPairs + ' pairs in ' + moves + ' moves</div>' +
-                    '<button class="memory-play-again">Play Again</button>';
+                winMsg.innerHTML = '<div class="memory-win-text">' + t('game.youWon') + '</div>' +
+                    '<div class="memory-win-stats">' + t('game.stats', { pairs: totalPairs, moves: moves }) + '</div>' +
+                    '<button class="memory-play-again">' + t('game.playAgain') + '</button>';
                 winMsg.querySelector('.memory-play-again').addEventListener('click', function() {
                     overlay.remove();
                     startMemoryGame();
@@ -2131,8 +2131,8 @@
             var content = document.createElement('div');
             content.style.cssText = 'background: var(--bg-secondary); padding: 30px; border-radius: 8px; max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto;';
 
-            var htmlStr = '<h2 style="margin-bottom: 20px; color: var(--text-primary);">Multiple Set Versions Found</h2>' +
-                '<p style="margin-bottom: 20px; color: var(--text-secondary);">This set has ' + versions.length + ' versions. Please select one:</p>' +
+            var htmlStr = '<h2 style="margin-bottom: 20px; color: var(--text-primary);">' + t('modal.versionsTitle') + '</h2>' +
+                '<p style="margin-bottom: 20px; color: var(--text-secondary);">' + t('modal.versionsDescription', { count: versions.length }) + '</p>' +
                 '<div style="display: flex; flex-direction: column; gap: 15px;">';
 
             versions.forEach(function (version) {
@@ -2141,7 +2141,7 @@
             });
 
             htmlStr += '</div>' +
-                '<button onclick="this.parentElement.parentElement.remove()" style="margin-top: 20px; width: 100%; background: var(--text-secondary);">Cancel</button>';
+                '<button onclick="this.parentElement.parentElement.remove()" style="margin-top: 20px; width: 100%; background: var(--text-secondary);">' + t('button.cancel') + '</button>';
 
             content.innerHTML = htmlStr;
             modal.appendChild(content);
@@ -2231,8 +2231,12 @@
             document.getElementById('setName').textContent = setData.name;
             document.getElementById('setImageContainer').innerHTML =
                 html`<img src="${setImageUrl || ''}" alt="${setData.name || ''}" class="set-detail-image" onerror="handleImageError(this)" onclick="retryImageLoad(this)">`;
-            document.getElementById('setDetails').innerHTML =
-                html`Set Number: ${displaySetNumber}${html.raw(versionInfo)} | Year: ${String(setData.year)} | Parts: ${String(setData.num_parts)}`;
+            var detailsText = versionNumber !== '1'
+                ? t('display.setDetailsVersioned', { number: displaySetNumber, version: versionNumber, year: String(setData.year), parts: String(setData.num_parts) })
+                : t('display.setDetails', { number: displaySetNumber, year: String(setData.year), parts: String(setData.num_parts) });
+            document.getElementById('setDetails').innerHTML = versionNumber !== '1'
+                ? detailsText.replace('[Version ' + versionNumber + ']', '<span style="color: var(--orange);">[Version ' + versionNumber + ']</span>')
+                : detailsText;
 
             // Update collapsed header set name
             var collapsedVersionInfo = versionNumber !== '1' ? ' (v' + versionNumber + ')' : '';
@@ -2318,7 +2322,7 @@
                 totalPieces += colorCounts[color];
             }
 
-            var htmlStr = '<button class="filter active" onclick="toggleColorFilter(\'all\', event)">All <span class="count">(' + totalPieces + ')</span></button>';
+            var htmlStr = '<button class="filter active" onclick="toggleColorFilter(\'all\', event)">' + t('filter.all', { count: totalPieces }) + '</button>';
 
             Object.keys(colorCounts).sort().forEach(function (color) {
                 htmlStr += html`<button class="filter" data-color="${color}" onclick="toggleColorFilter(this.dataset.color, event)">${color} <span class="count">(${colorCounts[color]})</span></button>`;
@@ -2410,7 +2414,7 @@
                 var altText = part.color + ' ' + part.name + ' (' + part.partNum + ')';
                 var fallbackInfo = escapeHtml(part.color) + ' ' + escapeHtml(part.name) + '<br>' + escapeHtml(part.partNum);
                 var decrementHidden = currentCount === 0 ? ' data-hidden-when-zero' : '';
-                htmlStr += html`<tr id="row-${part.id}" data-complete="${isComplete}" data-color="${part.color}" data-fallback-info="${fallbackInfo}"><td class="col-img"><img src="${part.imageUrl}" alt="${altText}" class="part-image" data-part-id="${part.id}" onerror="handleImageError(this)" onload="handleImageLoad(this)"></td><td class="col-info" id="info-${part.id}">${html.raw(infoText)}</td><td class="col-controls"><div class="controls"><button id="dec-${part.id}" onclick="decrementPart(${part.id})"${html.raw(decrementHidden)}>-</button><span class="count-display" id="count-${part.id}"><span class="counted">${currentCount}</span>/<span class="qty-click" onclick="fillQuantity(${part.id})" title="Click to mark all as counted">${part.quantity}</span></span><button id="inc-${part.id}" class="increment-btn${html.raw(incrementBtnClass)}" onclick="incrementPart(${part.id})"${html.raw(incrementBtnDisabled)}>${html.raw(incrementButtonText)}</button></div></td></tr>`;
+                htmlStr += html`<tr id="row-${part.id}" data-complete="${isComplete}" data-color="${part.color}" data-fallback-info="${fallbackInfo}"><td class="col-img"><img src="${part.imageUrl}" alt="${altText}" class="part-image" data-part-id="${part.id}" onerror="handleImageError(this)" onload="handleImageLoad(this)"></td><td class="col-info" id="info-${part.id}">${html.raw(infoText)}</td><td class="col-controls"><div class="controls"><button id="dec-${part.id}" onclick="decrementPart(${part.id})"${html.raw(decrementHidden)}>-</button><span class="count-display" id="count-${part.id}"><span class="counted">${currentCount}</span>/<span class="qty-click" onclick="fillQuantity(${part.id})" title="${t('tooltip.fillQuantity')}">${part.quantity}</span></span><button id="inc-${part.id}" class="increment-btn${html.raw(incrementBtnClass)}" onclick="incrementPart(${part.id})"${html.raw(incrementBtnDisabled)}>${html.raw(incrementButtonText)}</button></div></td></tr>`;
             });
 
             htmlStr += '</tbody></table>';
@@ -2476,7 +2480,7 @@
                 var altText = part.color + ' ' + part.name + ' (' + part.partNum + ')';
                 var fallbackInfo = escapeHtml(part.color) + ' ' + escapeHtml(part.name) + '<br>' + escapeHtml(part.partNum);
                 var decrementHidden = currentCount === 0 ? ' data-hidden-when-zero' : '';
-                htmlStr += html`<tr id="row-${part.id}" data-complete="${isComplete}" data-color="${part.color}" data-fallback-info="${fallbackInfo}"><td class="col-img"><img src="${part.imageUrl}" alt="${altText}" class="part-image" data-part-id="${part.id}" onerror="handleImageError(this)" onload="handleImageLoad(this)"></td><td class="col-info" id="info-${part.id}">${html.raw(infoText)}</td><td class="col-controls"><div class="controls"><button id="dec-${part.id}" onclick="decrementPart(${part.id})"${html.raw(decrementHidden)}>-</button><span class="count-display" id="count-${part.id}"><span class="counted">${currentCount}</span>/<span class="qty-click" onclick="fillQuantity(${part.id})" title="Click to mark all as counted">${part.quantity}</span></span><button id="inc-${part.id}" class="increment-btn${html.raw(incrementBtnClass)}" onclick="incrementPart(${part.id})"${html.raw(incrementBtnDisabled)}>${html.raw(incrementButtonText)}</button></div></td></tr>`;
+                htmlStr += html`<tr id="row-${part.id}" data-complete="${isComplete}" data-color="${part.color}" data-fallback-info="${fallbackInfo}"><td class="col-img"><img src="${part.imageUrl}" alt="${altText}" class="part-image" data-part-id="${part.id}" onerror="handleImageError(this)" onload="handleImageLoad(this)"></td><td class="col-info" id="info-${part.id}">${html.raw(infoText)}</td><td class="col-controls"><div class="controls"><button id="dec-${part.id}" onclick="decrementPart(${part.id})"${html.raw(decrementHidden)}>-</button><span class="count-display" id="count-${part.id}"><span class="counted">${currentCount}</span>/<span class="qty-click" onclick="fillQuantity(${part.id})" title="${t('tooltip.fillQuantity')}">${part.quantity}</span></span><button id="inc-${part.id}" class="increment-btn${html.raw(incrementBtnClass)}" onclick="incrementPart(${part.id})"${html.raw(incrementBtnDisabled)}>${html.raw(incrementButtonText)}</button></div></td></tr>`;
             });
 
             htmlStr += '</tbody></table>';
@@ -2670,7 +2674,7 @@
             var decrementBtn = document.getElementById('dec-' + partId);
 
             // Update count display with clickable quantity
-            countElement.innerHTML = '<span class="counted">' + userCounts[key] + '</span>/<span class="qty-click" onclick="fillQuantity(' + partId + ')" title="Click to mark all as counted">' + part.quantity + '</span>';
+            countElement.innerHTML = '<span class="counted">' + userCounts[key] + '</span>/<span class="qty-click" onclick="fillQuantity(' + partId + ')" title="' + t('tooltip.fillQuantity') + '">' + part.quantity + '</span>';
 
             // Check completion using only the row's own count
             var ownCount = userCounts[key] || 0;
@@ -3042,7 +3046,7 @@
                 ctx.fillStyle = 'rgba(0,0,0,0.3)';
                 ctx.font = '12px Arial, sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText('No Image', 10 + setImgSize/2, 10 + setImgSize/2 + 4);
+                ctx.fillText(t('display.noImage'), 10 + setImgSize/2, 10 + setImgSize/2 + 4);
                 ctx.textAlign = 'left';
             }
 
@@ -3088,7 +3092,7 @@
             // Piece count - at original percentage position
             ctx.font = '16px Arial, sans-serif';
             ctx.fillStyle = 'rgba(255,255,255,0.9)';
-            var pieceText = data.completedPieces + ' / ' + data.totalPieces + ' pieces';
+            var pieceText = t('display.pieces', { completed: data.completedPieces, total: data.totalPieces });
             var percentBaselineY = 100;
             ctx.fillText(pieceText, contentX, percentBaselineY);
 
@@ -3110,7 +3114,7 @@
                 ctx.font = 'bold 16px Arial, sans-serif';
                 ctx.fillStyle = 'white';
                 var missingCount = data.missingParts.reduce(function(sum, p) { return sum + p.quantity; }, 0);
-                ctx.fillText('Missing ' + missingCount + ' piece' + (missingCount !== 1 ? 's' : '') + ':', 20, missingY + 17);
+                ctx.fillText(t('badge.missingPieces', { count: missingCount }), 20, missingY + 17);
 
                 // List missing parts with images
                 var listY = missingY + 45;
@@ -3144,7 +3148,7 @@
                     ctx.font = '13px Arial, sans-serif';
                     var nameText = part.name;
                     if (part.type === 'minifig') {
-                        nameText += ' (minifig)';
+                        nameText += ' ' + t('badge.minifig');
                     }
 
                     // Wrap name if needed
@@ -3186,7 +3190,7 @@
                     var moreY = listY + 10 * partRowHeight + 5;
                     ctx.font = '14px Arial, sans-serif';
                     ctx.fillStyle = 'rgba(255,255,255,0.7)';
-                    ctx.fillText('\u2026 and ' + (data.missingParts.length - 10) + ' more missing pieces', 20, moreY);
+                    ctx.fillText(t('badge.moreItems', { count: data.missingParts.length - 10 }), 20, moreY);
                 }
             }
 
@@ -3194,7 +3198,7 @@
             ctx.font = 'bold 16px Arial, sans-serif';
             ctx.fillStyle = 'rgba(255,255,255,0.6)';
             ctx.textAlign = 'right';
-            ctx.fillText('bricktally.app', width - 15, height - 14);
+            ctx.fillText(t('badge.watermark'), width - 15, height - 14);
             ctx.textAlign = 'left';
 
             // Convert to data URL and show modal
@@ -3246,15 +3250,15 @@
             var missingSuffix = missingCount === 0 ? 'complete' : missingCount + '-missing';
             var filename = 'bricktally-' + data.setNumber + '-' + safeSetName + '-' + missingSuffix + '.png';
 
-            content.innerHTML = '<h2 style="margin-bottom: 20px; color: var(--text-primary);">BrickTally Badge</h2>' +
-                '<p style="color: var(--text-secondary); margin-bottom: 15px;">Download this badge to share on eBay, Facebook Marketplace, or other platforms as proof of your set\'s completeness.</p>' +
+            content.innerHTML = '<h2 style="margin-bottom: 20px; color: var(--text-primary);">' + t('modal.badgeTitle') + '</h2>' +
+                '<p style="color: var(--text-secondary); margin-bottom: 15px;">' + t('modal.badgeDescription') + '</p>' +
                 '<div style="margin: 20px 0; text-align: center;">' +
                 '<img src="' + imageDataUrl + '" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);" alt="BrickTally Badge">' +
                 '</div>' +
                 '<a id="badgeDownload" href="' + imageDataUrl + '" download="' + filename + '" style="display: block; text-decoration: none;">' +
-                '<button style="width: 100%; background: var(--green); font-size: 16px; padding: 12px;">Download Badge (PNG)</button>' +
+                '<button style="width: 100%; background: var(--green); font-size: 16px; padding: 12px;">' + t('button.downloadBadge') + '</button>' +
                 '</a>' +
-                '<button onclick="this.parentElement.parentElement.remove()" style="margin-top: 15px; width: 100%; background: var(--text-secondary);">Close</button>';
+                '<button onclick="this.parentElement.parentElement.remove()" style="margin-top: 15px; width: 100%; background: var(--text-secondary);">' + t('button.close') + '</button>';
 
             modal.appendChild(content);
             document.body.appendChild(modal);
@@ -3387,8 +3391,8 @@
             }
 
             // Generate CSV for Pick a Brick
-            var csv = '# Note: Minifigures excluded (not available via Pick a Brick)\n';
-            csv += 'Element ID,Design ID,Colour,Quantity,Name\n';
+            var csv = t('export.csvNote') + '\n';
+            csv += t('export.csvHeader') + '\n';
 
             missingParts.forEach(function (part) {
                 // Pick a Brick uses Design ID (same as part number) and Element ID (part+color combination)
@@ -3458,32 +3462,32 @@
             }
 
             // Generate readable text list
-            var text = 'Missing Pieces for Set ' + currentSetNumber.split('-')[0] + '\n';
+            var text = t('export.textHeader', { number: currentSetNumber.split('-')[0] }) + '\n';
             text += '='.repeat(50) + '\n\n';
 
             if (missingParts.length > 0) {
-                text += 'PARTS:\n';
+                text += t('export.textParts') + '\n';
                 missingParts.forEach(function (part) {
                     text += part.quantity + 'x ' + part.partNum + ' - ' + part.name + ' (' + part.color + ')\n';
                 });
             }
 
             if (missingMinifigs.length > 0) {
-                text += '\nMINIFIGURES:\n';
+                text += '\n' + t('export.textMinifigures') + '\n';
                 missingMinifigs.forEach(function (minifig) {
                     text += minifig.quantity + 'x ' + minifig.partNum + ' - ' + minifig.name + '\n';
                 });
             }
 
             text += '\n' + '='.repeat(50) + '\n';
-            text += 'Total unique parts missing: ' + missingParts.length + '\n';
+            text += t('export.textTotalParts', { count: missingParts.length }) + '\n';
             if (missingMinifigs.length > 0) {
-                text += 'Total unique minifigs missing: ' + missingMinifigs.length + '\n';
+                text += t('export.textTotalMinifigs', { count: missingMinifigs.length }) + '\n';
             }
 
             var totalPieces = 0;
             missingParts.forEach(function (p) { totalPieces += p.quantity; });
-            text += 'Total pieces missing: ' + totalPieces + '\n';
+            text += t('export.textTotalPieces', { count: totalPieces }) + '\n';
 
             // Create download
             var blob = new Blob([text], { type: 'text/plain' });
@@ -3528,7 +3532,7 @@
                 return;
             }
 
-            var csv = 'Part,Color,Quantity\n';
+            var csv = t('export.rebrickableCsvHeader') + '\n';
             for (var csvKey in partCounts) {
                 csv += csvKey + ',' + partCounts[csvKey] + '\n';
             }
@@ -3609,9 +3613,9 @@
             setTimeout(function () {
                 var congrats = document.createElement('div');
                 congrats.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--bg-secondary); padding: 40px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); z-index: 10001; text-align: center; animation: scaleIn 0.3s ease;';
-                congrats.innerHTML = '<h2 style="color: var(--green); font-size: 36px; margin-bottom: 15px;">🎉 Complete!</h2>' +
-                    '<p style="color: var(--text-primary); font-size: 18px; margin-bottom: 20px;">All pieces accounted for!</p>' +
-                    '<button onclick="this.parentElement.remove()" style="padding: 12px 30px; font-size: 16px;">Awesome!</button>';
+                congrats.innerHTML = '<h2 style="color: var(--green); font-size: 36px; margin-bottom: 15px;">' + t('celebration.title') + '</h2>' +
+                    '<p style="color: var(--text-primary); font-size: 18px; margin-bottom: 20px;">' + t('celebration.message') + '</p>' +
+                    '<button onclick="this.parentElement.remove()" style="padding: 12px 30px; font-size: 16px;">' + t('celebration.button') + '</button>';
                 document.body.appendChild(congrats);
 
                 // Add scale-in animation
@@ -3627,7 +3631,7 @@
     <footer class="app-footer">
         <span class="footer-tagline">Made with ❤️ between building sessions for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.28.0 (b17de1b)</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.29.0 (eccfacf)</a>
         <span class="footer-disclaimer">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise, or endorse this app.</span>
     </footer>
 </body>
