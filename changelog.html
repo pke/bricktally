@@ -6,28 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Changelog - BrickTally</title>
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
-  <link rel="apple-touch-icon" sizes="180x180" href="/assets/bricktally-icon.png">
-
-  <!-- SEO Meta -->
-  <meta name="description"
-    content="See what's new in BrickTally — release notes for every update to the free LEGO® set verification tool.">
-  <meta name="theme-color" content="#0055BF">
-  <link rel="canonical" href="https://bricktally.app/changelog">
-
-  <!-- OpenGraph -->
-  <meta property="og:title" content="Changelog - BrickTally">
-  <meta property="og:description"
-    content="See what's new in BrickTally — release notes for every update to the free LEGO® set verification tool.">
-  <meta property="og:image" content="https://bricktally.app/assets/og-image.png">
-  <meta property="og:url" content="https://bricktally.app/changelog">
-  <meta property="og:type" content="website">
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Changelog - BrickTally">
-  <meta name="twitter:description"
-    content="See what's new in BrickTally — release notes for every update to the free LEGO® set verification tool.">
-  <meta name="twitter:image" content="https://bricktally.app/assets/og-image.png">
 
   <!-- PWA Manifest -->
   <link rel="manifest" href="/manifest.json">
@@ -42,10 +20,7 @@
 </head>
 
 <body class="changelog-page">
-  <main class="container">
-    <nav class="changelog-nav">
-      <a href="/">← Back to BrickTally</a>
-    </nav>
+  <div class="container">
     <button class="theme-toggle" id="themeToggle" onclick="toggleDarkMode()">
       <span id="themeIcon">🌙</span>
     </button>
@@ -54,7 +29,19 @@
     <p class="changelog-subtitle">Every brick-counting improvement, one release at a time.</p>
 
     <div id="changelogContent">
-    <article class="changelog-release">
+    <div class="changelog-release">
+      <div class="changelog-release-header">
+        <span class="changelog-version">v1.32.0</span>
+        <span class="changelog-date">2026-03-17</span>
+      </div>
+      <h2 class="changelog-release-title">Now in 11 Languages!</h2>
+      <ul class="changelog-entries">
+        <li>BrickTally now speaks your language! Choose from English, German, French, Spanish, Dutch, Danish, Japanese, Korean, Russian, Simplified Chinese, and Traditional Chinese</li>
+        <li>Pick your language from the footer — your choice is remembered across visits</li>
+      </ul>
+    </div>
+
+    <div class="changelog-release">
       <div class="changelog-release-header">
         <span class="changelog-version">v1.19.0</span>
         <span class="changelog-date">2026-02-23</span>
@@ -63,9 +50,9 @@
       <ul class="changelog-entries">
         <li>BrickTally is now easier to find on the web — the red carpet has been rolled out for search engines with better SEO</li>
       </ul>
-    </article>
+    </div>
 
-    <article class="changelog-release">
+    <div class="changelog-release">
       <div class="changelog-release-header">
         <span class="changelog-version">v1.18.1</span>
         <span class="changelog-date">2025-02-21</span>
@@ -75,9 +62,9 @@
         <li>No more awkward backup warnings when you haven't even started counting</li>
         <li>Images now gracefully retry through a backup route if your browser is feeling overprotective</li>
       </ul>
-    </article>
+    </div>
 
-    <article class="changelog-release">
+    <div class="changelog-release">
       <div class="changelog-release-header">
         <span class="changelog-version">v1.18.0</span>
         <span class="changelog-date">2025-02-21</span>
@@ -86,9 +73,9 @@
       <ul class="changelog-entries">
         <li>Export your counted parts as a Rebrickable-compatible CSV — finally, your hard work travels!</li>
       </ul>
-    </article>
+    </div>
 
-    <article class="changelog-release">
+    <div class="changelog-release">
       <div class="changelog-release-header">
         <span class="changelog-version">v1.17.0</span>
         <span class="changelog-date">2025-02-20</span>
@@ -97,9 +84,9 @@
       <ul class="changelog-entries">
         <li>Your progress is now compressed before saving — big sets like the Millennium Falcon use way less storage</li>
       </ul>
-    </article>
+    </div>
 
-    <article class="changelog-release">
+    <div class="changelog-release">
       <div class="changelog-release-header">
         <span class="changelog-version">v1.16.0</span>
         <span class="changelog-date">2025-02-19</span>
@@ -110,9 +97,9 @@
         <li>Smart delete dialog warns you about unsaved work before nuking a set</li>
         <li>Hide-complete toggle now lives in the section headers where it belongs</li>
       </ul>
-    </article>
+    </div>
 
-    <article class="changelog-release">
+    <div class="changelog-release">
       <div class="changelog-release-header">
         <span class="changelog-version">v1.15.0</span>
         <span class="changelog-date">2025-02-18</span>
@@ -124,9 +111,9 @@
         <li>Parts only show complete for their own count — spare parts don't steal the checkmark</li>
         <li>Increment button shows a checkmark when you're one piece away from done</li>
       </ul>
-    </article>
+    </div>
 
-    <article class="changelog-release">
+    <div class="changelog-release">
       <div class="changelog-release-header">
         <span class="changelog-version">v1.14.0</span>
         <span class="changelog-date">2025-02-17</span>
@@ -136,9 +123,9 @@
         <li>Generate a shareable PNG badge showing your set completion — perfect for eBay listings!</li>
         <li>Search bar simplified — just type and go, no extra button needed</li>
       </ul>
-    </article>
+    </div>
 
-    <article class="changelog-release">
+    <div class="changelog-release">
       <div class="changelog-release-header">
         <span class="changelog-version">v1.13.0</span>
         <span class="changelog-date">2025-02-15</span>
@@ -148,9 +135,9 @@
         <li>Spare parts now get their own section — count them separately from the main build</li>
         <li>Minifigure support landed — track your little people too</li>
       </ul>
-    </article>
+    </div>
 
-    <article class="changelog-release">
+    <div class="changelog-release">
       <div class="changelog-release-header">
         <span class="changelog-version">v1.12.0</span>
         <span class="changelog-date">2025-02-13</span>
@@ -160,9 +147,9 @@
         <li>Click any part image to zoom in with a slick lightbox view</li>
         <li>Parts break out of the table when zoomed — very dramatic</li>
       </ul>
-    </article>
+    </div>
 
-    <article class="changelog-release">
+    <div class="changelog-release">
       <div class="changelog-release-header">
         <span class="changelog-version">v1.11.0</span>
         <span class="changelog-date">2025-02-12</span>
@@ -172,9 +159,9 @@
         <li>BrickTally is now a full PWA — install it and count bricks even without internet</li>
         <li>Your set history shows right on the main page</li>
       </ul>
-    </article>
+    </div>
 
-    <article class="changelog-release">
+    <div class="changelog-release">
       <div class="changelog-release-header">
         <span class="changelog-version">v1.10.0</span>
         <span class="changelog-date">2025-02-10</span>
@@ -185,13 +172,11 @@
         <li>Checkmarks for single-quantity items instead of a lonely increment button</li>
         <li>Color filters to focus on one color at a time</li>
       </ul>
-    </article>
+    </div>
     </div>
 
-    <nav class="changelog-nav">
-      <a href="/" class="back-link">← Back to BrickTally</a>
-    </nav>
-  </main>
+    <a href="/" class="back-link">← Back to BrickTally</a>
+  </div>
 
   <script>
     function loadDarkMode() {

@@ -1,5 +1,14 @@
 [
   {
+    "version": "1.32.0",
+    "date": "2026-03-17",
+    "title": "Now in 11 Languages!",
+    "entries": [
+      "BrickTally now speaks your language! Choose from English, German, French, Spanish, Dutch, Danish, Japanese, Korean, Russian, Simplified Chinese, and Traditional Chinese",
+      "Pick your language from the footer — your choice is remembered across visits"
+    ]
+  },
+  {
     "version": "1.19.0",
     "date": "2026-02-23",
     "title": "Hello, Google!",
