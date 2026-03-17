@@ -1,4 +1,6 @@
 {
+  "buildCommand": "node scripts/build-i18n.js",
+  "outputDirectory": "dist",
   "cleanUrls": true,
   "headers": [
     {
@@ -20,6 +22,10 @@
     {
       "source": "/manifest.json",
       "destination": "/api/manifest"
+    },
+    {
+      "source": "/:locale(de|fr|es|nl|da|ja|ko|ru|zh-CN|zh-TW)/changelog",
+      "destination": "/changelog.html"
     }
   ]
 }

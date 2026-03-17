@@ -9,6 +9,7 @@
     "test:headed": "playwright test --headed",
     "test:debug": "playwright test --debug",
     "test:report": "playwright show-report",
+    "build": "node scripts/build-i18n.js",
     "serve": "python3 -m http.server 8080"
   },
   "devDependencies": {
