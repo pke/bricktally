@@ -1,0 +1,167 @@
+{
+  "meta": {
+    "title": "BrickTally - Каждый кубик на счету",
+    "description": "Проверьте комплектность ваших наборов LEGO\u00ae перед продажей или хранением. Подсчитайте каждую деталь и отслеживайте несколько наборов с BrickTally.",
+    "ogDescription": "Проверьте, все ли детали в ваших наборах LEGO\u00ae перед продажей или хранением. Подсчитайте каждый кубик и убедитесь в 100% комплектности.",
+    "keywords": "LEGO\u00ae, проверка набора, подсчёт деталей, проверка комплектности, инвентаризация LEGO\u00ae, продажа LEGO\u00ae, б/у наборы LEGO\u00ae"
+  },
+  "button": {
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "backupAndDelete": "Сохранить и удалить",
+    "resetProgress": "Сбросить прогресс",
+    "restore": "\ud83d\udce5 Восстановить",
+    "restoreBackup": "\ud83d\udce5 Восстановить из резервной копии",
+    "restoreSelected": "Восстановить выбранные",
+    "backupAll": "\ud83d\udce4 Сохранить всё",
+    "backupSelected": "\ud83d\udce4 Сохранить выбранные",
+    "backupSet": "Сохранить набор",
+    "deleteSet": "Удалить набор",
+    "hideComplete": "Скрыть собранные",
+    "hideCompleteParts": "Скрыть собранные детали",
+    "generateBadge": "\ud83c\udff7\ufe0f Создать значок",
+    "exportBrickLink": "\ud83d\udce6 BrickLink XML",
+    "exportPickABrick": "\ud83e\uddf1 Pick a Brick CSV",
+    "exportTextList": "\ud83d\udcc4 Текстовый список",
+    "exportPartlist": "\ud83e\udde9 Экспорт списка деталей",
+    "downloadBadge": "Скачать значок (PNG)",
+    "close": "Закрыть",
+    "updateNow": "Обновить сейчас",
+    "maybeLater": "Может быть позже",
+    "awesome": "Отлично!",
+    "playAgain": "Играть снова",
+    "toggleFullscreen": "Полноэкранный режим",
+    "toggleDarkMode": "Тёмная тема"
+  },
+  "input": {
+    "setNumberPlaceholder": "Введите номер набора\u2026",
+    "setNumberLabel": "Номер набора LEGO"
+  },
+  "section": {
+    "parts": "Детали",
+    "spareParts": "Запасные детали",
+    "extraSpareParts": "Дополнительные запасные детали",
+    "minifigures": "Минифигурки",
+    "colours": "Цвета",
+    "columns": "Столбцы",
+    "export": "Экспорт"
+  },
+  "column": {
+    "color": "Цвет",
+    "name": "Название",
+    "partNumber": "Номер детали"
+  },
+  "landing": {
+    "heading": "Проверьте комплектность ваших наборов LEGO",
+    "description": "BrickTally поможет вам подсчитать каждую деталь в наборах LEGO\u00ae перед продажей, хранением или сборкой. Введите номер набора, чтобы получить полный список деталей на основе базы данных <a href=\"https://rebrickable.com/\" target=\"_blank\" rel=\"noopener\">Rebrickable</a>.",
+    "featureTrack": "Отслеживайте детали, запасные детали и минифигурки отдельно",
+    "featureFilter": "Фильтруйте по цвету, чтобы сосредоточиться на одной группе",
+    "featureExport": "Экспортируйте недостающие детали в BrickLink, Pick a Brick, Rebrickable или в текстовый список",
+    "featureBadge": "Создайте значок комплектности для eBay или торговых площадок",
+    "featureMobile": "Оптимизировано для планшетов и телефонов — всегда под рукой при сортировке деталей",
+    "featurePwa": "Работает офлайн как PWA — установите на своё устройство",
+    "featureBackup": "Создавайте резервные копии и восстанавливайте прогресс на разных устройствах"
+  },
+  "display": {
+    "pieces": "{{completed}}/{{total}} деталей",
+    "piecesChecked": "деталей подсчитано",
+    "setYear": "Набор {{number}} ({{year}})",
+    "setDetails": "Номер набора: {{number}} | Год: {{year}} | Деталей: {{parts}}",
+    "setDetailsVersioned": "Номер набора: {{number}} [Версия {{version}}] | Год: {{year}} | Деталей: {{parts}}",
+    "percentage": "{{value}}%",
+    "noImage": "Нет изображения",
+    "loading": "Загрузка данных набора\u2026",
+    "preview": "ПРЕДПРОСМОТР"
+  },
+  "history": {
+    "noSets": "Нет обработанных наборов",
+    "getStarted": "Введите номер набора выше, чтобы начать"
+  },
+  "modal": {
+    "restoreTitle": "Восстановить наборы",
+    "deleteTitle": "Удалить набор?",
+    "deleteSetTitle": "Удалить «{{name}}» (Набор {{number}})?",
+    "deleteSafe": "\u2705 Можно удалить — резервная копия от {{date}} ({{percentage}}% завершено)",
+    "deleteOutdated": "\u26a0\ufe0f Резервная копия устарела — сохранена {{date}} при {{backupPercentage}}% ({{backupPieces}} деталей), сейчас {{currentPercentage}}% ({{currentPieces}} деталей)",
+    "deleteNeverBackedUp": "\u26a0\ufe0f Резервная копия этого набора никогда не создавалась!",
+    "versionsTitle": "Найдено несколько версий набора",
+    "versionsDescription": "У этого набора {{count}} версий. Пожалуйста, выберите:",
+    "whatsNewTitle": "\u2728 Что нового в BrickTally",
+    "whatsNewFallback": "Доступна новая версия.",
+    "whatsNewChangelog": "Полный список изменений \u2192",
+    "badgeTitle": "Значок BrickTally",
+    "badgeDescription": "Скачайте этот значок, чтобы поделиться на eBay, Facebook Marketplace или других площадках как подтверждение комплектности набора."
+  },
+  "restore": {
+    "keepLocal": "Оставить локальную",
+    "overwrite": "Перезаписать",
+    "localProgress": "Локально: {{percentage}}% ({{date}})",
+    "restoreProgress": "Восстановить: {{percentage}}% ({{date}})"
+  },
+  "error": {
+    "noSetLoaded": "Сначала загрузите набор",
+    "setNumberRequired": "Введите номер набора",
+    "loadFailed": "Ошибка загрузки данных набора. Попробуйте ещё раз.",
+    "invalidFormat": "Некорректный файл .bricktally: не соответствует ожидаемому формату.",
+    "invalidJson": "Некорректный файл .bricktally: не удалось разобрать JSON.",
+    "invalidFile": "Некорректный файл .bricktally",
+    "noSetsSelected": "Не выбрано ни одного набора для сохранения.",
+    "noPartsCounted": "Ещё ни одна деталь не подсчитана."
+  },
+  "confirm": {
+    "resetSet": "Вы уверены, что хотите сбросить весь прогресс для этого набора?"
+  },
+  "export": {
+    "noMissingPieces": "Нет недостающих деталей! Ваш набор полный.",
+    "brickLinkInstructions": "XML-файл BrickLink скачан!\n\nИспользование:\n1. Перейдите на BrickLink.com\n2. Откройте «Want» > «Upload»\n3. Выберите формат «BrickLink XML»\n4. Загрузите скачанный файл",
+    "pickABrickInstructions": "CSV-файл Pick a Brick скачан!\n\nПримечание: Это справочный список. Вам нужно вручную найти и добавить детали на LEGO.com/pick-a-brick, так как массовый импорт не поддерживается.",
+    "textHeader": "Недостающие детали для набора {{number}}",
+    "textParts": "ДЕТАЛИ:",
+    "textMinifigures": "МИНИФИГУРКИ:",
+    "textTotalParts": "Всего уникальных недостающих деталей: {{count}}",
+    "textTotalMinifigs": "Всего уникальных недостающих минифигурок: {{count}}",
+    "textTotalPieces": "Всего недостающих деталей: {{count}}",
+    "csvNote": "# Примечание: Минифигурки исключены (недоступны через Pick a Brick)",
+    "csvHeader": "Element ID,Design ID,Colour,Quantity,Name",
+    "rebrickableCsvHeader": "Part,Color,Quantity"
+  },
+  "badge": {
+    "missingPieces_one": "Не хватает {{count}} детали:",
+    "missingPieces_other": "Не хватает {{count}} деталей:",
+    "moreItems_one": "\u2026 и ещё {{count}} недостающая деталь",
+    "moreItems_other": "\u2026 и ещё {{count}} недостающих деталей",
+    "minifig": "(минифигурка)",
+    "watermark": "bricktally.app"
+  },
+  "tooltip": {
+    "fillQuantity": "Нажмите, чтобы отметить все как подсчитанные",
+    "restoreBackup": "Восстановить из резервной копии",
+    "backupAll": "Сохранить все наборы",
+    "backupSelected": "Сохранить выбранные наборы",
+    "cancelBackup": "Отменить сохранение",
+    "restoreSets": "Восстановить наборы"
+  },
+  "footer": {
+    "tagline": "Сделано с \u2764\ufe0f между сборками для фанатов LEGO\u00ae",
+    "disclaimer": "LEGO\u00ae является товарным знаком LEGO Group, которая не спонсирует, не авторизует и не поддерживает это приложение."
+  },
+  "game": {
+    "title": "\ud83e\udde9 Игра «Мемори»",
+    "moves": "Ходы:",
+    "youWon": "\ud83c\udf89 Вы выиграли!",
+    "stats": "{{pairs}} пар за {{moves}} ходов",
+    "playAgain": "Играть снова",
+    "partAlt": "Деталь"
+  },
+  "celebration": {
+    "title": "\ud83c\udf89 Готово!",
+    "message": "Все детали на месте!",
+    "button": "Отлично!"
+  },
+  "filter": {
+    "all": "Все ({{count}})"
+  },
+  "languagePicker": {
+    "label": "Язык"
+  }
+}

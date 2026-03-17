@@ -1,0 +1,167 @@
+{
+  "meta": {
+    "title": "BrickTally - Elk Steentje Telt",
+    "description": "Controleer of je LEGO\u00ae sets compleet zijn voor verkoop of opslag. Tel elk onderdeel en volg meerdere sets met BrickTally.",
+    "ogDescription": "Controleer of je LEGO\u00ae sets alle onderdelen bevatten voor verkoop of opslag. Tel elk steentje om 100% volledigheid te bevestigen.",
+    "keywords": "LEGO\u00ae, set verificatie, steentjes tellen, complete set checker, LEGO\u00ae inventaris, LEGO\u00ae verkopen, gebruikte LEGO\u00ae sets"
+  },
+  "button": {
+    "cancel": "Annuleren",
+    "delete": "Verwijderen",
+    "backupAndDelete": "Back-up & Verwijderen",
+    "resetProgress": "Voortgang resetten",
+    "restore": "\ud83d\udce5 Herstellen",
+    "restoreBackup": "\ud83d\udce5 Een back-up herstellen",
+    "restoreSelected": "Geselecteerde herstellen",
+    "backupAll": "\ud83d\udce4 Alles back-uppen",
+    "backupSelected": "\ud83d\udce4 Geselecteerde back-uppen",
+    "backupSet": "Set back-uppen",
+    "deleteSet": "Set verwijderen",
+    "hideComplete": "Volledige verbergen",
+    "hideCompleteParts": "Complete onderdelen verbergen",
+    "generateBadge": "\ud83c\udff7\ufe0f Badge genereren",
+    "exportBrickLink": "\ud83d\udce6 BrickLink XML",
+    "exportPickABrick": "\ud83e\uddf1 Pick a Brick CSV",
+    "exportTextList": "\ud83d\udcc4 Tekstlijst",
+    "exportPartlist": "\ud83e\udde9 Onderdelenlijst exporteren",
+    "downloadBadge": "Badge downloaden (PNG)",
+    "close": "Sluiten",
+    "updateNow": "Nu bijwerken",
+    "maybeLater": "Misschien later",
+    "awesome": "Geweldig!",
+    "playAgain": "Opnieuw spelen",
+    "toggleFullscreen": "Volledig scherm wisselen",
+    "toggleDarkMode": "Donkere modus wisselen"
+  },
+  "input": {
+    "setNumberPlaceholder": "Voer setnummer in\u2026",
+    "setNumberLabel": "LEGO setnummer"
+  },
+  "section": {
+    "parts": "Onderdelen",
+    "spareParts": "Reserve-onderdelen",
+    "extraSpareParts": "Extra reserve-onderdelen",
+    "minifigures": "Minifiguren",
+    "colours": "Kleuren",
+    "columns": "Kolommen",
+    "export": "Exporteren"
+  },
+  "column": {
+    "color": "Kleur",
+    "name": "Naam",
+    "partNumber": "Onderdeelnummer"
+  },
+  "landing": {
+    "heading": "Controleer of je LEGO sets compleet zijn",
+    "description": "BrickTally helpt je elk onderdeel in je LEGO\u00ae sets te tellen voor verkoop, opslag of bouw. Voer een setnummer in voor een volledige onderdelenlijst op basis van de <a href=\"https://rebrickable.com/\" target=\"_blank\" rel=\"noopener\">Rebrickable</a>-database.",
+    "featureTrack": "Volg onderdelen, reserve-onderdelen en minifiguren apart",
+    "featureFilter": "Filter op kleur om je op \u00e9\u00e9n groep tegelijk te richten",
+    "featureExport": "Exporteer ontbrekende onderdelen naar BrickLink, Pick a Brick, Rebrickable of als tekstlijst",
+    "featureBadge": "Genereer een volledigheidsbadge voor eBay of marktplaatsadvertenties",
+    "featureMobile": "Geoptimaliseerd voor tablets en telefoons \u2014 altijd bij de hand tijdens het sorteren",
+    "featurePwa": "Werkt offline als PWA \u2014 installeer het op je apparaat",
+    "featureBackup": "Maak een back-up en herstel je voortgang op verschillende apparaten"
+  },
+  "display": {
+    "pieces": "{{completed}}/{{total}} onderdelen",
+    "piecesChecked": "onderdelen geteld",
+    "setYear": "Set {{number}} ({{year}})",
+    "setDetails": "Setnummer: {{number}} | Jaar: {{year}} | Onderdelen: {{parts}}",
+    "setDetailsVersioned": "Setnummer: {{number}} [Versie {{version}}] | Jaar: {{year}} | Onderdelen: {{parts}}",
+    "percentage": "{{value}}%",
+    "noImage": "Geen afbeelding",
+    "loading": "Setgegevens laden\u2026",
+    "preview": "VOORBEELD"
+  },
+  "history": {
+    "noSets": "Nog geen sets bewerkt",
+    "getStarted": "Voer hierboven een setnummer in om te beginnen"
+  },
+  "modal": {
+    "restoreTitle": "Sets herstellen",
+    "deleteTitle": "Set verwijderen?",
+    "deleteSetTitle": "\"{{name}}\" (Set {{number}}) verwijderen?",
+    "deleteSafe": "\u2705 Veilig om te verwijderen \u2014 back-up gemaakt op {{date}} ({{percentage}}% compleet)",
+    "deleteOutdated": "\u26a0\ufe0f Back-up is verouderd \u2014 back-up gemaakt op {{date}} bij {{backupPercentage}}% ({{backupPieces}} onderdelen), nu {{currentPercentage}}% ({{currentPieces}} onderdelen)",
+    "deleteNeverBackedUp": "\u26a0\ufe0f Van deze set is nooit een back-up gemaakt!",
+    "versionsTitle": "Meerdere setversies gevonden",
+    "versionsDescription": "Deze set heeft {{count}} versies. Selecteer er een:",
+    "whatsNewTitle": "\u2728 Wat is nieuw in BrickTally",
+    "whatsNewFallback": "Er is een nieuwe versie beschikbaar.",
+    "whatsNewChangelog": "Bekijk de volledige changelog \u2192",
+    "badgeTitle": "BrickTally Badge",
+    "badgeDescription": "Download deze badge om te delen op eBay, Facebook Marketplace of andere platforms als bewijs van de volledigheid van je set."
+  },
+  "restore": {
+    "keepLocal": "Lokaal behouden",
+    "overwrite": "Overschrijven",
+    "localProgress": "Lokaal: {{percentage}}% ({{date}})",
+    "restoreProgress": "Herstellen: {{percentage}}% ({{date}})"
+  },
+  "error": {
+    "noSetLoaded": "Laad eerst een set",
+    "setNumberRequired": "Voer een setnummer in",
+    "loadFailed": "Fout bij het laden van setgegevens. Probeer het opnieuw.",
+    "invalidFormat": "Ongeldig .bricktally-bestand: komt niet overeen met het verwachte formaat.",
+    "invalidJson": "Ongeldig .bricktally-bestand: JSON kon niet worden verwerkt.",
+    "invalidFile": "Ongeldig .bricktally-bestand",
+    "noSetsSelected": "Geen sets geselecteerd voor back-up.",
+    "noPartsCounted": "Nog geen onderdelen geteld."
+  },
+  "confirm": {
+    "resetSet": "Weet je zeker dat je alle voortgang voor deze set wilt resetten?"
+  },
+  "export": {
+    "noMissingPieces": "Geen ontbrekende onderdelen! Je set is compleet.",
+    "brickLinkInstructions": "BrickLink XML-bestand gedownload!\n\nGebruik:\n1. Ga naar BrickLink.com\n2. Ga naar \"Want\" > \"Upload\"\n3. Selecteer \"BrickLink XML\"-formaat\n4. Upload het gedownloade bestand",
+    "pickABrickInstructions": "Pick a Brick CSV-bestand gedownload!\n\nOpmerking: Dit is een referentielijst. Je moet handmatig zoeken en items toevoegen op LEGO.com/pick-a-brick omdat bulk-import niet wordt ondersteund.",
+    "textHeader": "Ontbrekende onderdelen voor set {{number}}",
+    "textParts": "ONDERDELEN:",
+    "textMinifigures": "MINIFIGUREN:",
+    "textTotalParts": "Totaal unieke ontbrekende onderdelen: {{count}}",
+    "textTotalMinifigs": "Totaal unieke ontbrekende minifiguren: {{count}}",
+    "textTotalPieces": "Totaal ontbrekende onderdelen: {{count}}",
+    "csvNote": "# Opmerking: Minifiguren uitgesloten (niet beschikbaar via Pick a Brick)",
+    "csvHeader": "Element ID,Design ID,Colour,Quantity,Name",
+    "rebrickableCsvHeader": "Part,Color,Quantity"
+  },
+  "badge": {
+    "missingPieces_one": "{{count}} onderdeel ontbreekt:",
+    "missingPieces_other": "{{count}} onderdelen ontbreken:",
+    "moreItems_one": "\u2026 en nog {{count}} ontbrekend onderdeel",
+    "moreItems_other": "\u2026 en nog {{count}} ontbrekende onderdelen",
+    "minifig": "(minifiguur)",
+    "watermark": "bricktally.app"
+  },
+  "tooltip": {
+    "fillQuantity": "Klik om alles als geteld te markeren",
+    "restoreBackup": "Een eerdere back-up herstellen",
+    "backupAll": "Alle sets back-uppen",
+    "backupSelected": "Geselecteerde sets back-uppen",
+    "cancelBackup": "Back-up annuleren",
+    "restoreSets": "Sets herstellen"
+  },
+  "footer": {
+    "tagline": "Gemaakt met \u2764\ufe0f tussen bouwsessies door voor LEGO\u00ae liefhebbers",
+    "disclaimer": "LEGO\u00ae is een handelsmerk van de LEGO Groep, die deze app niet sponsort, autoriseert of onderschrijft."
+  },
+  "game": {
+    "title": "\ud83e\udde9 Memory Spel",
+    "moves": "Zetten:",
+    "youWon": "\ud83c\udf89 Gewonnen!",
+    "stats": "{{pairs}} paren in {{moves}} zetten",
+    "playAgain": "Opnieuw spelen",
+    "partAlt": "Onderdeel"
+  },
+  "celebration": {
+    "title": "\ud83c\udf89 Compleet!",
+    "message": "Alle onderdelen zijn geteld!",
+    "button": "Geweldig!"
+  },
+  "filter": {
+    "all": "Alle ({{count}})"
+  },
+  "languagePicker": {
+    "label": "Taal"
+  }
+}

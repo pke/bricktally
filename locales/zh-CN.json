@@ -1,0 +1,167 @@
+{
+  "meta": {
+    "title": "BrickTally - 每块积木都很重要",
+    "description": "在出售或存放之前验证您的 LEGO\u00ae 套装是否完整。清点每个零件，使用 BrickTally 追踪多个套装。",
+    "ogDescription": "在出售或存放之前检查您的 LEGO\u00ae 套装是否齐全。清点每块积木，确认 100% 完整。",
+    "keywords": "LEGO\u00ae, 套装验证, 积木清点, 完整性检查, LEGO\u00ae 库存, 出售 LEGO\u00ae, 二手 LEGO\u00ae 套装"
+  },
+  "button": {
+    "cancel": "取消",
+    "delete": "删除",
+    "backupAndDelete": "备份并删除",
+    "resetProgress": "重置进度",
+    "restore": "\ud83d\udce5 恢复",
+    "restoreBackup": "\ud83d\udce5 恢复备份",
+    "restoreSelected": "恢复所选",
+    "backupAll": "\ud83d\udce4 备份全部",
+    "backupSelected": "\ud83d\udce4 备份所选",
+    "backupSet": "备份套装",
+    "deleteSet": "删除套装",
+    "hideComplete": "隐藏已完成",
+    "hideCompleteParts": "隐藏已完成零件",
+    "generateBadge": "\ud83c\udff7\ufe0f 生成徽章",
+    "exportBrickLink": "\ud83d\udce6 BrickLink XML",
+    "exportPickABrick": "\ud83e\uddf1 Pick a Brick CSV",
+    "exportTextList": "\ud83d\udcc4 文本列表",
+    "exportPartlist": "\ud83e\udde9 导出零件清单",
+    "downloadBadge": "下载徽章 (PNG)",
+    "close": "关闭",
+    "updateNow": "立即更新",
+    "maybeLater": "以后再说",
+    "awesome": "太棒了！",
+    "playAgain": "再玩一次",
+    "toggleFullscreen": "切换全屏",
+    "toggleDarkMode": "切换深色模式"
+  },
+  "input": {
+    "setNumberPlaceholder": "输入套装编号\u2026",
+    "setNumberLabel": "LEGO 套装编号"
+  },
+  "section": {
+    "parts": "零件",
+    "spareParts": "备用零件",
+    "extraSpareParts": "额外备用零件",
+    "minifigures": "人仔",
+    "colours": "颜色",
+    "columns": "列",
+    "export": "导出"
+  },
+  "column": {
+    "color": "颜色",
+    "name": "名称",
+    "partNumber": "零件编号"
+  },
+  "landing": {
+    "heading": "验证您的 LEGO 套装是否完整",
+    "description": "BrickTally 帮助您在出售、存放或拼搭之前清点 LEGO\u00ae 套装中的每个零件。输入套装编号即可获取基于 <a href=\"https://rebrickable.com/\" target=\"_blank\" rel=\"noopener\">Rebrickable</a> 数据库的完整零件清单。",
+    "featureTrack": "分别追踪零件、备用零件和人仔",
+    "featureFilter": "按颜色筛选，专注于一组零件",
+    "featureExport": "将缺少的零件导出到 BrickLink、Pick a Brick、Rebrickable 或纯文本列表",
+    "featureBadge": "生成完整性徽章，用于 eBay 或二手交易平台",
+    "featureMobile": "针对平板电脑和手机优化——分拣零件时随时可用",
+    "featurePwa": "作为 PWA 离线使用——安装到您的设备上",
+    "featureBackup": "跨设备备份和恢复您的进度"
+  },
+  "display": {
+    "pieces": "{{completed}}/{{total}} 个零件",
+    "piecesChecked": "已清点零件",
+    "setYear": "套装 {{number}} ({{year}})",
+    "setDetails": "套装编号：{{number}} | 年份：{{year}} | 零件数：{{parts}}",
+    "setDetailsVersioned": "套装编号：{{number}} [版本 {{version}}] | 年份：{{year}} | 零件数：{{parts}}",
+    "percentage": "{{value}}%",
+    "noImage": "无图片",
+    "loading": "正在加载套装数据\u2026",
+    "preview": "预览"
+  },
+  "history": {
+    "noSets": "尚无已处理的套装",
+    "getStarted": "在上方输入套装编号开始使用"
+  },
+  "modal": {
+    "restoreTitle": "恢复套装",
+    "deleteTitle": "删除套装？",
+    "deleteSetTitle": "删除「{{name}}」（套装 {{number}}）？",
+    "deleteSafe": "\u2705 可以安全删除——已于 {{date}} 备份（{{percentage}}% 完成）",
+    "deleteOutdated": "\u26a0\ufe0f 备份已过期——于 {{date}} 备份时为 {{backupPercentage}}%（{{backupPieces}} 个零件），当前为 {{currentPercentage}}%（{{currentPieces}} 个零件）",
+    "deleteNeverBackedUp": "\u26a0\ufe0f 此套装从未备份过！",
+    "versionsTitle": "发现多个套装版本",
+    "versionsDescription": "此套装有 {{count}} 个版本。请选择：",
+    "whatsNewTitle": "\u2728 BrickTally 新功能",
+    "whatsNewFallback": "有新版本可用。",
+    "whatsNewChangelog": "查看完整更新日志 \u2192",
+    "badgeTitle": "BrickTally 徽章",
+    "badgeDescription": "下载此徽章，在 eBay、Facebook Marketplace 或其他平台上分享，作为套装完整性的证明。"
+  },
+  "restore": {
+    "keepLocal": "保留本地",
+    "overwrite": "覆盖",
+    "localProgress": "本地：{{percentage}}%（{{date}}）",
+    "restoreProgress": "恢复：{{percentage}}%（{{date}}）"
+  },
+  "error": {
+    "noSetLoaded": "请先加载一个套装",
+    "setNumberRequired": "请输入套装编号",
+    "loadFailed": "加载套装数据出错，请重试。",
+    "invalidFormat": "无效的 .bricktally 文件：不符合预期格式。",
+    "invalidJson": "无效的 .bricktally 文件：无法解析 JSON。",
+    "invalidFile": "无效的 .bricktally 文件",
+    "noSetsSelected": "未选择任何套装进行备份。",
+    "noPartsCounted": "尚未清点任何零件。"
+  },
+  "confirm": {
+    "resetSet": "确定要重置此套装的所有进度吗？"
+  },
+  "export": {
+    "noMissingPieces": "没有缺少的零件！您的套装是完整的。",
+    "brickLinkInstructions": "BrickLink XML 文件已下载！\n\n使用方法：\n1. 前往 BrickLink.com\n2. 进入「Want」>「Upload」\n3. 选择「BrickLink XML」格式\n4. 上传已下载的文件",
+    "pickABrickInstructions": "Pick a Brick CSV 文件已下载！\n\n注意：这是一份参考列表。您需要在 LEGO.com/pick-a-brick 上手动搜索和添加零件，因为不支持批量导入。",
+    "textHeader": "套装 {{number}} 的缺少零件",
+    "textParts": "零件：",
+    "textMinifigures": "人仔：",
+    "textTotalParts": "缺少的独立零件总数：{{count}}",
+    "textTotalMinifigs": "缺少的独立人仔总数：{{count}}",
+    "textTotalPieces": "缺少的零件总数：{{count}}",
+    "csvNote": "# 注意：人仔已排除（无法通过 Pick a Brick 获取）",
+    "csvHeader": "Element ID,Design ID,Colour,Quantity,Name",
+    "rebrickableCsvHeader": "Part,Color,Quantity"
+  },
+  "badge": {
+    "missingPieces_one": "缺少 {{count}} 个零件：",
+    "missingPieces_other": "缺少 {{count}} 个零件：",
+    "moreItems_one": "\u2026 还有 {{count}} 个缺少的零件",
+    "moreItems_other": "\u2026 还有 {{count}} 个缺少的零件",
+    "minifig": "（人仔）",
+    "watermark": "bricktally.app"
+  },
+  "tooltip": {
+    "fillQuantity": "点击标记全部为已清点",
+    "restoreBackup": "恢复之前的备份",
+    "backupAll": "备份所有套装",
+    "backupSelected": "备份所选套装",
+    "cancelBackup": "取消备份",
+    "restoreSets": "恢复套装"
+  },
+  "footer": {
+    "tagline": "由 LEGO\u00ae 爱好者在拼搭间隙用 \u2764\ufe0f 制作",
+    "disclaimer": "LEGO\u00ae 是乐高集团的商标，乐高集团不赞助、授权或认可本应用。"
+  },
+  "game": {
+    "title": "\ud83e\udde9 记忆游戏",
+    "moves": "步数：",
+    "youWon": "\ud83c\udf89 你赢了！",
+    "stats": "{{pairs}} 对，用了 {{moves}} 步",
+    "playAgain": "再玩一次",
+    "partAlt": "零件"
+  },
+  "celebration": {
+    "title": "\ud83c\udf89 完成！",
+    "message": "所有零件已确认齐全！",
+    "button": "太棒了！"
+  },
+  "filter": {
+    "all": "全部 ({{count}})"
+  },
+  "languagePicker": {
+    "label": "语言"
+  }
+}

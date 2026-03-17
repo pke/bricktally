@@ -1,0 +1,167 @@
+{
+  "meta": {
+    "title": "BrickTally - Chaque brique compte",
+    "description": "V\u00e9rifiez que vos sets LEGO\u00ae sont complets avant de les vendre ou de les stocker. Comptez chaque pi\u00e8ce et suivez plusieurs sets avec BrickTally.",
+    "ogDescription": "V\u00e9rifiez que vos sets LEGO\u00ae contiennent toutes les pi\u00e8ces avant de les vendre ou de les stocker. Comptez chaque brique pour confirmer une compl\u00e9tude de 100%.",
+    "keywords": "LEGO\u00ae, v\u00e9rification de set, comptage de briques, v\u00e9rificateur de compl\u00e9tude, inventaire LEGO\u00ae, vendre LEGO\u00ae, sets LEGO\u00ae d'occasion"
+  },
+  "button": {
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "backupAndDelete": "Sauvegarder & Supprimer",
+    "resetProgress": "R\u00e9initialiser la progression",
+    "restore": "\ud83d\udce5 Restaurer",
+    "restoreBackup": "\ud83d\udce5 Restaurer une sauvegarde",
+    "restoreSelected": "Restaurer la s\u00e9lection",
+    "backupAll": "\ud83d\udce4 Tout sauvegarder",
+    "backupSelected": "\ud83d\udce4 Sauvegarder la s\u00e9lection",
+    "backupSet": "Sauvegarder le set",
+    "deleteSet": "Supprimer le set",
+    "hideComplete": "Masquer les complets",
+    "hideCompleteParts": "Masquer les pi\u00e8ces compl\u00e8tes",
+    "generateBadge": "\ud83c\udff7\ufe0f G\u00e9n\u00e9rer un badge",
+    "exportBrickLink": "\ud83d\udce6 BrickLink XML",
+    "exportPickABrick": "\ud83e\uddf1 Pick a Brick CSV",
+    "exportTextList": "\ud83d\udcc4 Liste texte",
+    "exportPartlist": "\ud83e\udde9 Exporter la liste de pi\u00e8ces",
+    "downloadBadge": "T\u00e9l\u00e9charger le badge (PNG)",
+    "close": "Fermer",
+    "updateNow": "Mettre \u00e0 jour maintenant",
+    "maybeLater": "Peut-\u00eatre plus tard",
+    "awesome": "G\u00e9nial\u00a0!",
+    "playAgain": "Rejouer",
+    "toggleFullscreen": "Basculer en plein \u00e9cran",
+    "toggleDarkMode": "Basculer le mode sombre"
+  },
+  "input": {
+    "setNumberPlaceholder": "Entrez un num\u00e9ro de set\u2026",
+    "setNumberLabel": "Num\u00e9ro de set LEGO"
+  },
+  "section": {
+    "parts": "Pi\u00e8ces",
+    "spareParts": "Pi\u00e8ces de rechange",
+    "extraSpareParts": "Pi\u00e8ces de rechange suppl\u00e9mentaires",
+    "minifigures": "Minifigurines",
+    "colours": "Couleurs",
+    "columns": "Colonnes",
+    "export": "Exporter"
+  },
+  "column": {
+    "color": "Couleur",
+    "name": "Nom",
+    "partNumber": "R\u00e9f\u00e9rence"
+  },
+  "landing": {
+    "heading": "V\u00e9rifiez que vos sets LEGO sont complets",
+    "description": "BrickTally vous aide \u00e0 compter chaque pi\u00e8ce de vos sets LEGO\u00ae avant de les vendre, stocker ou construire. Entrez un num\u00e9ro de set pour obtenir une liste compl\u00e8te des pi\u00e8ces bas\u00e9e sur la base de donn\u00e9es <a href=\"https://rebrickable.com/\" target=\"_blank\" rel=\"noopener\">Rebrickable</a>.",
+    "featureTrack": "Suivez les pi\u00e8ces, pi\u00e8ces de rechange et minifigurines s\u00e9par\u00e9ment",
+    "featureFilter": "Filtrez par couleur pour vous concentrer sur un groupe \u00e0 la fois",
+    "featureExport": "Exportez les pi\u00e8ces manquantes vers BrickLink, Pick a Brick, Rebrickable ou en liste texte",
+    "featureBadge": "G\u00e9n\u00e9rez un badge de compl\u00e9tude pour eBay ou les annonces de marketplace",
+    "featureMobile": "Optimis\u00e9 pour tablettes et t\u00e9l\u00e9phones \u2014 toujours \u00e0 port\u00e9e de main lors du tri",
+    "featurePwa": "Fonctionne hors ligne en tant que PWA \u2014 installez-le sur votre appareil",
+    "featureBackup": "Sauvegardez et restaurez votre progression entre appareils"
+  },
+  "display": {
+    "pieces": "{{completed}}/{{total}} pi\u00e8ces",
+    "piecesChecked": "pi\u00e8ces v\u00e9rifi\u00e9es",
+    "setYear": "Set {{number}} ({{year}})",
+    "setDetails": "Num\u00e9ro de set\u00a0: {{number}} | Ann\u00e9e\u00a0: {{year}} | Pi\u00e8ces\u00a0: {{parts}}",
+    "setDetailsVersioned": "Num\u00e9ro de set\u00a0: {{number}} [Version {{version}}] | Ann\u00e9e\u00a0: {{year}} | Pi\u00e8ces\u00a0: {{parts}}",
+    "percentage": "{{value}}%",
+    "noImage": "Pas d'image",
+    "loading": "Chargement des donn\u00e9es du set\u2026",
+    "preview": "APERÇU"
+  },
+  "history": {
+    "noSets": "Aucun set trait\u00e9 pour l'instant",
+    "getStarted": "Entrez un num\u00e9ro de set ci-dessus pour commencer"
+  },
+  "modal": {
+    "restoreTitle": "Restaurer des sets",
+    "deleteTitle": "Supprimer le set\u00a0?",
+    "deleteSetTitle": "Supprimer \"{{name}}\" (Set {{number}})\u00a0?",
+    "deleteSafe": "\u2705 Suppression s\u00fbre \u2014 sauvegard\u00e9 le {{date}} ({{percentage}}% complet)",
+    "deleteOutdated": "\u26a0\ufe0f La sauvegarde est obsol\u00e8te \u2014 sauvegard\u00e9 le {{date}} \u00e0 {{backupPercentage}}% ({{backupPieces}} pi\u00e8ces), maintenant {{currentPercentage}}% ({{currentPieces}} pi\u00e8ces)",
+    "deleteNeverBackedUp": "\u26a0\ufe0f Ce set n'a jamais \u00e9t\u00e9 sauvegard\u00e9\u00a0!",
+    "versionsTitle": "Plusieurs versions du set trouv\u00e9es",
+    "versionsDescription": "Ce set a {{count}} versions. Veuillez en s\u00e9lectionner une\u00a0:",
+    "whatsNewTitle": "\u2728 Nouveaut\u00e9s de BrickTally",
+    "whatsNewFallback": "Une nouvelle version est disponible.",
+    "whatsNewChangelog": "Voir le journal des modifications complet \u2192",
+    "badgeTitle": "Badge BrickTally",
+    "badgeDescription": "T\u00e9l\u00e9chargez ce badge pour le partager sur eBay, Facebook Marketplace ou d'autres plateformes comme preuve de la compl\u00e9tude de votre set."
+  },
+  "restore": {
+    "keepLocal": "Garder le local",
+    "overwrite": "\u00c9craser",
+    "localProgress": "Local\u00a0: {{percentage}}% ({{date}})",
+    "restoreProgress": "Restauration\u00a0: {{percentage}}% ({{date}})"
+  },
+  "error": {
+    "noSetLoaded": "Veuillez d'abord charger un set",
+    "setNumberRequired": "Veuillez entrer un num\u00e9ro de set",
+    "loadFailed": "Erreur lors du chargement des donn\u00e9es du set. Veuillez r\u00e9essayer.",
+    "invalidFormat": "Fichier .bricktally invalide\u00a0: ne correspond pas au format attendu.",
+    "invalidJson": "Fichier .bricktally invalide\u00a0: impossible d'analyser le JSON.",
+    "invalidFile": "Fichier .bricktally invalide",
+    "noSetsSelected": "Aucun set s\u00e9lectionn\u00e9 pour la sauvegarde.",
+    "noPartsCounted": "Aucune pi\u00e8ce compt\u00e9e pour l'instant."
+  },
+  "confirm": {
+    "resetSet": "\u00cates-vous s\u00fbr de vouloir r\u00e9initialiser toute la progression de ce set\u00a0?"
+  },
+  "export": {
+    "noMissingPieces": "Aucune pi\u00e8ce manquante\u00a0! Votre set est complet.",
+    "brickLinkInstructions": "Fichier BrickLink XML t\u00e9l\u00e9charg\u00e9\u00a0!\n\nPour l'utiliser\u00a0:\n1. Allez sur BrickLink.com\n2. Naviguez vers \"Want\" > \"Upload\"\n3. S\u00e9lectionnez le format \"BrickLink XML\"\n4. T\u00e9l\u00e9versez le fichier t\u00e9l\u00e9charg\u00e9",
+    "pickABrickInstructions": "Fichier Pick a Brick CSV t\u00e9l\u00e9charg\u00e9\u00a0!\n\nNote\u00a0: Ceci est une liste de r\u00e9f\u00e9rence. Vous devrez rechercher et ajouter manuellement les articles sur LEGO.com/pick-a-brick car l'import en masse n'est pas pris en charge.",
+    "textHeader": "Pi\u00e8ces manquantes pour le set {{number}}",
+    "textParts": "PI\u00c8CES\u00a0:",
+    "textMinifigures": "MINIFIGURINES\u00a0:",
+    "textTotalParts": "Total de pi\u00e8ces uniques manquantes\u00a0: {{count}}",
+    "textTotalMinifigs": "Total de minifigurines uniques manquantes\u00a0: {{count}}",
+    "textTotalPieces": "Total de pi\u00e8ces manquantes\u00a0: {{count}}",
+    "csvNote": "# Note\u00a0: Minifigurines exclues (non disponibles via Pick a Brick)",
+    "csvHeader": "Element ID,Design ID,Colour,Quantity,Name",
+    "rebrickableCsvHeader": "Part,Color,Quantity"
+  },
+  "badge": {
+    "missingPieces_one": "{{count}} pi\u00e8ce manquante\u00a0:",
+    "missingPieces_other": "{{count}} pi\u00e8ces manquantes\u00a0:",
+    "moreItems_one": "\u2026 et {{count}} autre pi\u00e8ce manquante",
+    "moreItems_other": "\u2026 et {{count}} autres pi\u00e8ces manquantes",
+    "minifig": "(minifigurine)",
+    "watermark": "bricktally.app"
+  },
+  "tooltip": {
+    "fillQuantity": "Cliquez pour tout marquer comme compt\u00e9",
+    "restoreBackup": "Restaurer une sauvegarde pr\u00e9c\u00e9dente",
+    "backupAll": "Sauvegarder tous les sets",
+    "backupSelected": "Sauvegarder les sets s\u00e9lectionn\u00e9s",
+    "cancelBackup": "Annuler la sauvegarde",
+    "restoreSets": "Restaurer des sets"
+  },
+  "footer": {
+    "tagline": "Fait avec \u2764\ufe0f entre les sessions de construction pour les passionn\u00e9s de LEGO\u00ae",
+    "disclaimer": "LEGO\u00ae est une marque du groupe LEGO, qui ne sponsorise, n'autorise ni n'approuve cette application."
+  },
+  "game": {
+    "title": "\ud83e\udde9 Jeu de m\u00e9moire",
+    "moves": "Coups\u00a0:",
+    "youWon": "\ud83c\udf89 Vous avez gagn\u00e9\u00a0!",
+    "stats": "{{pairs}} paires en {{moves}} coups",
+    "playAgain": "Rejouer",
+    "partAlt": "Pi\u00e8ce"
+  },
+  "celebration": {
+    "title": "\ud83c\udf89 Complet\u00a0!",
+    "message": "Toutes les pi\u00e8ces sont compt\u00e9es\u00a0!",
+    "button": "G\u00e9nial\u00a0!"
+  },
+  "filter": {
+    "all": "Tous ({{count}})"
+  },
+  "languagePicker": {
+    "label": "Langue"
+  }
+}

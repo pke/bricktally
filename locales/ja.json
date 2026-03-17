@@ -1,0 +1,167 @@
+{
+  "meta": {
+    "title": "BrickTally - すべてのブロックをカウント",
+    "description": "販売や保管の前にLEGO\u00aeセットが完全かどうかを確認しましょう。すべてのピースを数えて、複数のセットをBrickTallyで管理できます。",
+    "ogDescription": "販売や保管の前にLEGO\u00aeセットのピースがすべて揃っているか確認。すべてのブロックを数えて100%の完全性を確認しましょう。",
+    "keywords": "LEGO\u00ae, セット検証, ブロック数え, 完全セットチェッカー, LEGO\u00aeインベントリ, LEGO\u00ae売却, 中古LEGO\u00aeセット"
+  },
+  "button": {
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "backupAndDelete": "バックアップして削除",
+    "resetProgress": "進捗をリセット",
+    "restore": "\ud83d\udce5 復元",
+    "restoreBackup": "\ud83d\udce5 バックアップを復元",
+    "restoreSelected": "選択したものを復元",
+    "backupAll": "\ud83d\udce4 すべてバックアップ",
+    "backupSelected": "\ud83d\udce4 選択したものをバックアップ",
+    "backupSet": "セットをバックアップ",
+    "deleteSet": "セットを削除",
+    "hideComplete": "完了を非表示",
+    "hideCompleteParts": "完了パーツを非表示",
+    "generateBadge": "\ud83c\udff7\ufe0f バッジを生成",
+    "exportBrickLink": "\ud83d\udce6 BrickLink XML",
+    "exportPickABrick": "\ud83e\uddf1 Pick a Brick CSV",
+    "exportTextList": "\ud83d\udcc4 テキストリスト",
+    "exportPartlist": "\ud83e\udde9 パーツリストをエクスポート",
+    "downloadBadge": "バッジをダウンロード (PNG)",
+    "close": "閉じる",
+    "updateNow": "今すぐ更新",
+    "maybeLater": "あとで",
+    "awesome": "すごい！",
+    "playAgain": "もう一度プレイ",
+    "toggleFullscreen": "フルスクリーン切替",
+    "toggleDarkMode": "ダークモード切替"
+  },
+  "input": {
+    "setNumberPlaceholder": "セット番号を入力\u2026",
+    "setNumberLabel": "LEGOセット番号"
+  },
+  "section": {
+    "parts": "パーツ",
+    "spareParts": "予備パーツ",
+    "extraSpareParts": "追加予備パーツ",
+    "minifigures": "ミニフィグ",
+    "colours": "カラー",
+    "columns": "列",
+    "export": "エクスポート"
+  },
+  "column": {
+    "color": "カラー",
+    "name": "名前",
+    "partNumber": "パーツ番号"
+  },
+  "landing": {
+    "heading": "LEGOセットの完全性を確認",
+    "description": "BrickTallyは、販売・保管・組み立ての前にLEGO\u00aeセットのすべてのピースを数えるお手伝いをします。セット番号を入力すると、<a href=\"https://rebrickable.com/\" target=\"_blank\" rel=\"noopener\">Rebrickable</a>データベースによるパーツチェックリストが表示されます。",
+    "featureTrack": "パーツ、予備パーツ、ミニフィグを個別にトラッキング",
+    "featureFilter": "カラーでフィルタリングして一度に一つのグループに集中",
+    "featureExport": "不足パーツをBrickLink、Pick a Brick、Rebrickable、またはテキストリストにエクスポート",
+    "featureBadge": "eBayやフリマサイトの出品用に完成度バッジを生成",
+    "featureMobile": "タブレットやスマホに最適化 \u2014 ピースの仕分け時にいつでも手元に",
+    "featurePwa": "PWAとしてオフラインでも動作 \u2014 デバイスにインストール可能",
+    "featureBackup": "デバイス間で進捗をバックアップ・復元"
+  },
+  "display": {
+    "pieces": "{{completed}}/{{total}} ピース",
+    "piecesChecked": "チェック済みピース",
+    "setYear": "セット {{number}} ({{year}})",
+    "setDetails": "セット番号: {{number}} | 年: {{year}} | パーツ: {{parts}}",
+    "setDetailsVersioned": "セット番号: {{number}} [バージョン {{version}}] | 年: {{year}} | パーツ: {{parts}}",
+    "percentage": "{{value}}%",
+    "noImage": "画像なし",
+    "loading": "セットデータを読み込み中\u2026",
+    "preview": "プレビュー"
+  },
+  "history": {
+    "noSets": "まだ作業したセットはありません",
+    "getStarted": "上のフィールドにセット番号を入力して始めましょう"
+  },
+  "modal": {
+    "restoreTitle": "セットを復元",
+    "deleteTitle": "セットを削除しますか？",
+    "deleteSetTitle": "\"{{name}}\" (セット {{number}}) を削除しますか？",
+    "deleteSafe": "\u2705 安全に削除可能 \u2014 {{date}}にバックアップ済み ({{percentage}}%完了)",
+    "deleteOutdated": "\u26a0\ufe0f バックアップが古くなっています \u2014 {{date}}に{{backupPercentage}}% ({{backupPieces}}ピース) でバックアップ、現在{{currentPercentage}}% ({{currentPieces}}ピース)",
+    "deleteNeverBackedUp": "\u26a0\ufe0f このセットはバックアップされたことがありません！",
+    "versionsTitle": "複数のセットバージョンが見つかりました",
+    "versionsDescription": "このセットには{{count}}つのバージョンがあります。選択してください：",
+    "whatsNewTitle": "\u2728 BrickTallyの新機能",
+    "whatsNewFallback": "新しいバージョンが利用可能です。",
+    "whatsNewChangelog": "変更履歴の全文を見る \u2192",
+    "badgeTitle": "BrickTallyバッジ",
+    "badgeDescription": "このバッジをダウンロードして、eBay、フリマサイト、その他のプラットフォームでセットの完全性の証明として共有しましょう。"
+  },
+  "restore": {
+    "keepLocal": "ローカルを保持",
+    "overwrite": "上書き",
+    "localProgress": "ローカル: {{percentage}}% ({{date}})",
+    "restoreProgress": "復元: {{percentage}}% ({{date}})"
+  },
+  "error": {
+    "noSetLoaded": "まずセットを読み込んでください",
+    "setNumberRequired": "セット番号を入力してください",
+    "loadFailed": "セットデータの読み込みに失敗しました。もう一度お試しください。",
+    "invalidFormat": "無効な .bricktally ファイル: 期待される形式と一致しません。",
+    "invalidJson": "無効な .bricktally ファイル: JSONを解析できませんでした。",
+    "invalidFile": "無効な .bricktally ファイル",
+    "noSetsSelected": "バックアップするセットが選択されていません。",
+    "noPartsCounted": "まだパーツが数えられていません。"
+  },
+  "confirm": {
+    "resetSet": "このセットのすべての進捗をリセットしてもよろしいですか？"
+  },
+  "export": {
+    "noMissingPieces": "不足ピースはありません！セットは完全です。",
+    "brickLinkInstructions": "BrickLink XMLファイルがダウンロードされました！\n\n使い方：\n1. BrickLink.comにアクセス\n2. 「Want」>「Upload」に移動\n3. 「BrickLink XML」形式を選択\n4. ダウンロードしたファイルをアップロード",
+    "pickABrickInstructions": "Pick a Brick CSVファイルがダウンロードされました！\n\n注意：これは参照用リストです。LEGO.com/pick-a-brickでは一括インポートに対応していないため、手動で検索・追加する必要があります。",
+    "textHeader": "セット {{number}} の不足ピース",
+    "textParts": "パーツ：",
+    "textMinifigures": "ミニフィグ：",
+    "textTotalParts": "不足しているユニークパーツ数: {{count}}",
+    "textTotalMinifigs": "不足しているユニークミニフィグ数: {{count}}",
+    "textTotalPieces": "不足しているピース数合計: {{count}}",
+    "csvNote": "# 注意：ミニフィグは除外されています（Pick a Brickでは取り扱いなし）",
+    "csvHeader": "Element ID,Design ID,Colour,Quantity,Name",
+    "rebrickableCsvHeader": "Part,Color,Quantity"
+  },
+  "badge": {
+    "missingPieces_one": "{{count}}ピース不足：",
+    "missingPieces_other": "{{count}}ピース不足：",
+    "moreItems_one": "\u2026 他に{{count}}ピース不足",
+    "moreItems_other": "\u2026 他に{{count}}ピース不足",
+    "minifig": "（ミニフィグ）",
+    "watermark": "bricktally.app"
+  },
+  "tooltip": {
+    "fillQuantity": "クリックですべてをカウント済みにする",
+    "restoreBackup": "以前のバックアップを復元",
+    "backupAll": "すべてのセットをバックアップ",
+    "backupSelected": "選択したセットをバックアップ",
+    "cancelBackup": "バックアップをキャンセル",
+    "restoreSets": "セットを復元"
+  },
+  "footer": {
+    "tagline": "LEGO\u00ae愛好家のために、組み立てセッションの合間に\u2764\ufe0fを込めて作りました",
+    "disclaimer": "LEGO\u00aeはLEGOグループの商標です。LEGOグループはこのアプリのスポンサー、承認、推奨を行っていません。"
+  },
+  "game": {
+    "title": "\ud83e\udde9 神経衰弱ゲーム",
+    "moves": "手数：",
+    "youWon": "\ud83c\udf89 クリア！",
+    "stats": "{{pairs}}ペアを{{moves}}手でクリア",
+    "playAgain": "もう一度プレイ",
+    "partAlt": "パーツ"
+  },
+  "celebration": {
+    "title": "\ud83c\udf89 完了！",
+    "message": "すべてのピースが揃いました！",
+    "button": "すごい！"
+  },
+  "filter": {
+    "all": "すべて ({{count}})"
+  },
+  "languagePicker": {
+    "label": "言語"
+  }
+}

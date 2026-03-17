@@ -1,0 +1,167 @@
+{
+  "meta": {
+    "title": "BrickTally - Hver Klods T\u00e6ller",
+    "description": "Kontroll\u00e9r, at dine LEGO\u00ae s\u00e6t er komplette, f\u00f8r du s\u00e6lger eller opbevarer dem. T\u00e6l hver brik og f\u00f8lg flere s\u00e6t med BrickTally.",
+    "ogDescription": "Tjek om dine LEGO\u00ae s\u00e6t har alle dele, f\u00f8r du s\u00e6lger eller opbevarer dem. T\u00e6l hver klods for at bekr\u00e6fte 100% komplethed.",
+    "keywords": "LEGO\u00ae, s\u00e6t verificering, klodst\u00e6lling, komplet s\u00e6t checker, LEGO\u00ae inventar, s\u00e6lg LEGO\u00ae, brugte LEGO\u00ae s\u00e6t"
+  },
+  "button": {
+    "cancel": "Annuller",
+    "delete": "Slet",
+    "backupAndDelete": "Sikkerhedskopi\u00e9r & Slet",
+    "resetProgress": "Nulstil fremskridt",
+    "restore": "\ud83d\udce5 Gendan",
+    "restoreBackup": "\ud83d\udce5 Gendan en sikkerhedskopi",
+    "restoreSelected": "Gendan valgte",
+    "backupAll": "\ud83d\udce4 Sikkerhedskopi\u00e9r alle",
+    "backupSelected": "\ud83d\udce4 Sikkerhedskopi\u00e9r valgte",
+    "backupSet": "Sikkerhedskopi\u00e9r s\u00e6t",
+    "deleteSet": "Slet s\u00e6t",
+    "hideComplete": "Skjul komplette",
+    "hideCompleteParts": "Skjul komplette dele",
+    "generateBadge": "\ud83c\udff7\ufe0f Gener\u00e9r badge",
+    "exportBrickLink": "\ud83d\udce6 BrickLink XML",
+    "exportPickABrick": "\ud83e\uddf1 Pick a Brick CSV",
+    "exportTextList": "\ud83d\udcc4 Tekstliste",
+    "exportPartlist": "\ud83e\udde9 Eksport\u00e9r deleliste",
+    "downloadBadge": "Download badge (PNG)",
+    "close": "Luk",
+    "updateNow": "Opdater nu",
+    "maybeLater": "M\u00e5ske senere",
+    "awesome": "Fantastisk!",
+    "playAgain": "Spil igen",
+    "toggleFullscreen": "Skift fuldsk\u00e6rm",
+    "toggleDarkMode": "Skift m\u00f8rk tilstand"
+  },
+  "input": {
+    "setNumberPlaceholder": "Indtast s\u00e6tnummer\u2026",
+    "setNumberLabel": "LEGO s\u00e6tnummer"
+  },
+  "section": {
+    "parts": "Dele",
+    "spareParts": "Reservedele",
+    "extraSpareParts": "Ekstra reservedele",
+    "minifigures": "Minifigurer",
+    "colours": "Farver",
+    "columns": "Kolonner",
+    "export": "Eksport\u00e9r"
+  },
+  "column": {
+    "color": "Farve",
+    "name": "Navn",
+    "partNumber": "Delnummer"
+  },
+  "landing": {
+    "heading": "Kontroll\u00e9r, at dine LEGO s\u00e6t er komplette",
+    "description": "BrickTally hj\u00e6lper dig med at t\u00e6lle hver del i dine LEGO\u00ae s\u00e6t f\u00f8r salg, opbevaring eller bygning. Indtast et s\u00e6tnummer for at f\u00e5 en komplet deleliste baseret p\u00e5 <a href=\"https://rebrickable.com/\" target=\"_blank\" rel=\"noopener\">Rebrickable</a>-databasen.",
+    "featureTrack": "F\u00f8lg dele, reservedele og minifigurer separat",
+    "featureFilter": "Filtr\u00e9r efter farve for at fokusere p\u00e5 \u00e9n gruppe ad gangen",
+    "featureExport": "Eksport\u00e9r manglende dele til BrickLink, Pick a Brick, Rebrickable eller som tekstliste",
+    "featureBadge": "Gener\u00e9r et komplethedbadge til eBay eller markedspladsannoncer",
+    "featureMobile": "Optimeret til tablets og telefoner \u2014 altid ved h\u00e5nden, n\u00e5r du sorterer klodser",
+    "featurePwa": "Virker offline som PWA \u2014 install\u00e9r den p\u00e5 din enhed",
+    "featureBackup": "Sikkerhedskopi\u00e9r og gendan dine fremskridt p\u00e5 tv\u00e6rs af enheder"
+  },
+  "display": {
+    "pieces": "{{completed}}/{{total}} dele",
+    "piecesChecked": "dele kontrolleret",
+    "setYear": "S\u00e6t {{number}} ({{year}})",
+    "setDetails": "S\u00e6tnummer: {{number}} | \u00c5r: {{year}} | Dele: {{parts}}",
+    "setDetailsVersioned": "S\u00e6tnummer: {{number}} [Version {{version}}] | \u00c5r: {{year}} | Dele: {{parts}}",
+    "percentage": "{{value}}%",
+    "noImage": "Intet billede",
+    "loading": "Indl\u00e6ser s\u00e6tdata\u2026",
+    "preview": "FORH\u00c5NDSVISNING"
+  },
+  "history": {
+    "noSets": "Ingen s\u00e6t arbejdet p\u00e5 endnu",
+    "getStarted": "Indtast et s\u00e6tnummer ovenfor for at komme i gang"
+  },
+  "modal": {
+    "restoreTitle": "Gendan s\u00e6t",
+    "deleteTitle": "Slet s\u00e6t?",
+    "deleteSetTitle": "Slet \"{{name}}\" (S\u00e6t {{number}})?",
+    "deleteSafe": "\u2705 Sikker at slette \u2014 sikkerhedskopieret {{date}} ({{percentage}}% komplet)",
+    "deleteOutdated": "\u26a0\ufe0f Sikkerhedskopi er for\u00e6ldet \u2014 sikkerhedskopieret {{date}} ved {{backupPercentage}}% ({{backupPieces}} dele), nu {{currentPercentage}}% ({{currentPieces}} dele)",
+    "deleteNeverBackedUp": "\u26a0\ufe0f Dette s\u00e6t er aldrig blevet sikkerhedskopieret!",
+    "versionsTitle": "Flere s\u00e6tversioner fundet",
+    "versionsDescription": "Dette s\u00e6t har {{count}} versioner. V\u00e6lg venligst en:",
+    "whatsNewTitle": "\u2728 Nyheder i BrickTally",
+    "whatsNewFallback": "En ny version er tilg\u00e6ngelig.",
+    "whatsNewChangelog": "Se fuld \u00e6ndringslog \u2192",
+    "badgeTitle": "BrickTally Badge",
+    "badgeDescription": "Download dette badge for at dele p\u00e5 eBay, Facebook Marketplace eller andre platforme som bevis p\u00e5 dit s\u00e6ts komplethed."
+  },
+  "restore": {
+    "keepLocal": "Behold lokal",
+    "overwrite": "Overskriv",
+    "localProgress": "Lokal: {{percentage}}% ({{date}})",
+    "restoreProgress": "Gendan: {{percentage}}% ({{date}})"
+  },
+  "error": {
+    "noSetLoaded": "Indl\u00e6s venligst et s\u00e6t f\u00f8rst",
+    "setNumberRequired": "Indtast venligst et s\u00e6tnummer",
+    "loadFailed": "Fejl ved indl\u00e6sning af s\u00e6tdata. Pr\u00f8v venligst igen.",
+    "invalidFormat": "Ugyldig .bricktally-fil: matcher ikke det forventede format.",
+    "invalidJson": "Ugyldig .bricktally-fil: kunne ikke parse JSON.",
+    "invalidFile": "Ugyldig .bricktally-fil",
+    "noSetsSelected": "Ingen s\u00e6t valgt til sikkerhedskopiering.",
+    "noPartsCounted": "Ingen dele t\u00e6lt endnu."
+  },
+  "confirm": {
+    "resetSet": "Er du sikker p\u00e5, at du vil nulstille al fremskridt for dette s\u00e6t?"
+  },
+  "export": {
+    "noMissingPieces": "Ingen manglende dele! Dit s\u00e6t er komplet.",
+    "brickLinkInstructions": "BrickLink XML-fil downloadet!\n\nS\u00e5dan bruger du den:\n1. G\u00e5 til BrickLink.com\n2. Naviger til \"Want\" > \"Upload\"\n3. V\u00e6lg \"BrickLink XML\"-format\n4. Upload den downloadede fil",
+    "pickABrickInstructions": "Pick a Brick CSV-fil downloadet!\n\nBem\u00e6rk: Dette er en referenceliste. Du skal manuelt s\u00f8ge og tilf\u00f8je varer p\u00e5 LEGO.com/pick-a-brick, da de ikke underst\u00f8tter masseimport.",
+    "textHeader": "Manglende dele for s\u00e6t {{number}}",
+    "textParts": "DELE:",
+    "textMinifigures": "MINIFIGURER:",
+    "textTotalParts": "Samlede unikke manglende dele: {{count}}",
+    "textTotalMinifigs": "Samlede unikke manglende minifigurer: {{count}}",
+    "textTotalPieces": "Samlede manglende dele: {{count}}",
+    "csvNote": "# Bem\u00e6rk: Minifigurer udeladt (ikke tilg\u00e6ngelige via Pick a Brick)",
+    "csvHeader": "Element ID,Design ID,Colour,Quantity,Name",
+    "rebrickableCsvHeader": "Part,Color,Quantity"
+  },
+  "badge": {
+    "missingPieces_one": "Mangler {{count}} del:",
+    "missingPieces_other": "Mangler {{count}} dele:",
+    "moreItems_one": "\u2026 og {{count}} mere manglende del",
+    "moreItems_other": "\u2026 og {{count}} flere manglende dele",
+    "minifig": "(minifigur)",
+    "watermark": "bricktally.app"
+  },
+  "tooltip": {
+    "fillQuantity": "Klik for at markere alle som t\u00e6lt",
+    "restoreBackup": "Gendan en tidligere sikkerhedskopi",
+    "backupAll": "Sikkerhedskopi\u00e9r alle s\u00e6t",
+    "backupSelected": "Sikkerhedskopi\u00e9r valgte s\u00e6t",
+    "cancelBackup": "Annull\u00e9r sikkerhedskopiering",
+    "restoreSets": "Gendan s\u00e6t"
+  },
+  "footer": {
+    "tagline": "Lavet med \u2764\ufe0f mellem byggesessioner til LEGO\u00ae entusiaster",
+    "disclaimer": "LEGO\u00ae er et varem\u00e6rke tilh\u00f8rende LEGO Gruppen, som ikke sponsorerer, autoriserer eller st\u00f8tter denne app."
+  },
+  "game": {
+    "title": "\ud83e\udde9 Huskespil",
+    "moves": "Tr\u00e6k:",
+    "youWon": "\ud83c\udf89 Du vandt!",
+    "stats": "{{pairs}} par p\u00e5 {{moves}} tr\u00e6k",
+    "playAgain": "Spil igen",
+    "partAlt": "Del"
+  },
+  "celebration": {
+    "title": "\ud83c\udf89 Komplet!",
+    "message": "Alle dele er registreret!",
+    "button": "Fantastisk!"
+  },
+  "filter": {
+    "all": "Alle ({{count}})"
+  },
+  "languagePicker": {
+    "label": "Sprog"
+  }
+}

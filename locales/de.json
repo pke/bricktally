@@ -1,0 +1,167 @@
+{
+  "meta": {
+    "title": "BrickTally - Jeder Stein z\u00e4hlt",
+    "description": "Pr\u00fcfe, ob deine LEGO\u00ae-Sets vollst\u00e4ndig sind, bevor du sie verkaufst oder einlagerst. Z\u00e4hle jedes Teil und verfolge mehrere Sets mit BrickTally.",
+    "ogDescription": "Pr\u00fcfe, ob deine LEGO\u00ae-Sets alle Teile enthalten, bevor du sie verkaufst oder einlagerst. Z\u00e4hle jeden Stein, um 100% Vollst\u00e4ndigkeit zu best\u00e4tigen.",
+    "keywords": "LEGO\u00ae, Set-\u00dcberpr\u00fcfung, Steine z\u00e4hlen, Vollst\u00e4ndigkeitspr\u00fcfer, LEGO\u00ae-Inventar, LEGO\u00ae verkaufen, gebrauchte LEGO\u00ae-Sets"
+  },
+  "button": {
+    "cancel": "Abbrechen",
+    "delete": "L\u00f6schen",
+    "backupAndDelete": "Sichern & L\u00f6schen",
+    "resetProgress": "Fortschritt zur\u00fccksetzen",
+    "restore": "\ud83d\udce5 Wiederherstellen",
+    "restoreBackup": "\ud83d\udce5 Sicherung wiederherstellen",
+    "restoreSelected": "Ausgew\u00e4hlte wiederherstellen",
+    "backupAll": "\ud83d\udce4 Alle sichern",
+    "backupSelected": "\ud83d\udce4 Ausgew\u00e4hlte sichern",
+    "backupSet": "Set sichern",
+    "deleteSet": "Set l\u00f6schen",
+    "hideComplete": "Vollst\u00e4ndige ausblenden",
+    "hideCompleteParts": "Vollst\u00e4ndige Teile ausblenden",
+    "generateBadge": "\ud83c\udff7\ufe0f Abzeichen erstellen",
+    "exportBrickLink": "\ud83d\udce6 BrickLink XML",
+    "exportPickABrick": "\ud83e\uddf1 Pick a Brick CSV",
+    "exportTextList": "\ud83d\udcc4 Textliste",
+    "exportPartlist": "\ud83e\udde9 Teileliste exportieren",
+    "downloadBadge": "Abzeichen herunterladen (PNG)",
+    "close": "Schlie\u00dfen",
+    "updateNow": "Jetzt aktualisieren",
+    "maybeLater": "Vielleicht sp\u00e4ter",
+    "awesome": "Super!",
+    "playAgain": "Nochmal spielen",
+    "toggleFullscreen": "Vollbild umschalten",
+    "toggleDarkMode": "Dunkelmodus umschalten"
+  },
+  "input": {
+    "setNumberPlaceholder": "Set-Nummer eingeben\u2026",
+    "setNumberLabel": "LEGO-Set-Nummer"
+  },
+  "section": {
+    "parts": "Teile",
+    "spareParts": "Ersatzteile",
+    "extraSpareParts": "Zus\u00e4tzliche Ersatzteile",
+    "minifigures": "Minifiguren",
+    "colours": "Farben",
+    "columns": "Spalten",
+    "export": "Exportieren"
+  },
+  "column": {
+    "color": "Farbe",
+    "name": "Name",
+    "partNumber": "Teilenummer"
+  },
+  "landing": {
+    "heading": "\u00dcberpr\u00fcfe, ob deine LEGO-Sets vollst\u00e4ndig sind",
+    "description": "BrickTally hilft dir, jedes Teil in deinen LEGO\u00ae-Sets zu z\u00e4hlen, bevor du sie verkaufst, einlagerst oder baust. Gib eine Set-Nummer ein, um eine vollst\u00e4ndige Teileliste basierend auf der <a href=\"https://rebrickable.com/\" target=\"_blank\" rel=\"noopener\">Rebrickable</a>-Datenbank zu erhalten.",
+    "featureTrack": "Verfolge Teile, Ersatzteile und Minifiguren separat",
+    "featureFilter": "Filtere nach Farbe, um dich auf eine Gruppe zu konzentrieren",
+    "featureExport": "Exportiere fehlende Teile zu BrickLink, Pick a Brick, Rebrickable oder als Textliste",
+    "featureBadge": "Erstelle ein Vollst\u00e4ndigkeitsabzeichen f\u00fcr eBay oder Marktplatz-Anzeigen",
+    "featureMobile": "Optimiert f\u00fcr Tablets und Handys \u2014 immer griffbereit beim Sortieren",
+    "featurePwa": "Funktioniert offline als PWA \u2014 installiere es auf deinem Ger\u00e4t",
+    "featureBackup": "Sichere und stelle deinen Fortschritt ger\u00e4te\u00fcbergreifend wieder her"
+  },
+  "display": {
+    "pieces": "{{completed}}/{{total}} Teile",
+    "piecesChecked": "Teile gez\u00e4hlt",
+    "setYear": "Set {{number}} ({{year}})",
+    "setDetails": "Set-Nummer: {{number}} | Jahr: {{year}} | Teile: {{parts}}",
+    "setDetailsVersioned": "Set-Nummer: {{number}} [Version {{version}}] | Jahr: {{year}} | Teile: {{parts}}",
+    "percentage": "{{value}}%",
+    "noImage": "Kein Bild",
+    "loading": "Set-Daten werden geladen\u2026",
+    "preview": "VORSCHAU"
+  },
+  "history": {
+    "noSets": "Noch keine Sets bearbeitet",
+    "getStarted": "Gib oben eine Set-Nummer ein, um loszulegen"
+  },
+  "modal": {
+    "restoreTitle": "Sets wiederherstellen",
+    "deleteTitle": "Set l\u00f6schen?",
+    "deleteSetTitle": "\"{{name}}\" (Set {{number}}) l\u00f6schen?",
+    "deleteSafe": "\u2705 Sicher zu l\u00f6schen \u2014 gesichert am {{date}} ({{percentage}}% vollst\u00e4ndig)",
+    "deleteOutdated": "\u26a0\ufe0f Sicherung ist veraltet \u2014 gesichert am {{date}} bei {{backupPercentage}}% ({{backupPieces}} Teile), jetzt {{currentPercentage}}% ({{currentPieces}} Teile)",
+    "deleteNeverBackedUp": "\u26a0\ufe0f Dieses Set wurde noch nie gesichert!",
+    "versionsTitle": "Mehrere Set-Versionen gefunden",
+    "versionsDescription": "Dieses Set hat {{count}} Versionen. Bitte w\u00e4hle eine aus:",
+    "whatsNewTitle": "\u2728 Neuigkeiten in BrickTally",
+    "whatsNewFallback": "Eine neue Version ist verf\u00fcgbar.",
+    "whatsNewChangelog": "Vollst\u00e4ndiges \u00c4nderungsprotokoll ansehen \u2192",
+    "badgeTitle": "BrickTally-Abzeichen",
+    "badgeDescription": "Lade dieses Abzeichen herunter, um es auf eBay, Facebook Marketplace oder anderen Plattformen als Nachweis der Vollst\u00e4ndigkeit deines Sets zu teilen."
+  },
+  "restore": {
+    "keepLocal": "Lokal behalten",
+    "overwrite": "\u00dcberschreiben",
+    "localProgress": "Lokal: {{percentage}}% ({{date}})",
+    "restoreProgress": "Wiederherstellen: {{percentage}}% ({{date}})"
+  },
+  "error": {
+    "noSetLoaded": "Bitte lade zuerst ein Set",
+    "setNumberRequired": "Bitte gib eine Set-Nummer ein",
+    "loadFailed": "Fehler beim Laden der Set-Daten. Bitte versuche es erneut.",
+    "invalidFormat": "Ung\u00fcltige .bricktally-Datei: entspricht nicht dem erwarteten Format.",
+    "invalidJson": "Ung\u00fcltige .bricktally-Datei: JSON konnte nicht gelesen werden.",
+    "invalidFile": "Ung\u00fcltige .bricktally-Datei",
+    "noSetsSelected": "Keine Sets zum Sichern ausgew\u00e4hlt.",
+    "noPartsCounted": "Noch keine Teile gez\u00e4hlt."
+  },
+  "confirm": {
+    "resetSet": "M\u00f6chtest du wirklich den gesamten Fortschritt f\u00fcr dieses Set zur\u00fccksetzen?"
+  },
+  "export": {
+    "noMissingPieces": "Keine fehlenden Teile! Dein Set ist vollst\u00e4ndig.",
+    "brickLinkInstructions": "BrickLink XML-Datei heruntergeladen!\n\nSo verwendest du sie:\n1. Gehe zu BrickLink.com\n2. Navigiere zu \"Want\" > \"Upload\"\n3. W\u00e4hle das Format \"BrickLink XML\"\n4. Lade die heruntergeladene Datei hoch",
+    "pickABrickInstructions": "Pick a Brick CSV-Datei heruntergeladen!\n\nHinweis: Dies ist eine Referenzliste. Du musst die Teile manuell auf LEGO.com/pick-a-brick suchen und hinzuf\u00fcgen, da kein Massenimport unterst\u00fctzt wird.",
+    "textHeader": "Fehlende Teile f\u00fcr Set {{number}}",
+    "textParts": "TEILE:",
+    "textMinifigures": "MINIFIGUREN:",
+    "textTotalParts": "Fehlende einzigartige Teile insgesamt: {{count}}",
+    "textTotalMinifigs": "Fehlende einzigartige Minifiguren insgesamt: {{count}}",
+    "textTotalPieces": "Fehlende Teile insgesamt: {{count}}",
+    "csvNote": "# Hinweis: Minifiguren ausgeschlossen (nicht \u00fcber Pick a Brick verf\u00fcgbar)",
+    "csvHeader": "Element ID,Design ID,Colour,Quantity,Name",
+    "rebrickableCsvHeader": "Part,Color,Quantity"
+  },
+  "badge": {
+    "missingPieces_one": "{{count}} Teil fehlt:",
+    "missingPieces_other": "{{count}} Teile fehlen:",
+    "moreItems_one": "\u2026 und {{count}} weiteres fehlendes Teil",
+    "moreItems_other": "\u2026 und {{count}} weitere fehlende Teile",
+    "minifig": "(Minifigur)",
+    "watermark": "bricktally.app"
+  },
+  "tooltip": {
+    "fillQuantity": "Klicke, um alle als gez\u00e4hlt zu markieren",
+    "restoreBackup": "Eine vorherige Sicherung wiederherstellen",
+    "backupAll": "Alle Sets sichern",
+    "backupSelected": "Ausgew\u00e4hlte Sets sichern",
+    "cancelBackup": "Sicherung abbrechen",
+    "restoreSets": "Sets wiederherstellen"
+  },
+  "footer": {
+    "tagline": "Mit \u2764\ufe0f zwischen Bausitzungen f\u00fcr LEGO\u00ae-Fans gemacht",
+    "disclaimer": "LEGO\u00ae ist eine Marke der LEGO Gruppe, die diese App weder sponsert, autorisiert noch unterst\u00fctzt."
+  },
+  "game": {
+    "title": "\ud83e\udde9 Memory-Spiel",
+    "moves": "Z\u00fcge:",
+    "youWon": "\ud83c\udf89 Gewonnen!",
+    "stats": "{{pairs}} Paare in {{moves}} Z\u00fcgen",
+    "playAgain": "Nochmal spielen",
+    "partAlt": "Teil"
+  },
+  "celebration": {
+    "title": "\ud83c\udf89 Vollst\u00e4ndig!",
+    "message": "Alle Teile erfasst!",
+    "button": "Super!"
+  },
+  "filter": {
+    "all": "Alle ({{count}})"
+  },
+  "languagePicker": {
+    "label": "Sprache"
+  }
+}

@@ -1,0 +1,167 @@
+{
+  "meta": {
+    "title": "BrickTally - 모든 브릭을 세어보세요",
+    "description": "판매하거나 보관하기 전에 LEGO\u00ae 세트가 완전한지 확인하세요. 모든 피스를 세고 BrickTally로 여러 세트를 관리하세요.",
+    "ogDescription": "판매하거나 보관하기 전에 LEGO\u00ae 세트의 모든 피스가 있는지 확인하세요. 모든 브릭을 세어 100% 완전성을 확인하세요.",
+    "keywords": "LEGO\u00ae, 세트 검증, 브릭 세기, 완전 세트 확인, LEGO\u00ae 인벤토리, LEGO\u00ae 판매, 중고 LEGO\u00ae 세트"
+  },
+  "button": {
+    "cancel": "취소",
+    "delete": "삭제",
+    "backupAndDelete": "백업 후 삭제",
+    "resetProgress": "진행 상황 초기화",
+    "restore": "\ud83d\udce5 복원",
+    "restoreBackup": "\ud83d\udce5 백업 복원",
+    "restoreSelected": "선택한 항목 복원",
+    "backupAll": "\ud83d\udce4 모두 백업",
+    "backupSelected": "\ud83d\udce4 선택한 항목 백업",
+    "backupSet": "세트 백업",
+    "deleteSet": "세트 삭제",
+    "hideComplete": "완료 숨기기",
+    "hideCompleteParts": "완료된 파트 숨기기",
+    "generateBadge": "\ud83c\udff7\ufe0f 배지 생성",
+    "exportBrickLink": "\ud83d\udce6 BrickLink XML",
+    "exportPickABrick": "\ud83e\uddf1 Pick a Brick CSV",
+    "exportTextList": "\ud83d\udcc4 텍스트 목록",
+    "exportPartlist": "\ud83e\udde9 파트 목록 내보내기",
+    "downloadBadge": "배지 다운로드 (PNG)",
+    "close": "닫기",
+    "updateNow": "지금 업데이트",
+    "maybeLater": "나중에",
+    "awesome": "멋져요!",
+    "playAgain": "다시 플레이",
+    "toggleFullscreen": "전체 화면 전환",
+    "toggleDarkMode": "다크 모드 전환"
+  },
+  "input": {
+    "setNumberPlaceholder": "세트 번호 입력\u2026",
+    "setNumberLabel": "LEGO 세트 번호"
+  },
+  "section": {
+    "parts": "파트",
+    "spareParts": "여분 파트",
+    "extraSpareParts": "추가 여분 파트",
+    "minifigures": "미니피겨",
+    "colours": "색상",
+    "columns": "열",
+    "export": "내보내기"
+  },
+  "column": {
+    "color": "색상",
+    "name": "이름",
+    "partNumber": "파트 번호"
+  },
+  "landing": {
+    "heading": "LEGO 세트의 완전성을 확인하세요",
+    "description": "BrickTally는 판매, 보관 또는 조립 전에 LEGO\u00ae 세트의 모든 피스를 세는 것을 도와줍니다. 세트 번호를 입력하면 <a href=\"https://rebrickable.com/\" target=\"_blank\" rel=\"noopener\">Rebrickable</a> 데이터베이스 기반의 전체 파트 체크리스트를 확인할 수 있습니다.",
+    "featureTrack": "파트, 여분 파트, 미니피겨를 개별적으로 추적",
+    "featureFilter": "색상별로 필터링하여 한 번에 하나의 그룹에 집중",
+    "featureExport": "누락된 파트를 BrickLink, Pick a Brick, Rebrickable 또는 텍스트 목록으로 내보내기",
+    "featureBadge": "eBay 또는 중고마켓 등록용 완성도 배지 생성",
+    "featureMobile": "태블릿과 휴대폰에 최적화 \u2014 피스 분류 시 언제나 가까이에",
+    "featurePwa": "PWA로 오프라인에서도 작동 \u2014 기기에 설치 가능",
+    "featureBackup": "기기 간 진행 상황 백업 및 복원"
+  },
+  "display": {
+    "pieces": "{{completed}}/{{total}} 피스",
+    "piecesChecked": "확인된 피스",
+    "setYear": "세트 {{number}} ({{year}})",
+    "setDetails": "세트 번호: {{number}} | 연도: {{year}} | 파트: {{parts}}",
+    "setDetailsVersioned": "세트 번호: {{number}} [버전 {{version}}] | 연도: {{year}} | 파트: {{parts}}",
+    "percentage": "{{value}}%",
+    "noImage": "이미지 없음",
+    "loading": "세트 데이터 로딩 중\u2026",
+    "preview": "미리보기"
+  },
+  "history": {
+    "noSets": "아직 작업한 세트가 없습니다",
+    "getStarted": "위에 세트 번호를 입력하여 시작하세요"
+  },
+  "modal": {
+    "restoreTitle": "세트 복원",
+    "deleteTitle": "세트를 삭제하시겠습니까?",
+    "deleteSetTitle": "\"{{name}}\" (세트 {{number}})을(를) 삭제하시겠습니까?",
+    "deleteSafe": "\u2705 안전하게 삭제 가능 \u2014 {{date}}에 백업됨 ({{percentage}}% 완료)",
+    "deleteOutdated": "\u26a0\ufe0f 백업이 오래되었습니다 \u2014 {{date}}에 {{backupPercentage}}% ({{backupPieces}}피스)로 백업, 현재 {{currentPercentage}}% ({{currentPieces}}피스)",
+    "deleteNeverBackedUp": "\u26a0\ufe0f 이 세트는 백업된 적이 없습니다!",
+    "versionsTitle": "여러 세트 버전 발견",
+    "versionsDescription": "이 세트에는 {{count}}개의 버전이 있습니다. 하나를 선택하세요:",
+    "whatsNewTitle": "\u2728 BrickTally 새로운 기능",
+    "whatsNewFallback": "새 버전을 사용할 수 있습니다.",
+    "whatsNewChangelog": "전체 변경 내역 보기 \u2192",
+    "badgeTitle": "BrickTally 배지",
+    "badgeDescription": "이 배지를 다운로드하여 eBay, 중고마켓 또는 기타 플랫폼에서 세트의 완전성 증거로 공유하세요."
+  },
+  "restore": {
+    "keepLocal": "로컬 유지",
+    "overwrite": "덮어쓰기",
+    "localProgress": "로컬: {{percentage}}% ({{date}})",
+    "restoreProgress": "복원: {{percentage}}% ({{date}})"
+  },
+  "error": {
+    "noSetLoaded": "먼저 세트를 로드하세요",
+    "setNumberRequired": "세트 번호를 입력하세요",
+    "loadFailed": "세트 데이터 로딩에 실패했습니다. 다시 시도해 주세요.",
+    "invalidFormat": "잘못된 .bricktally 파일: 예상 형식과 일치하지 않습니다.",
+    "invalidJson": "잘못된 .bricktally 파일: JSON을 파싱할 수 없습니다.",
+    "invalidFile": "잘못된 .bricktally 파일",
+    "noSetsSelected": "백업할 세트가 선택되지 않았습니다.",
+    "noPartsCounted": "아직 세어진 파트가 없습니다."
+  },
+  "confirm": {
+    "resetSet": "이 세트의 모든 진행 상황을 초기화하시겠습니까?"
+  },
+  "export": {
+    "noMissingPieces": "누락된 피스가 없습니다! 세트가 완전합니다.",
+    "brickLinkInstructions": "BrickLink XML 파일이 다운로드되었습니다!\n\n사용 방법:\n1. BrickLink.com에 접속\n2. \"Want\" > \"Upload\"으로 이동\n3. \"BrickLink XML\" 형식 선택\n4. 다운로드한 파일 업로드",
+    "pickABrickInstructions": "Pick a Brick CSV 파일이 다운로드되었습니다!\n\n참고: 이것은 참조용 목록입니다. LEGO.com/pick-a-brick에서는 일괄 가져오기를 지원하지 않으므로 수동으로 검색하여 추가해야 합니다.",
+    "textHeader": "세트 {{number}}의 누락된 피스",
+    "textParts": "파트:",
+    "textMinifigures": "미니피겨:",
+    "textTotalParts": "누락된 고유 파트 수: {{count}}",
+    "textTotalMinifigs": "누락된 고유 미니피겨 수: {{count}}",
+    "textTotalPieces": "총 누락 피스 수: {{count}}",
+    "csvNote": "# 참고: 미니피겨는 제외됨 (Pick a Brick에서 취급하지 않음)",
+    "csvHeader": "Element ID,Design ID,Colour,Quantity,Name",
+    "rebrickableCsvHeader": "Part,Color,Quantity"
+  },
+  "badge": {
+    "missingPieces_one": "{{count}}피스 누락:",
+    "missingPieces_other": "{{count}}피스 누락:",
+    "moreItems_one": "\u2026 그 외 {{count}}피스 누락",
+    "moreItems_other": "\u2026 그 외 {{count}}피스 누락",
+    "minifig": "(미니피겨)",
+    "watermark": "bricktally.app"
+  },
+  "tooltip": {
+    "fillQuantity": "클릭하여 모두 카운트 완료로 표시",
+    "restoreBackup": "이전 백업 복원",
+    "backupAll": "모든 세트 백업",
+    "backupSelected": "선택한 세트 백업",
+    "cancelBackup": "백업 취소",
+    "restoreSets": "세트 복원"
+  },
+  "footer": {
+    "tagline": "LEGO\u00ae 애호가를 위해 조립 세션 사이에 \u2764\ufe0f를 담아 만들었습니다",
+    "disclaimer": "LEGO\u00ae는 LEGO 그룹의 상표입니다. LEGO 그룹은 이 앱을 후원, 승인 또는 보증하지 않습니다."
+  },
+  "game": {
+    "title": "\ud83e\udde9 메모리 게임",
+    "moves": "이동 횟수:",
+    "youWon": "\ud83c\udf89 승리!",
+    "stats": "{{pairs}}쌍을 {{moves}}번 만에 완료",
+    "playAgain": "다시 플레이",
+    "partAlt": "파트"
+  },
+  "celebration": {
+    "title": "\ud83c\udf89 완료!",
+    "message": "모든 피스가 확인되었습니다!",
+    "button": "멋져요!"
+  },
+  "filter": {
+    "all": "전체 ({{count}})"
+  },
+  "languagePicker": {
+    "label": "언어"
+  }
+}
