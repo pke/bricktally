@@ -2286,6 +2286,29 @@ body.verify-page {
   text-decoration: underline;
 }
 
+.language-picker {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.language-picker label {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.language-picker select {
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
 /* What's New Modal
    ========================================================================== */
 

@@ -3624,6 +3624,40 @@
                 document.head.appendChild(style);
             }, 1000);
         }
+
+        // Language switcher
+        window.switchLanguage = function(locale) {
+            localStorage.setItem('locale', locale);
+            var currentPath = window.location.pathname;
+            // Remove existing locale prefix
+            var stripped = currentPath.replace(/^\/(en|de|fr|es|nl|da|ja|ko|ru|zh-CN|zh-TW)(\/|$)/, '/');
+            // Navigate to new locale path
+            if (locale === 'en') {
+                window.location.href = stripped;
+            } else {
+                window.location.href = '/' + locale + stripped;
+            }
+        };
+
+        // On page load: redirect to saved locale preference if not already on it
+        (function() {
+            var saved = localStorage.getItem('locale');
+            var current = window.__LOCALE__ || 'en';
+            if (saved && saved !== current) {
+                var currentPath = window.location.pathname;
+                var stripped = currentPath.replace(/^\/(en|de|fr|es|nl|da|ja|ko|ru|zh-CN|zh-TW)(\/|$)/, '/');
+                var target = saved === 'en' ? stripped : '/' + saved + stripped;
+                if (window.location.pathname !== target) {
+                    window.location.replace(target);
+                    return;
+                }
+            }
+            // Set selected language in dropdown
+            var select = document.getElementById('languageSelect');
+            if (select) {
+                select.value = current;
+            }
+        })();
     </script>
 
     <div id="fireworksContainer"></div>
@@ -3631,8 +3665,24 @@
     <footer class="app-footer">
         <span class="footer-tagline" data-i18n="footer.tagline">Made with ❤️ between building sessions for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.31.0 (29a1ba1)</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.32.0 (2353813)</a>
         <span class="footer-disclaimer" data-i18n="footer.disclaimer">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise, or endorse this app.</span>
+        <div class="language-picker">
+            <label data-i18n="languagePicker.label" for="languageSelect">Language</label>
+            <select id="languageSelect" onchange="switchLanguage(this.value)">
+                <option value="en">English</option>
+                <option value="de">Deutsch</option>
+                <option value="fr">Français</option>
+                <option value="es">Español</option>
+                <option value="nl">Nederlands</option>
+                <option value="da">Dansk</option>
+                <option value="ja">日本語</option>
+                <option value="ko">한국어</option>
+                <option value="ru">Русский</option>
+                <option value="zh-CN">简体中文</option>
+                <option value="zh-TW">繁體中文</option>
+            </select>
+        </div>
     </footer>
 </body>
 
