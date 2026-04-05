@@ -5,7 +5,6 @@ import {
   loadTestSet,
   getProgressState,
   incrementPart,
-  decrementPart,
   fillQuantity,
   getPartCount,
   waitForProgressUpdate
@@ -67,10 +66,13 @@ test.describe('Category 1: Progress Calculation - Parts Only', () => {
     await page.goto('/');
     await loadTestSet(page, '99005');
 
-    // Count 293 out of 294
-    for (let i = 0; i < 293; i++) {
-      await incrementPart(page, 0);
-    }
+    // Set count to 293 out of 294 directly (avoid 294 clicks and celebration trigger)
+    await page.evaluate(() => {
+      var key = partsData[0].partNum + '_' + partsData[0].color;
+      userCounts[key] = 293;
+      updateRow(0);
+      updateStats();
+    });
     await waitForProgressUpdate(page);
 
     const progress = await getProgressState(page);

@@ -2570,7 +2570,19 @@
             saveState();
         }
 
+        // Guard against duplicate events (e.g. terminal servers firing touch+mouse for one gesture)
+        var _lastTapPart = -1;
+        var _lastTapMs = 0;
+        function isDuplicateTap(partId) {
+            var now = Date.now();
+            if (partId === _lastTapPart && now - _lastTapMs < 80) return true;
+            _lastTapPart = partId;
+            _lastTapMs = now;
+            return false;
+        }
+
         function incrementPart(partId) {
+            if (isDuplicateTap(partId)) return;
             var part = partsData[partId];
             if (!part) return;
 
@@ -2597,6 +2609,7 @@
         }
 
         function decrementPart(partId) {
+            if (isDuplicateTap(partId)) return;
             var part = partsData[partId];
             if (!part) return;
 
@@ -3665,7 +3678,7 @@
     <footer class="app-footer">
         <span class="footer-tagline" data-i18n="footer.tagline">Made with ❤️ between building sessions for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.34.0 (04a161f)</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.34.1 (90a35d5)</a>
         <span class="footer-disclaimer" data-i18n="footer.disclaimer">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise, or endorse this app.</span>
         <div class="language-picker">
             <label data-i18n="languagePicker.label" for="languageSelect">Language</label>

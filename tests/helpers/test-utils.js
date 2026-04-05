@@ -194,6 +194,7 @@ export async function getCollapsedProgressState(page) {
  */
 export async function incrementPart(page, partId) {
   await page.click(`#inc-${partId}`);
+  await page.waitForTimeout(90); // exceed 80ms tap-debounce guard
 }
 
 /**
@@ -201,6 +202,7 @@ export async function incrementPart(page, partId) {
  */
 export async function decrementPart(page, partId) {
   await page.click(`#dec-${partId}`);
+  await page.waitForTimeout(90); // exceed 80ms tap-debounce guard
 }
 
 /**
