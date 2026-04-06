@@ -861,13 +861,18 @@
         }
 
         // Sort/filter/group preferences
+        var SORT_DEFAULTS = { lastAccessed: 'desc', name: 'asc', number: 'asc', year: 'desc' };
         function getSortFilterPrefs() {
             var sortVal = localStorage.getItem('pref_sort') || 'lastAccessed-desc';
+            // Fix old format missing direction
+            if (sortVal.indexOf('-') === -1) {
+                sortVal = sortVal + '-' + (SORT_DEFAULTS[sortVal] || 'desc');
+            }
             var parts = sortVal.split('-');
             return {
                 sortValue: sortVal,
                 sort: parts[0],
-                dir: parts[1] || 'desc',
+                dir: parts[1],
                 filter: localStorage.getItem('pref_filter') || 'all',
                 group: localStorage.getItem('pref_group') || 'none'
             };
@@ -3888,7 +3893,7 @@
     <footer class="app-footer">
         <span class="footer-tagline" data-i18n="footer.tagline">Made with ❤️ between building sessions for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.37.1 (fdd0aaf)</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.37.2 (d0e18de)</a>
         <span class="footer-disclaimer" data-i18n="footer.disclaimer">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise, or endorse this app.</span>
         <div class="language-picker">
             <label data-i18n="languagePicker.label" for="languageSelect">Language</label>
