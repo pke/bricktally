@@ -232,6 +232,9 @@
                             <option value="theme" data-i18n="group.theme">Theme</option>
                         </select>
                     </div>
+                    <div class="sort-filter-group sort-filter-search">
+                        <input type="text" id="searchFilter" placeholder="Filter by name or set number" oninput="onSearchFilterInput()" data-i18n="[placeholder]filter.searchPlaceholder" autocomplete="off">
+                    </div>
                 </div>
                 <div id="setHistoryList" class="set-history-list"></div>
                 <div id="setHistoryEmpty" class="set-history-empty hide">
@@ -903,6 +906,28 @@
             };
             saveSortFilterPrefs(prefs);
             displaySetHistory();
+        }
+
+        function onSearchFilterInput() {
+            var query = (document.getElementById('searchFilter').value || '').toLowerCase();
+            var items = document.querySelectorAll('.set-history-item');
+            items.forEach(function(item) {
+                var name = (item.querySelector('.set-history-item-title') || {}).textContent || '';
+                var number = item.getAttribute('data-set-number') || '';
+                var match = !query || name.toLowerCase().indexOf(query) !== -1 || number.indexOf(query) !== -1;
+                item.style.display = match ? '' : 'none';
+            });
+            // Also hide/show group headers with no visible items
+            var headers = document.querySelectorAll('.theme-group-header');
+            headers.forEach(function(header) {
+                var next = header.nextElementSibling;
+                var hasVisible = false;
+                while (next && !next.classList.contains('theme-group-header')) {
+                    if (next.classList.contains('set-history-item') && next.style.display !== 'none') hasVisible = true;
+                    next = next.nextElementSibling;
+                }
+                header.style.display = hasVisible ? '' : 'none';
+            });
         }
 
         function restoreSortFilterUI() {
@@ -3916,7 +3941,7 @@
     <footer class="app-footer">
         <span class="footer-tagline" data-i18n="footer.tagline">Made with ❤️ between building sessions for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.38.0 (45bb1f7)</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.39.0 (0996835)</a>
         <span class="footer-disclaimer" data-i18n="footer.disclaimer">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise, or endorse this app.</span>
         <div class="language-picker">
             <label data-i18n="languagePicker.label" for="languageSelect">Language</label>

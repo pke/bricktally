@@ -166,7 +166,8 @@
     "inProgress": "I gang",
     "notStarted": "Ikke startet",
     "noMatch": "Ingen sæt matcher filteret \"{{filter}}\".",
-    "showAll": "Vis alle sæt"
+    "showAll": "Vis alle sæt",
+    "searchPlaceholder": "Filtrer efter navn eller sætnummer"
   },
   "sort": {
     "label": "Sortér efter",

@@ -166,7 +166,8 @@
     "inProgress": "In uitvoering",
     "notStarted": "Niet gestart",
     "noMatch": "Geen sets komen overeen met het filter \"{{filter}}\".",
-    "showAll": "Alle sets tonen"
+    "showAll": "Alle sets tonen",
+    "searchPlaceholder": "Filteren op naam of setnummer"
   },
   "sort": {
     "label": "Sorteren op",

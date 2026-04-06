@@ -166,7 +166,8 @@
     "inProgress": "진행 중",
     "notStarted": "시작 안 함",
     "noMatch": "필터 \"{{filter}}\"와(과) 일치하는 세트가 없습니다.",
-    "showAll": "모든 세트 표시"
+    "showAll": "모든 세트 표시",
+    "searchPlaceholder": "이름 또는 세트 번호로 필터"
   },
   "sort": {
     "label": "정렬 기준",

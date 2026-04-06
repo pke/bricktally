@@ -166,7 +166,8 @@
     "inProgress": "進行中",
     "notStarted": "未開始",
     "noMatch": "沒有套裝符合篩選條件「{{filter}}」。",
-    "showAll": "顯示所有套裝"
+    "showAll": "顯示所有套裝",
+    "searchPlaceholder": "依名稱或套裝編號篩選"
   },
   "sort": {
     "label": "排序方式",

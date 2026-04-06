@@ -166,7 +166,8 @@
     "inProgress": "In Progress",
     "notStarted": "Not Started",
     "noMatch": "No sets match the filter \"{{filter}}\".",
-    "showAll": "Show all sets"
+    "showAll": "Show all sets",
+    "searchPlaceholder": "Filter by name or set number"
   },
   "sort": {
     "label": "Sort by",

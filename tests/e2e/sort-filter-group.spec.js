@@ -92,4 +92,42 @@ test.describe('Category 19: Sort, Filter & Group', () => {
     const names = await page.locator('.set-history-item-title').allTextContents();
     expect(names).toEqual(['Liebherr Excavator', 'Millennium Falcon', 'Sydney Opera House']);
   });
+
+  test('19.10: Text filter by set name', async ({ page }) => {
+    await page.fill('#searchFilter', 'falcon');
+    const visible = await page.locator('.set-history-item:visible').count();
+    expect(visible).toBe(1);
+    await expect(page.locator('.set-history-item:visible .set-history-item-title')).toHaveText('Millennium Falcon');
+  });
+
+  test('19.11: Text filter by set number', async ({ page }) => {
+    await page.fill('#searchFilter', '42100');
+    const visible = await page.locator('.set-history-item:visible').count();
+    expect(visible).toBe(1);
+    await expect(page.locator('.set-history-item:visible .set-history-item-title')).toHaveText('Liebherr Excavator');
+  });
+
+  test('19.12: Text filter is case-insensitive', async ({ page }) => {
+    await page.fill('#searchFilter', 'SYDNEY');
+    const visible = await page.locator('.set-history-item:visible').count();
+    expect(visible).toBe(1);
+    await expect(page.locator('.set-history-item:visible .set-history-item-title')).toHaveText('Sydney Opera House');
+  });
+
+  test('19.13: Clearing text filter shows all sets again', async ({ page }) => {
+    await page.fill('#searchFilter', 'falcon');
+    await expect(page.locator('.set-history-item:visible')).toHaveCount(1);
+    await page.fill('#searchFilter', '');
+    await expect(page.locator('.set-history-item:visible')).toHaveCount(3);
+  });
+
+  test('19.14: Text filter works together with status filter', async ({ page }) => {
+    // All sets are "Not Started", filter to notStarted + search for "opera"
+    await page.selectOption('#filterSelect', 'notStarted');
+    await page.fill('#searchFilter', 'opera');
+    await expect(page.locator('.set-history-item:visible')).toHaveCount(1);
+    // Switch to "Complete" — no matches
+    await page.selectOption('#filterSelect', 'complete');
+    await expect(page.locator('.set-history-item:visible')).toHaveCount(0);
+  });
 });

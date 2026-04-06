@@ -166,7 +166,8 @@
     "inProgress": "進行中",
     "notStarted": "未着手",
     "noMatch": "フィルター「{{filter}}」に一致するセットはありません。",
-    "showAll": "すべてのセットを表示"
+    "showAll": "すべてのセットを表示",
+    "searchPlaceholder": "名前またはセット番号で絞り込み"
   },
   "sort": {
     "label": "並べ替え",

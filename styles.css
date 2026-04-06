@@ -1279,6 +1279,23 @@ body.dark-mode .set-history-item.backup-selected {
   white-space: nowrap;
 }
 
+.sort-filter-search {
+  flex: 1;
+  min-width: 120px;
+}
+
+.sort-filter-search input {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 14px;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
 .sort-filter-group select {
   padding: 8px 12px;
   border-radius: 6px;
