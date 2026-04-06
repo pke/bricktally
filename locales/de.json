@@ -139,8 +139,7 @@
     "backupAll": "Alle Sets sichern",
     "backupSelected": "Ausgew\u00e4hlte Sets sichern",
     "cancelBackup": "Sicherung abbrechen",
-    "restoreSets": "Sets wiederherstellen",
-    "toggleSortDir": "Sortierrichtung umschalten"
+    "restoreSets": "Sets wiederherstellen"
   },
   "footer": {
     "tagline": "Mit \u2764\ufe0f zwischen Bausitzungen f\u00fcr LEGO\u00ae-Fans gemacht",
@@ -171,9 +170,13 @@
   "sort": {
     "label": "Sortieren nach",
     "lastWorkedOn": "Zuletzt bearbeitet",
-    "name": "Set-Name",
-    "number": "Set-Nummer",
-    "year": "Jahr"
+    "firstWorkedOn": "Zuerst bearbeitet",
+    "nameAZ": "Name A→Z",
+    "nameZA": "Name Z→A",
+    "numberAsc": "Nummer aufsteigend",
+    "numberDesc": "Nummer absteigend",
+    "yearNewest": "Neueste zuerst",
+    "yearOldest": "Älteste zuerst"
   },
   "group": {
     "label": "Gruppieren nach",

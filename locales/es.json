@@ -139,8 +139,7 @@
     "backupAll": "Respaldar todos los sets",
     "backupSelected": "Respaldar los sets seleccionados",
     "cancelBackup": "Cancelar respaldo",
-    "restoreSets": "Restaurar sets",
-    "toggleSortDir": "Cambiar dirección de orden"
+    "restoreSets": "Restaurar sets"
   },
   "footer": {
     "tagline": "Hecho con \u2764\ufe0f entre sesiones de construcci\u00f3n para entusiastas de LEGO\u00ae",
@@ -171,9 +170,13 @@
   "sort": {
     "label": "Ordenar por",
     "lastWorkedOn": "Último trabajado",
-    "name": "Nombre del set",
-    "number": "Número del set",
-    "year": "Año"
+    "firstWorkedOn": "Primer trabajado",
+    "nameAZ": "Nombre A→Z",
+    "nameZA": "Nombre Z→A",
+    "numberAsc": "Número ascendente",
+    "numberDesc": "Número descendente",
+    "yearNewest": "Más reciente primero",
+    "yearOldest": "Más antiguo primero"
   },
   "group": {
     "label": "Agrupar por",

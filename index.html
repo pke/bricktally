@@ -195,12 +195,15 @@
                     <div class="sort-filter-group">
                         <label for="sortSelect" data-i18n="sort.label">Sort by</label>
                         <select id="sortSelect" onchange="onSortFilterChange()">
-                            <option value="lastAccessed" data-i18n="sort.lastWorkedOn">Last worked on</option>
-                            <option value="name" data-i18n="sort.name">Set name</option>
-                            <option value="number" data-i18n="sort.number">Set number</option>
-                            <option value="year" data-i18n="sort.year">Year</option>
+                            <option value="lastAccessed-desc" data-i18n="sort.lastWorkedOn">Last worked on</option>
+                            <option value="lastAccessed-asc" data-i18n="sort.firstWorkedOn">First worked on</option>
+                            <option value="name-asc" data-i18n="sort.nameAZ">Name A→Z</option>
+                            <option value="name-desc" data-i18n="sort.nameZA">Name Z→A</option>
+                            <option value="number-asc" data-i18n="sort.numberAsc">Number low→high</option>
+                            <option value="number-desc" data-i18n="sort.numberDesc">Number high→low</option>
+                            <option value="year-desc" data-i18n="sort.yearNewest">Newest first</option>
+                            <option value="year-asc" data-i18n="sort.yearOldest">Oldest first</option>
                         </select>
-                        <button id="sortDirBtn" class="sort-dir-btn" onclick="toggleSortDirection()" title="Toggle sort direction" data-i18n="[title]tooltip.toggleSortDir">▼</button>
                     </div>
                     <div class="sort-filter-group">
                         <label for="filterSelect" data-i18n="filter.label">Filter</label>
@@ -858,44 +861,30 @@
         }
 
         // Sort/filter/group preferences
-        var SORT_DEFAULTS = { lastAccessed: 'desc', name: 'asc', number: 'asc', year: 'desc' };
-
         function getSortFilterPrefs() {
+            var sortVal = localStorage.getItem('pref_sort') || 'lastAccessed-desc';
+            var parts = sortVal.split('-');
             return {
-                sort: localStorage.getItem('pref_sort') || 'lastAccessed',
-                dir: localStorage.getItem('pref_dir') || 'desc',
+                sortValue: sortVal,
+                sort: parts[0],
+                dir: parts[1] || 'desc',
                 filter: localStorage.getItem('pref_filter') || 'all',
                 group: localStorage.getItem('pref_group') || 'none'
             };
         }
 
         function saveSortFilterPrefs(prefs) {
-            localStorage.setItem('pref_sort', prefs.sort);
-            localStorage.setItem('pref_dir', prefs.dir);
+            localStorage.setItem('pref_sort', prefs.sortValue);
             localStorage.setItem('pref_filter', prefs.filter);
             localStorage.setItem('pref_group', prefs.group);
         }
 
         function onSortFilterChange() {
-            var oldPrefs = getSortFilterPrefs();
-            var newSort = document.getElementById('sortSelect').value;
-            // Reset direction to sensible default when sort option changes
-            var dir = (newSort !== oldPrefs.sort) ? (SORT_DEFAULTS[newSort] || 'asc') : oldPrefs.dir;
             var prefs = {
-                sort: newSort,
-                dir: dir,
+                sortValue: document.getElementById('sortSelect').value,
                 filter: document.getElementById('filterSelect').value,
                 group: document.getElementById('groupSelect').value
             };
-            document.getElementById('sortDirBtn').textContent = dir === 'asc' ? '▲' : '▼';
-            saveSortFilterPrefs(prefs);
-            displaySetHistory();
-        }
-
-        function toggleSortDirection() {
-            var prefs = getSortFilterPrefs();
-            prefs.dir = prefs.dir === 'asc' ? 'desc' : 'asc';
-            document.getElementById('sortDirBtn').textContent = prefs.dir === 'asc' ? '▲' : '▼';
             saveSortFilterPrefs(prefs);
             displaySetHistory();
         }
@@ -905,11 +894,9 @@
             var sortSel = document.getElementById('sortSelect');
             var filterSel = document.getElementById('filterSelect');
             var groupSel = document.getElementById('groupSelect');
-            var dirBtn = document.getElementById('sortDirBtn');
-            if (sortSel) sortSel.value = prefs.sort;
+            if (sortSel) sortSel.value = prefs.sortValue;
             if (filterSel) filterSel.value = prefs.filter;
             if (groupSel) groupSel.value = prefs.group;
-            if (dirBtn) dirBtn.textContent = prefs.dir === 'asc' ? '▲' : '▼';
         }
 
         function getSetHistory() {
@@ -3901,7 +3888,7 @@
     <footer class="app-footer">
         <span class="footer-tagline" data-i18n="footer.tagline">Made with ❤️ between building sessions for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.37.0 (e5e59ae)</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.37.1 (fdd0aaf)</a>
         <span class="footer-disclaimer" data-i18n="footer.disclaimer">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise, or endorse this app.</span>
         <div class="language-picker">
             <label data-i18n="languagePicker.label" for="languageSelect">Language</label>

@@ -1290,22 +1290,6 @@ body.dark-mode .set-history-item.backup-selected {
   min-height: 44px;
 }
 
-.sort-dir-btn {
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: 1px solid var(--border-color);
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-  font-size: 16px;
-  cursor: pointer;
-  line-height: 1;
-  min-width: 44px;
-  min-height: 44px;
-}
-
-.sort-dir-btn:hover {
-  border-color: var(--blue);
-}
 
 .theme-group-header {
   font-size: 16px;

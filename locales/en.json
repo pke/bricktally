@@ -139,8 +139,7 @@
     "backupAll": "Backup all sets",
     "backupSelected": "Backup selected sets",
     "cancelBackup": "Cancel backup",
-    "restoreSets": "Restore sets",
-    "toggleSortDir": "Toggle sort direction"
+    "restoreSets": "Restore sets"
   },
   "footer": {
     "tagline": "Made with \u2764\ufe0f between building sessions for LEGO\u00ae enthusiasts",
@@ -171,9 +170,13 @@
   "sort": {
     "label": "Sort by",
     "lastWorkedOn": "Last worked on",
-    "name": "Set name",
-    "number": "Set number",
-    "year": "Year"
+    "firstWorkedOn": "First worked on",
+    "nameAZ": "Name A\u2192Z",
+    "nameZA": "Name Z\u2192A",
+    "numberAsc": "Number low\u2192high",
+    "numberDesc": "Number high\u2192low",
+    "yearNewest": "Newest first",
+    "yearOldest": "Oldest first"
   },
   "group": {
     "label": "Group by",

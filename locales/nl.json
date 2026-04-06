@@ -139,8 +139,7 @@
     "backupAll": "Alle sets back-uppen",
     "backupSelected": "Geselecteerde sets back-uppen",
     "cancelBackup": "Back-up annuleren",
-    "restoreSets": "Sets herstellen",
-    "toggleSortDir": "Sorteerrichting omschakelen"
+    "restoreSets": "Sets herstellen"
   },
   "footer": {
     "tagline": "Gemaakt met \u2764\ufe0f tussen bouwsessies door voor LEGO\u00ae liefhebbers",
@@ -171,9 +170,13 @@
   "sort": {
     "label": "Sorteren op",
     "lastWorkedOn": "Laatst bewerkt",
-    "name": "Setnaam",
-    "number": "Setnummer",
-    "year": "Jaar"
+    "firstWorkedOn": "Eerst bewerkt",
+    "nameAZ": "Naam A→Z",
+    "nameZA": "Naam Z→A",
+    "numberAsc": "Nummer oplopend",
+    "numberDesc": "Nummer aflopend",
+    "yearNewest": "Nieuwste eerst",
+    "yearOldest": "Oudste eerst"
   },
   "group": {
     "label": "Groeperen op",

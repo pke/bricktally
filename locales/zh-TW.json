@@ -139,8 +139,7 @@
     "backupAll": "備份所有套裝",
     "backupSelected": "備份所選套裝",
     "cancelBackup": "取消備份",
-    "restoreSets": "恢復套裝",
-    "toggleSortDir": "切換排序方向"
+    "restoreSets": "恢復套裝"
   },
   "footer": {
     "tagline": "由 LEGO\u00ae 愛好者在拼搭間隙用 \u2764\ufe0f 製作",
@@ -171,9 +170,13 @@
   "sort": {
     "label": "排序方式",
     "lastWorkedOn": "最近處理",
-    "name": "套裝名稱",
-    "number": "套裝編號",
-    "year": "年份"
+    "firstWorkedOn": "最早處理",
+    "nameAZ": "名稱 A→Z",
+    "nameZA": "名稱 Z→A",
+    "numberAsc": "編號由低到高",
+    "numberDesc": "編號由高到低",
+    "yearNewest": "最新優先",
+    "yearOldest": "最早優先"
   },
   "group": {
     "label": "分組方式",

@@ -139,8 +139,7 @@
     "backupAll": "Sikkerhedskopiér alle sæt",
     "backupSelected": "Sikkerhedskopiér valgte sæt",
     "cancelBackup": "Annullér sikkerhedskopiering",
-    "restoreSets": "Gendan sæt",
-    "toggleSortDir": "Skift sorteringsretning"
+    "restoreSets": "Gendan sæt"
   },
   "footer": {
     "tagline": "Lavet med ❤️ mellem byggesessioner til LEGO® entusiaster",
@@ -171,9 +170,13 @@
   "sort": {
     "label": "Sortér efter",
     "lastWorkedOn": "Sidst arbejdet på",
-    "name": "Sætnavn",
-    "number": "Sætnummer",
-    "year": "År"
+    "firstWorkedOn": "Først arbejdet på",
+    "nameAZ": "Navn A→Z",
+    "nameZA": "Navn Z→A",
+    "numberAsc": "Nummer stigende",
+    "numberDesc": "Nummer faldende",
+    "yearNewest": "Nyeste først",
+    "yearOldest": "Ældste først"
   },
   "group": {
     "label": "Gruppér efter",
