@@ -8,7 +8,8 @@
       "Filter sets by completion status: show only complete, in progress, or not started",
       "Group sets by LEGO theme to see your Star Wars, Technic, and City sets together",
       "Taps no longer double-count on remote desktop or terminal server setups",
-      "The What's New dialog now properly lists changes and dismisses on first tap"
+      "The What's New dialog now properly lists changes and dismisses on first tap",
+      "No more flash of the welcome page when you already have sets saved"
     ]
   },
   {
