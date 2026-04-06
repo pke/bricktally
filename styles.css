@@ -1258,6 +1258,75 @@ body.dark-mode .set-history-item.backup-selected {
   margin-bottom: 10px;
 }
 
+/* Sort/Filter/Group Toolbar */
+.sort-filter-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+  align-items: center;
+}
+
+.sort-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sort-filter-group label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.sort-filter-group select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 14px;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.sort-dir-btn {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 16px;
+  cursor: pointer;
+  line-height: 1;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.sort-dir-btn:hover {
+  border-color: var(--blue);
+}
+
+.theme-group-header {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 16px 0 8px 0;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.theme-group-header:first-child {
+  margin-top: 0;
+}
+
+.set-history-empty-filter {
+  text-align: center;
+  padding: 40px 0;
+  color: var(--text-secondary);
+  font-size: 16px;
+}
+
 /* Backup/Restore Toolbar */
 .backup-restore-toolbar {
   display: flex;

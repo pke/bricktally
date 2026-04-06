@@ -1,6 +1,6 @@
 // BrickTally Service Worker
 // Version: 1
-const CACHE_VERSION = 'v20260405-021234';
+const CACHE_VERSION = 'v20260406-051222';
 const STATIC_CACHE = `bricktally-static-${CACHE_VERSION}`;
 const API_CACHE = `bricktally-api-${CACHE_VERSION}`;
 const IMAGE_CACHE = `bricktally-images-${CACHE_VERSION}`;
@@ -22,7 +22,8 @@ const STATIC_ASSETS = [
     '/js/lottie.min.js',
     '/js/pako.min.js',
     '/changelog',
-    '/changelog.json'
+    '/changelog.json',
+    '/data/themes.json'
 ];
 
 // Install event - precache static assets and activate immediately
@@ -113,6 +114,12 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
+    // Handle changelog.json (Network First) — must be fresh for What's New modal
+    if (url.pathname === '/changelog.json') {
+        event.respondWith(networkFirst(request, STATIC_CACHE));
+        return;
+    }
+
     // Handle static assets (Cache First)
     if (isStaticAsset(url)) {
         event.respondWith(cacheFirst(request, STATIC_CACHE));
@@ -148,8 +155,8 @@ function isStaticAsset(url) {
         return true;
     }
 
-    // JSON data files
-    if (url.pathname === '/changelog.json') {
+    // JSON data files (excluding changelog.json — served network-first for What's New modal)
+    if (url.pathname === '/data/themes.json') {
         return true;
     }
 

@@ -155,7 +155,7 @@ if (existsSync(enIndex)) {
 
 // Copy static assets
 const assetsToCopy = ['styles.css', 'sw.js', 'changelog.html', 'changelog.json'];
-const dirsToCopy = ['js', 'assets', 'locales'];
+const dirsToCopy = ['js', 'assets', 'locales', 'data'];
 
 assetsToCopy.forEach(function(file) {
     const src = join(ROOT, file);

@@ -191,6 +191,34 @@
                     <button id="backupSelectedBtn" onclick="executeBackupAll()" class="backup-selected-btn" title="Backup selected sets" data-i18n="button.backupSelected;[title]tooltip.backupSelected">📤 Backup Selected</button>
                     <button id="cancelBackupBtn" onclick="cancelBackupAll()" class="cancel-backup-btn" title="Cancel backup" data-i18n="button.cancel;[title]tooltip.cancelBackup">Cancel</button>
                 </div>
+                <div class="sort-filter-toolbar" id="sortFilterToolbar">
+                    <div class="sort-filter-group">
+                        <label for="sortSelect" data-i18n="sort.label">Sort by</label>
+                        <select id="sortSelect" onchange="onSortFilterChange()">
+                            <option value="lastAccessed" data-i18n="sort.lastWorkedOn">Last worked on</option>
+                            <option value="name" data-i18n="sort.name">Set name</option>
+                            <option value="number" data-i18n="sort.number">Set number</option>
+                            <option value="year" data-i18n="sort.year">Year</option>
+                        </select>
+                        <button id="sortDirBtn" class="sort-dir-btn" onclick="toggleSortDirection()" title="Toggle sort direction" data-i18n="[title]tooltip.toggleSortDir">▼</button>
+                    </div>
+                    <div class="sort-filter-group">
+                        <label for="filterSelect" data-i18n="filter.label">Filter</label>
+                        <select id="filterSelect" onchange="onSortFilterChange()">
+                            <option value="all" data-i18n="filter.allSets">All sets</option>
+                            <option value="complete" data-i18n="filter.complete">Complete</option>
+                            <option value="inProgress" data-i18n="filter.inProgress">In Progress</option>
+                            <option value="notStarted" data-i18n="filter.notStarted">Not Started</option>
+                        </select>
+                    </div>
+                    <div class="sort-filter-group">
+                        <label for="groupSelect" data-i18n="group.label">Group by</label>
+                        <select id="groupSelect" onchange="onSortFilterChange()">
+                            <option value="none" data-i18n="group.none">None</option>
+                            <option value="theme" data-i18n="group.theme">Theme</option>
+                        </select>
+                    </div>
+                </div>
                 <div id="setHistoryList" class="set-history-list"></div>
                 <div id="setHistoryEmpty" class="set-history-empty hide">
                     <p data-i18n="history.noSets">No sets worked on yet</p>
@@ -326,12 +354,7 @@
         // Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-                var versionEl = document.getElementById('versionInfo');
-                var currentVersion = null;
-                if (versionEl) {
-                    var versionMatch = versionEl.textContent.match(/v([\d.]+)/);
-                    if (versionMatch) currentVersion = versionMatch[1];
-                }
+                var currentVersion = getCurrentAppVersion();
 
                 // First visit: store version, no modal
                 var lastSeen = localStorage.getItem('lastSeenVersion');
@@ -349,14 +372,20 @@
             });
         }
 
+        function getCurrentAppVersion() {
+            var el = document.getElementById('versionInfo');
+            if (!el) return null;
+            var m = el.textContent.match(/v([\d.]+)/);
+            return m ? m[1] : null;
+        }
+
         function showWhatsNewModal() {
+            var appVersion = getCurrentAppVersion();
             fetch('/changelog.json?_=' + Date.now())
                 .then(function(response) { return response.json(); })
                 .then(function(changelog) {
                     var lastSeen = localStorage.getItem('lastSeenVersion') || '0.0.0';
-                    // Collect entries from all versions newer than lastSeen
                     var newEntries = [];
-                    var latestVersion = changelog.length > 0 ? changelog[0].version : lastSeen;
 
                     changelog.forEach(function(release) {
                         if (compareVersions(release.version, lastSeen) > 0) {
@@ -364,11 +393,12 @@
                         }
                     });
 
-                    buildWhatsNewModal(latestVersion, newEntries);
+                    // Use the app version (from HTML), not the changelog version,
+                    // so lastSeenVersion is always >= currentVersion after dismiss
+                    buildWhatsNewModal(appVersion, newEntries);
                 })
                 .catch(function() {
-                    // changelog.json unavailable — show simple update prompt
-                    buildWhatsNewModal(null, []);
+                    buildWhatsNewModal(appVersion, []);
                 });
         }
 
@@ -459,6 +489,24 @@
         var currentSetNumber = '';
         var activeColorFilters = [];
         var showCompleteParts = false;
+
+        // Theme map for grouping
+        var themeMap = {};
+        fetch('/data/themes.json').then(function(r) { return r.json(); }).then(function(data) {
+            themeMap = data;
+        }).catch(function() { /* themes unavailable, grouping will show ungrouped */ });
+
+        function getRootThemeName(themeId) {
+            var id = String(themeId);
+            var visited = {};
+            while (id && themeMap[id]) {
+                if (visited[id]) break;
+                visited[id] = true;
+                if (!themeMap[id].parent_id) return themeMap[id].name;
+                id = String(themeMap[id].parent_id);
+            }
+            return themeMap[String(themeId)] ? themeMap[String(themeId)].name : null;
+        }
         var visibleColumns = {
             partNum: false,
             name: false,
@@ -771,8 +819,97 @@
             existing.numParts = setData.num_parts || 0;
             existing.imageUrl = setData.set_img_url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="50" height="50"%3E%3Crect width="50" height="50" fill="%23ddd"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="10" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E';
             existing.lastAccessed = Date.now();
+            if (setData.theme_id) existing.theme_id = setData.theme_id;
             if (!existing.progress) existing.progress = '';
             saveSetData(setNumber, existing);
+        }
+
+        // Backfill theme_ids for sets that don't have one
+        var _backfillRunning = false;
+        function backfillThemeIds(sets) {
+            if (_backfillRunning) return;
+            var missing = sets.filter(function(s) { return !s.theme_id; });
+            if (missing.length === 0) return;
+            _backfillRunning = true;
+            var i = 0;
+            function next() {
+                if (i >= missing.length) {
+                    _backfillRunning = false;
+                    var prefs = getSortFilterPrefs();
+                    if (prefs.group === 'theme') displaySetHistory();
+                    return;
+                }
+                var s = missing[i++];
+                fetch('/api/rebrickable?endpoint=/lego/sets/' + encodeURIComponent(s.fullNumber) + '/')
+                    .then(function(r) { return r.json(); })
+                    .then(function(data) {
+                        if (data && data.theme_id) {
+                            var stored = getSetData(s.fullNumber);
+                            if (stored) {
+                                stored.theme_id = data.theme_id;
+                                saveSetData(s.fullNumber, stored);
+                            }
+                        }
+                    })
+                    .catch(function() { /* skip failed backfill */ })
+                    .then(next);
+            }
+            next();
+        }
+
+        // Sort/filter/group preferences
+        var SORT_DEFAULTS = { lastAccessed: 'desc', name: 'asc', number: 'asc', year: 'desc' };
+
+        function getSortFilterPrefs() {
+            return {
+                sort: localStorage.getItem('pref_sort') || 'lastAccessed',
+                dir: localStorage.getItem('pref_dir') || 'desc',
+                filter: localStorage.getItem('pref_filter') || 'all',
+                group: localStorage.getItem('pref_group') || 'none'
+            };
+        }
+
+        function saveSortFilterPrefs(prefs) {
+            localStorage.setItem('pref_sort', prefs.sort);
+            localStorage.setItem('pref_dir', prefs.dir);
+            localStorage.setItem('pref_filter', prefs.filter);
+            localStorage.setItem('pref_group', prefs.group);
+        }
+
+        function onSortFilterChange() {
+            var oldPrefs = getSortFilterPrefs();
+            var newSort = document.getElementById('sortSelect').value;
+            // Reset direction to sensible default when sort option changes
+            var dir = (newSort !== oldPrefs.sort) ? (SORT_DEFAULTS[newSort] || 'asc') : oldPrefs.dir;
+            var prefs = {
+                sort: newSort,
+                dir: dir,
+                filter: document.getElementById('filterSelect').value,
+                group: document.getElementById('groupSelect').value
+            };
+            document.getElementById('sortDirBtn').textContent = dir === 'asc' ? '▲' : '▼';
+            saveSortFilterPrefs(prefs);
+            displaySetHistory();
+        }
+
+        function toggleSortDirection() {
+            var prefs = getSortFilterPrefs();
+            prefs.dir = prefs.dir === 'asc' ? 'desc' : 'asc';
+            document.getElementById('sortDirBtn').textContent = prefs.dir === 'asc' ? '▲' : '▼';
+            saveSortFilterPrefs(prefs);
+            displaySetHistory();
+        }
+
+        function restoreSortFilterUI() {
+            var prefs = getSortFilterPrefs();
+            var sortSel = document.getElementById('sortSelect');
+            var filterSel = document.getElementById('filterSelect');
+            var groupSel = document.getElementById('groupSelect');
+            var dirBtn = document.getElementById('sortDirBtn');
+            if (sortSel) sortSel.value = prefs.sort;
+            if (filterSel) filterSel.value = prefs.filter;
+            if (groupSel) groupSel.value = prefs.group;
+            if (dirBtn) dirBtn.textContent = prefs.dir === 'asc' ? '▲' : '▼';
         }
 
         function getSetHistory() {
@@ -793,26 +930,113 @@
                 }
             });
 
-            sets.sort(function(a, b) {
-                return (b.lastAccessed || 0) - (a.lastAccessed || 0);
-            });
-
             return sets;
         }
 
+        function sortSets(sets, sortKey, dir) {
+            var mult = dir === 'asc' ? 1 : -1;
+            return sets.slice().sort(function(a, b) {
+                switch (sortKey) {
+                    case 'name':
+                        return mult * (a.name || '').localeCompare(b.name || '');
+                    case 'number':
+                        return mult * (parseInt(a.number, 10) - parseInt(b.number, 10));
+                    case 'year':
+                        return mult * ((a.year || 0) - (b.year || 0));
+                    case 'lastAccessed':
+                    default:
+                        return mult * ((a.lastAccessed || 0) - (b.lastAccessed || 0));
+                }
+            });
+        }
+
+        function filterSets(sets, filterKey) {
+            if (filterKey === 'all') return sets;
+            return sets.filter(function(s) {
+                var prog = calculateProgressFromString(s.numParts || 0, s.progress || '');
+                switch (filterKey) {
+                    case 'complete': return prog.percentage === 100;
+                    case 'inProgress': return prog.percentage > 0 && prog.percentage < 100;
+                    case 'notStarted': return prog.percentage === 0;
+                    default: return true;
+                }
+            });
+        }
+
+        function groupSetsByTheme(sets) {
+            var groups = {};
+            var ungrouped = [];
+            sets.forEach(function(s) {
+                var themeName = s.theme_id ? getRootThemeName(s.theme_id) : null;
+                if (themeName) {
+                    if (!groups[themeName]) groups[themeName] = [];
+                    groups[themeName].push(s);
+                } else {
+                    ungrouped.push(s);
+                }
+            });
+            var sortedNames = Object.keys(groups).sort(function(a, b) {
+                return a.localeCompare(b);
+            });
+            return { names: sortedNames, groups: groups, ungrouped: ungrouped };
+        }
+
+        function createSetHistoryItem(setInfo) {
+            var totalCount = setInfo.numParts || 0;
+            var prog = calculateProgressFromString(totalCount, setInfo.progress || '');
+            var completedCount = prog.completed;
+            var percentage = prog.percentage;
+
+            var item = document.createElement('div');
+            item.className = 'set-history-item';
+            item.setAttribute('data-set-number', setInfo.fullNumber);
+
+            // innerHTML with escapeHtml() via html tagged template to prevent XSS from restored backup data
+            item.innerHTML = html`
+                <img src="${setInfo.imageUrl || ''}" alt="${setInfo.name || ''}" class="set-history-item-image" onerror="handleImageError(this)" onclick="retryImageLoad(this)">
+                <div class="set-history-item-content">
+                    <div class="set-history-item-title">${setInfo.name || ''}</div>
+                    <div class="set-history-item-number">${t('display.setYear', { number: setInfo.number || '', year: String(setInfo.year || '') })}</div>
+                    <div class="set-history-item-stats">${t('display.pieces', { completed: completedCount, total: totalCount })}</div>
+                    <div class="progress-bar" data-percentage="${percentage}%">
+                        <div class="progress-fill" style="width: ${percentage}%;"></div>
+                    </div>
+                </div>
+                <div class="set-history-item-actions">
+                    <button class="backup" onclick="backupSingleSet(event, '${setInfo.fullNumber}')" title="${t('button.backupSet')}">📤</button>
+                    <button class="reset" onclick="resetSetHistory(event, '${setInfo.fullNumber}')" title="${t('button.resetProgress')}">↻</button>
+                    <button class="delete" onclick="deleteSetHistory(event, '${setInfo.fullNumber}')" title="${t('button.deleteSet')}">✕</button>
+                </div>`;
+
+            item.addEventListener('click', function(e) {
+                if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
+                var cb = this.querySelector('input[type="checkbox"]');
+                if (cb) {
+                    cb.checked = !cb.checked;
+                    this.classList.toggle('backup-selected', cb.checked);
+                    return;
+                }
+                document.getElementById('setNumber').value = setInfo.number;
+                loadSetDirect(setInfo.fullNumber);
+            });
+
+            return item;
+        }
+
         function displaySetHistory() {
-            var sets = getSetHistory();
+            var allSets = getSetHistory();
             var historySection = document.getElementById('setHistorySection');
             var historyList = document.getElementById('setHistoryList');
             var historyEmpty = document.getElementById('setHistoryEmpty');
             var backupAllBtn = document.getElementById('backupAllBtn');
             var landing = document.getElementById('landingContent');
+            var sortFilterToolbar = document.getElementById('sortFilterToolbar');
 
-            if (sets.length === 0) {
+            if (allSets.length === 0) {
                 historyList.innerHTML = '';
                 historyEmpty.classList.remove('hide');
                 if (backupAllBtn) backupAllBtn.classList.add('hide');
-                // Show landing content instead of empty set history
+                if (sortFilterToolbar) sortFilterToolbar.style.display = 'none';
                 if (landing) {
                     landing.style.display = '';
                     historySection.classList.add('hide');
@@ -822,58 +1046,56 @@
 
             historyEmpty.classList.add('hide');
             if (backupAllBtn) backupAllBtn.classList.remove('hide');
+            if (sortFilterToolbar) sortFilterToolbar.style.display = '';
             if (landing) landing.style.display = 'none';
             historySection.classList.remove('hide');
             historyList.innerHTML = '';
 
-            sets.forEach(function(setInfo) {
-                // Calculate progress from the consolidated object
-                var totalCount = setInfo.numParts || 0;
-                var prog = calculateProgressFromString(totalCount, setInfo.progress || '');
-                var completedCount = prog.completed;
-                var percentage = prog.percentage;
+            restoreSortFilterUI();
+            var prefs = getSortFilterPrefs();
 
-                // Note: innerHTML used here with app-controlled data only (setInfo from localStorage written by this app)
-                var item = document.createElement('div');
-                item.className = 'set-history-item';
-                item.setAttribute('data-set-number', setInfo.fullNumber);
+            var filtered = filterSets(allSets, prefs.filter);
 
-                // innerHTML with escapeHtml() to prevent XSS from restored backup data
-                item.innerHTML = html`
-                    <img src="${setInfo.imageUrl || ''}" alt="${setInfo.name || ''}" class="set-history-item-image" onerror="handleImageError(this)" onclick="retryImageLoad(this)">
-                    <div class="set-history-item-content">
-                        <div class="set-history-item-title">${setInfo.name || ''}</div>
-                        <div class="set-history-item-number">${t('display.setYear', { number: setInfo.number || '', year: String(setInfo.year || '') })}</div>
-                        <div class="set-history-item-stats">${t('display.pieces', { completed: completedCount, total: totalCount })}</div>
-                        <div class="progress-bar" data-percentage="${percentage}%">
-                            <div class="progress-fill" style="width: ${percentage}%;"></div>
-                        </div>
-                    </div>
-                    <div class="set-history-item-actions">
-                        <button class="backup" onclick="backupSingleSet(event, '${setInfo.fullNumber}')" title="${t('button.backupSet')}">📤</button>
-                        <button class="reset" onclick="resetSetHistory(event, '${setInfo.fullNumber}')" title="${t('button.resetProgress')}">↻</button>
-                        <button class="delete" onclick="deleteSetHistory(event, '${setInfo.fullNumber}')" title="${t('button.deleteSet')}">✕</button>
-                    </div>`;
+            if (filtered.length === 0) {
+                var emptyMsg = document.createElement('div');
+                emptyMsg.className = 'set-history-empty-filter';
+                emptyMsg.textContent = t('filter.noMatch');
+                historyList.appendChild(emptyMsg);
+                return;
+            }
 
-                // Click on row to load set or toggle backup checkbox
-                item.addEventListener('click', function(e) {
-                    // Don't trigger if clicking buttons or checkboxes
-                    if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
+            var sorted = sortSets(filtered, prefs.sort, prefs.dir);
 
-                    // In backup selection mode, toggle checkbox instead of loading set
-                    var cb = this.querySelector('input[type="checkbox"]');
-                    if (cb) {
-                        cb.checked = !cb.checked;
-                        this.classList.toggle('backup-selected', cb.checked);
-                        return;
-                    }
-
-                    document.getElementById('setNumber').value = setInfo.number;
-                    loadSetDirect(setInfo.fullNumber);
+            if (prefs.group === 'theme') {
+                var grouped = groupSetsByTheme(sorted);
+                grouped.names.forEach(function(themeName) {
+                    var header = document.createElement('h3');
+                    header.className = 'theme-group-header';
+                    header.textContent = themeName;
+                    historyList.appendChild(header);
+                    grouped.groups[themeName].forEach(function(setInfo) {
+                        historyList.appendChild(createSetHistoryItem(setInfo));
+                    });
                 });
+                if (grouped.ungrouped.length > 0) {
+                    if (grouped.names.length > 0) {
+                        var otherHeader = document.createElement('h3');
+                        otherHeader.className = 'theme-group-header';
+                        otherHeader.textContent = t('group.other');
+                        historyList.appendChild(otherHeader);
+                    }
+                    grouped.ungrouped.forEach(function(setInfo) {
+                        historyList.appendChild(createSetHistoryItem(setInfo));
+                    });
+                }
+            } else {
+                sorted.forEach(function(setInfo) {
+                    historyList.appendChild(createSetHistoryItem(setInfo));
+                });
+            }
 
-                historyList.appendChild(item);
-            });
+            // Backfill missing theme_ids
+            backfillThemeIds(allSets);
         }
 
         var pendingDeleteSetNumber = null;
@@ -3665,11 +3887,12 @@
                     return;
                 }
             }
-            // Set selected language in dropdown
-            var select = document.getElementById('languageSelect');
-            if (select) {
-                select.value = current;
-            }
+            // Set selected language in dropdown once DOM is ready
+            var selectedLocale = saved || current;
+            document.addEventListener('DOMContentLoaded', function() {
+                var select = document.getElementById('languageSelect');
+                if (select) select.value = selectedLocale;
+            });
         })();
     </script>
 
@@ -3678,7 +3901,7 @@
     <footer class="app-footer">
         <span class="footer-tagline" data-i18n="footer.tagline">Made with ❤️ between building sessions for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.34.1 (90a35d5)</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.35.0 (7dcb429)</a>
         <span class="footer-disclaimer" data-i18n="footer.disclaimer">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise, or endorse this app.</span>
         <div class="language-picker">
             <label data-i18n="languagePicker.label" for="languageSelect">Language</label>
