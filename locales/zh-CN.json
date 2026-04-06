@@ -139,7 +139,8 @@
     "backupAll": "备份所有套装",
     "backupSelected": "备份所选套装",
     "cancelBackup": "取消备份",
-    "restoreSets": "恢复套装"
+    "restoreSets": "恢复套装",
+    "toggleSortDir": "切换排序方向"
   },
   "footer": {
     "tagline": "由 LEGO\u00ae 爱好者在拼搭间隙用 \u2764\ufe0f 制作",
@@ -159,7 +160,26 @@
     "button": "太棒了！"
   },
   "filter": {
-    "all": "全部 ({{count}})"
+    "all": "全部 ({{count}})",
+    "label": "筛选",
+    "allSets": "所有套装",
+    "complete": "已完成",
+    "inProgress": "进行中",
+    "notStarted": "未开始",
+    "noMatch": "没有套装匹配此筛选条件。"
+  },
+  "sort": {
+    "label": "排序方式",
+    "lastWorkedOn": "最近处理",
+    "name": "套装名称",
+    "number": "套装编号",
+    "year": "年份"
+  },
+  "group": {
+    "label": "分组方式",
+    "none": "无",
+    "theme": "主题",
+    "other": "其他"
   },
   "languagePicker": {
     "label": "语言"

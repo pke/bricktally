@@ -139,7 +139,8 @@
     "backupAll": "모든 세트 백업",
     "backupSelected": "선택한 세트 백업",
     "cancelBackup": "백업 취소",
-    "restoreSets": "세트 복원"
+    "restoreSets": "세트 복원",
+    "toggleSortDir": "정렬 방향 전환"
   },
   "footer": {
     "tagline": "LEGO\u00ae 애호가를 위해 조립 세션 사이에 \u2764\ufe0f를 담아 만들었습니다",
@@ -159,7 +160,26 @@
     "button": "멋져요!"
   },
   "filter": {
-    "all": "전체 ({{count}})"
+    "all": "전체 ({{count}})",
+    "label": "필터",
+    "allSets": "모든 세트",
+    "complete": "완료",
+    "inProgress": "진행 중",
+    "notStarted": "시작 안 함",
+    "noMatch": "이 필터와 일치하는 세트가 없습니다."
+  },
+  "sort": {
+    "label": "정렬 기준",
+    "lastWorkedOn": "최근 작업한 순",
+    "name": "세트 이름",
+    "number": "세트 번호",
+    "year": "연도"
+  },
+  "group": {
+    "label": "그룹 기준",
+    "none": "없음",
+    "theme": "테마",
+    "other": "기타"
   },
   "languagePicker": {
     "label": "언어"

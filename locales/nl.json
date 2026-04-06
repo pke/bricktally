@@ -139,7 +139,8 @@
     "backupAll": "Alle sets back-uppen",
     "backupSelected": "Geselecteerde sets back-uppen",
     "cancelBackup": "Back-up annuleren",
-    "restoreSets": "Sets herstellen"
+    "restoreSets": "Sets herstellen",
+    "toggleSortDir": "Sorteerrichting omschakelen"
   },
   "footer": {
     "tagline": "Gemaakt met \u2764\ufe0f tussen bouwsessies door voor LEGO\u00ae liefhebbers",
@@ -159,7 +160,26 @@
     "button": "Geweldig!"
   },
   "filter": {
-    "all": "Alle ({{count}})"
+    "all": "Alle ({{count}})",
+    "label": "Filter",
+    "allSets": "Alle sets",
+    "complete": "Compleet",
+    "inProgress": "In uitvoering",
+    "notStarted": "Niet gestart",
+    "noMatch": "Geen sets komen overeen met dit filter."
+  },
+  "sort": {
+    "label": "Sorteren op",
+    "lastWorkedOn": "Laatst bewerkt",
+    "name": "Setnaam",
+    "number": "Setnummer",
+    "year": "Jaar"
+  },
+  "group": {
+    "label": "Groeperen op",
+    "none": "Geen",
+    "theme": "Thema",
+    "other": "Overig"
   },
   "languagePicker": {
     "label": "Taal"

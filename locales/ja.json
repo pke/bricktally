@@ -139,7 +139,8 @@
     "backupAll": "すべてのセットをバックアップ",
     "backupSelected": "選択したセットをバックアップ",
     "cancelBackup": "バックアップをキャンセル",
-    "restoreSets": "セットを復元"
+    "restoreSets": "セットを復元",
+    "toggleSortDir": "並べ替え方向を切替"
   },
   "footer": {
     "tagline": "LEGO\u00ae愛好家のために、組み立てセッションの合間に\u2764\ufe0fを込めて作りました",
@@ -159,7 +160,26 @@
     "button": "すごい！"
   },
   "filter": {
-    "all": "すべて ({{count}})"
+    "all": "すべて ({{count}})",
+    "label": "フィルター",
+    "allSets": "すべてのセット",
+    "complete": "完了",
+    "inProgress": "進行中",
+    "notStarted": "未着手",
+    "noMatch": "このフィルターに一致するセットはありません。"
+  },
+  "sort": {
+    "label": "並べ替え",
+    "lastWorkedOn": "最終作業日",
+    "name": "セット名",
+    "number": "セット番号",
+    "year": "年"
+  },
+  "group": {
+    "label": "グループ化",
+    "none": "なし",
+    "theme": "テーマ",
+    "other": "その他"
   },
   "languagePicker": {
     "label": "言語"

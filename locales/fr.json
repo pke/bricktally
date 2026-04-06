@@ -139,7 +139,8 @@
     "backupAll": "Sauvegarder tous les sets",
     "backupSelected": "Sauvegarder les sets s\u00e9lectionn\u00e9s",
     "cancelBackup": "Annuler la sauvegarde",
-    "restoreSets": "Restaurer des sets"
+    "restoreSets": "Restaurer des sets",
+    "toggleSortDir": "Inverser le sens du tri"
   },
   "footer": {
     "tagline": "Fait avec \u2764\ufe0f entre les sessions de construction pour les passionn\u00e9s de LEGO\u00ae",
@@ -159,7 +160,26 @@
     "button": "G\u00e9nial\u00a0!"
   },
   "filter": {
-    "all": "Tous ({{count}})"
+    "all": "Tous ({{count}})",
+    "label": "Filtrer",
+    "allSets": "Tous les sets",
+    "complete": "Complets",
+    "inProgress": "En cours",
+    "notStarted": "Non commencés",
+    "noMatch": "Aucun set ne correspond à ce filtre."
+  },
+  "sort": {
+    "label": "Trier par",
+    "lastWorkedOn": "Dernier travaillé",
+    "name": "Nom du set",
+    "number": "Numéro du set",
+    "year": "Année"
+  },
+  "group": {
+    "label": "Grouper par",
+    "none": "Aucun",
+    "theme": "Thème",
+    "other": "Autre"
   },
   "languagePicker": {
     "label": "Langue"

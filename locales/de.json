@@ -139,7 +139,8 @@
     "backupAll": "Alle Sets sichern",
     "backupSelected": "Ausgew\u00e4hlte Sets sichern",
     "cancelBackup": "Sicherung abbrechen",
-    "restoreSets": "Sets wiederherstellen"
+    "restoreSets": "Sets wiederherstellen",
+    "toggleSortDir": "Sortierrichtung umschalten"
   },
   "footer": {
     "tagline": "Mit \u2764\ufe0f zwischen Bausitzungen f\u00fcr LEGO\u00ae-Fans gemacht",
@@ -159,7 +160,26 @@
     "button": "Super!"
   },
   "filter": {
-    "all": "Alle ({{count}})"
+    "all": "Alle ({{count}})",
+    "label": "Filter",
+    "allSets": "Alle Sets",
+    "complete": "Vollständig",
+    "inProgress": "In Bearbeitung",
+    "notStarted": "Nicht begonnen",
+    "noMatch": "Keine Sets entsprechen diesem Filter."
+  },
+  "sort": {
+    "label": "Sortieren nach",
+    "lastWorkedOn": "Zuletzt bearbeitet",
+    "name": "Set-Name",
+    "number": "Set-Nummer",
+    "year": "Jahr"
+  },
+  "group": {
+    "label": "Gruppieren nach",
+    "none": "Keine",
+    "theme": "Thema",
+    "other": "Sonstige"
   },
   "languagePicker": {
     "label": "Sprache"
