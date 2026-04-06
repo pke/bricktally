@@ -165,7 +165,8 @@
     "complete": "Completos",
     "inProgress": "En progreso",
     "notStarted": "No iniciados",
-    "noMatch": "Ningún set coincide con este filtro."
+    "noMatch": "Ningún set coincide con el filtro \"{{filter}}\".",
+    "showAll": "Mostrar todos los sets"
   },
   "sort": {
     "label": "Ordenar por",

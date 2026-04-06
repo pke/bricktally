@@ -165,7 +165,8 @@
     "complete": "완료",
     "inProgress": "진행 중",
     "notStarted": "시작 안 함",
-    "noMatch": "이 필터와 일치하는 세트가 없습니다."
+    "noMatch": "필터 \"{{filter}}\"와(과) 일치하는 세트가 없습니다.",
+    "showAll": "모든 세트 표시"
   },
   "sort": {
     "label": "정렬 기준",

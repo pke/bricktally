@@ -165,7 +165,8 @@
     "complete": "Komplette",
     "inProgress": "I gang",
     "notStarted": "Ikke startet",
-    "noMatch": "Ingen sæt matcher dette filter."
+    "noMatch": "Ingen sæt matcher filteret \"{{filter}}\".",
+    "showAll": "Vis alle sæt"
   },
   "sort": {
     "label": "Sortér efter",

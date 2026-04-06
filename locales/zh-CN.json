@@ -165,7 +165,8 @@
     "complete": "已完成",
     "inProgress": "进行中",
     "notStarted": "未开始",
-    "noMatch": "没有套装匹配此筛选条件。"
+    "noMatch": "没有套装匹配筛选条件「{{filter}}」。",
+    "showAll": "显示所有套装"
   },
   "sort": {
     "label": "排序方式",
