@@ -2342,9 +2342,9 @@ body.verify-page {
 }
 
 .app-footer {
-  padding: 4px 12px;
+  padding: 8px 12px;
   background: var(--bg-secondary);
-  font-size: 11px;
+  font-size: 14px;
   color: var(--text-secondary);
   text-align: center;
   z-index: 100;
@@ -2365,9 +2365,9 @@ body.verify-page {
 
 .footer-disclaimer {
   display: block;
-  font-size: 9px;
+  font-size: 12px;
   opacity: 0.7;
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .footer-version-link:hover {
