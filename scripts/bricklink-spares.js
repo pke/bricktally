@@ -11,6 +11,7 @@
 import { readFileSync } from 'fs';
 import { resolve, dirname, join } from 'path';
 import { fileURLToPath } from 'url';
+import { execFileSync } from 'node:child_process';
 import { chromium } from 'playwright-core';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -25,9 +26,11 @@ function getApiKey() {
     return match[1].trim();
 }
 
-const setArg = process.argv[2];
+const args = process.argv.slice(2);
+const noOpen = args.includes('--no-open');
+const setArg = args.find((a) => !a.startsWith('--'));
 if (!setArg) {
-    console.error('Usage: node scripts/bricklink-spares.js <setNumber>');
+    console.error('Usage: node scripts/bricklink-spares.js <setNumber> [--no-open]');
     process.exit(1);
 }
 const fullNumber = setArg.includes('-') ? setArg : setArg + '-1';
@@ -162,17 +165,18 @@ for (const item of extras) {
     });
 }
 
-console.log('Rebrickable inventory change request for set ' + fullNumber);
-console.log('='.repeat(60));
-console.log('Change type: Add spare parts (Is Spare = yes)');
-console.log('Source: BrickLink confirmed inventory (sealed set contents),');
-console.log('        https://www.bricklink.com/catalogItemInv.asp?S=' + fullNumber);
-console.log('');
-console.log('Qty | Part      | Color (RB id)        | Name');
-console.log('----|-----------|----------------------|-----------------------------');
+const out = [];
+out.push('Rebrickable inventory change request for set ' + fullNumber);
+out.push('='.repeat(60));
+out.push('Change type: Add spare parts (Is Spare = yes)');
+out.push('Source: BrickLink confirmed inventory (sealed set contents),');
+out.push('        https://www.bricklink.com/catalogItemInv.asp?S=' + fullNumber);
+out.push('');
+out.push('Qty | Part      | Color (RB id)        | Name');
+out.push('----|-----------|----------------------|-----------------------------');
 for (const l of lines) {
     const flag = l.already ? '  [already in inventory as spare]' : '';
-    console.log(
+    out.push(
         String(l.quantity).padStart(3) + ' | ' +
         l.partNum.padEnd(9) + ' | ' +
         (l.colorName + ' (' + l.colorId + ')').padEnd(20) + ' | ' +
@@ -180,9 +184,29 @@ for (const l of lines) {
     );
 }
 if (unmapped.length > 0) {
-    console.log('\nCould not map automatically (add manually):');
+    out.push('');
+    out.push('Could not map automatically (add manually):');
     for (const u of unmapped) {
-        console.log('  ' + u.quantity + 'x BrickLink ' + u.blPartNo + ' (BL color ' + u.blColorId + ') — ' + u.description);
+        out.push('  ' + u.quantity + 'x BrickLink ' + u.blPartNo + ' (BL color ' + u.blColorId + ') — ' + u.description);
     }
 }
-console.log('\nSubmit at: https://rebrickable.com/sets/' + fullNumber + '/#parts → Inventory → Change Requests');
+
+const report = out.join('\n');
+const inventoryUrl = 'https://rebrickable.com/inventory/' + fullNumber + '/parts/';
+console.log(report);
+console.log('\nSubmit at: ' + inventoryUrl + ' → Change Requests');
+
+// Convenience on macOS: put the report on the clipboard and open the
+// inventory page so submitting is just paste-and-send
+if (process.platform === 'darwin') {
+    try {
+        execFileSync('pbcopy', { input: report });
+        console.error('\n✓ Report copied to clipboard');
+        if (!noOpen) {
+            execFileSync('open', [inventoryUrl]);
+            console.error('✓ Opening ' + inventoryUrl);
+        }
+    } catch (e) {
+        // Clipboard/browser are conveniences — the report is already printed
+    }
+}
