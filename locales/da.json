@@ -81,6 +81,9 @@
     "title": "Noter",
     "placeholder": "Tilføj noter om dette sæt — stand, manglende dele, opbevaringssted…"
   },
+  "spares": {
+    "missingLink": "🧩 Mangler reservedele?"
+  },
   "modal": {
     "restoreTitle": "Gendan sæt",
     "deleteTitle": "Slet sæt?",

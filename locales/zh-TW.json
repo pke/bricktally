@@ -81,6 +81,9 @@
     "title": "備註",
     "placeholder": "新增關於此套裝的備註 — 狀態、缺少零件、存放位置……"
   },
+  "spares": {
+    "missingLink": "🧩 缺少備用零件？"
+  },
   "modal": {
     "restoreTitle": "恢復套裝",
     "deleteTitle": "刪除套裝？",

@@ -81,6 +81,9 @@
     "title": "Notities",
     "placeholder": "Voeg notities toe over deze set — staat, ontbrekende onderdelen, opbergplek…"
   },
+  "spares": {
+    "missingLink": "🧩 Ontbrekende reserveonderdelen?"
+  },
   "modal": {
     "restoreTitle": "Sets herstellen",
     "deleteTitle": "Set verwijderen?",

@@ -335,6 +335,10 @@
             </div>
 
             <div id="spareTableContainer"></div>
+
+            <div id="missingSparesHint" class="missing-spares-hint hide">
+                <a id="missingSparesLink" href="#" data-i18n="spares.missingLink">🧩 Missing spare parts?</a>
+            </div>
         </div>
     </main>
 
@@ -1593,7 +1597,7 @@
 
             // Hide all set-related UI sections
             hide('setInfo', 'statsSection', 'filterSection', 'tableContainer', 'resetButton',
-                 'partsSection', 'minifigSection', 'sparePartsSection');
+                 'partsSection', 'minifigSection', 'sparePartsSection', 'missingSparesHint');
 
             // Clear and hide spare table container
             var spareTableContainer = document.getElementById('spareTableContainer');
@@ -2733,6 +2737,22 @@
             updateColumnToggles();
         }
 
+        // Shown when a loaded set has no spare parts in Rebrickable's data, so
+        // users can report sets whose physical box does include spares
+        function updateMissingSparesHint(visible) {
+            var hint = document.getElementById('missingSparesHint');
+            if (!visible || !currentSetNumber) {
+                hint.classList.add('hide');
+                return;
+            }
+            var data = getSetData(currentSetNumber);
+            var subject = 'Set ' + currentSetNumber + ': missing spare parts';
+            var body = 'Set: ' + currentSetNumber + (data && data.name ? ' — ' + data.name : '');
+            document.getElementById('missingSparesLink').href =
+                'mailto:bricktally@dudesoft.app?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+            hint.classList.remove('hide');
+        }
+
         function renderSparePartsTable() {
             var spareParts = partsData.filter(function(part) {
                 return part.isSpare;
@@ -2741,8 +2761,10 @@
             if (spareParts.length === 0) {
                 hide('sparePartsSection');
                 document.getElementById('spareTableContainer').style.display = 'none';
+                updateMissingSparesHint(true);
                 return;
             }
+            updateMissingSparesHint(false);
 
             var htmlStr = '<table><tbody>';
 
@@ -3987,7 +4009,7 @@
     <footer class="app-footer">
         <span class="footer-tagline" data-i18n="footer.tagline">Made with ❤️ between building sessions for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.40.0 (b7f1457)</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.41.0 (5b9b8ec)</a>
         <span class="footer-disclaimer" data-i18n="footer.disclaimer">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise, or endorse this app.</span>
         <div class="language-picker">
             <label data-i18n="languagePicker.label" for="languageSelect">Language</label>

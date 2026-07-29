@@ -1243,6 +1243,21 @@ body.dark-mode .set-history-item.backup-selected {
   margin: 0;
 }
 
+.missing-spares-hint {
+  text-align: center;
+  margin: 10px 0 25px;
+  font-size: 14px;
+}
+
+.missing-spares-hint a {
+  color: var(--text-secondary);
+  text-decoration: underline;
+}
+
+.missing-spares-hint a:hover {
+  color: var(--text-primary);
+}
+
 .set-history-item-notes {
   font-size: 13px;
   color: var(--text-secondary);

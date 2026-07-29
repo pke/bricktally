@@ -81,6 +81,9 @@
     "title": "메모",
     "placeholder": "이 세트에 대한 메모 — 상태, 누락된 부품, 보관 위치 등…"
   },
+  "spares": {
+    "missingLink": "🧩 여분 부품이 없나요?"
+  },
   "modal": {
     "restoreTitle": "세트 복원",
     "deleteTitle": "세트를 삭제하시겠습니까?",

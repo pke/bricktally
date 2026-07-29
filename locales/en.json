@@ -81,6 +81,9 @@
     "title": "Notes",
     "placeholder": "Add notes about this set — condition, missing parts, where it's stored…"
   },
+  "spares": {
+    "missingLink": "🧩 Missing spare parts?"
+  },
   "modal": {
     "restoreTitle": "Restore Sets",
     "deleteTitle": "Delete Set?",

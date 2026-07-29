@@ -81,6 +81,9 @@
     "title": "メモ",
     "placeholder": "このセットについてのメモ — 状態、不足パーツ、保管場所など…"
   },
+  "spares": {
+    "missingLink": "🧩 予備パーツが表示されない？"
+  },
   "modal": {
     "restoreTitle": "セットを復元",
     "deleteTitle": "セットを削除しますか？",

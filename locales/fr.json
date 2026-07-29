@@ -81,6 +81,9 @@
     "title": "Notes",
     "placeholder": "Ajoutez des notes sur ce set — état, pièces manquantes, lieu de rangement…"
   },
+  "spares": {
+    "missingLink": "🧩 Pièces de rechange manquantes ?"
+  },
   "modal": {
     "restoreTitle": "Restaurer des sets",
     "deleteTitle": "Supprimer le set\u00a0?",

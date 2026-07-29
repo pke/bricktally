@@ -81,6 +81,9 @@
     "title": "Notizen",
     "placeholder": "Notizen zu diesem Set — Zustand, fehlende Teile, Aufbewahrungsort…"
   },
+  "spares": {
+    "missingLink": "🧩 Fehlende Ersatzteile?"
+  },
   "modal": {
     "restoreTitle": "Sets wiederherstellen",
     "deleteTitle": "Set l\u00f6schen?",
