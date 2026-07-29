@@ -3,6 +3,7 @@
 import { existsSync, readFileSync, writeFileSync, mkdirSync, rmSync, copyFileSync, cpSync } from 'fs';
 import { resolve as pathResolve, join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { execFileSync } from 'node:child_process';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -18,7 +19,25 @@ if (existsSync(DIST)) {
 mkdirSync(DIST, { recursive: true });
 
 // Read template
-const template = readFileSync(join(ROOT, 'index.html'), 'utf8');
+let template = readFileSync(join(ROOT, 'index.html'), 'utf8');
+
+// Stamp the deployed commit hash into the footer version link. The post-commit
+// hook stamps only the version — a commit cannot contain its own hash — so the
+// hash is added here at build time, when HEAD is final.
+let commitSha = (process.env.VERCEL_GIT_COMMIT_SHA || '').slice(0, 7);
+if (!commitSha) {
+    try {
+        commitSha = execFileSync('git', ['rev-parse', '--short', 'HEAD'], { cwd: ROOT }).toString().trim();
+    } catch (e) {
+        commitSha = ''; // no git available — leave the footer as committed
+    }
+}
+if (commitSha) {
+    template = template.replace(
+        /(id="versionInfo"[^>]*>v[\d.]+)(?: \([^)]*\))?(?=<)/,
+        '$1 (' + commitSha + ')'
+    );
+}
 
 // Helper: resolve nested key like "landing.heading" from translations object
 function resolveKey(obj, keyPath) {

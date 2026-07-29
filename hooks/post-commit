@@ -86,10 +86,11 @@ echo "[post-commit] Bumping version: $CURRENT_VERSION -> $NEW_VERSION ($BUMP_TYP
 sed -i.bak "s/\"version\": \"$CURRENT_VERSION\"/\"version\": \"$NEW_VERSION\"/" package.json
 rm -f package.json.bak
 
-# Update version in index.html
-GIT_HASH=$(git rev-parse --short HEAD)
+# Update version in index.html. Only the version is stamped here — a commit
+# cannot contain its own hash (amending would change it again), so the commit
+# hash is injected at build time by scripts/build-i18n.js instead.
 if [ -f "index.html" ]; then
-  sed -i.bak "s|id=\"versionInfo\"[^>]*>v[^<]*</|id=\"versionInfo\" class=\"footer-version-link\">v${NEW_VERSION} (${GIT_HASH})</|" "index.html"
+  sed -i.bak "s|id=\"versionInfo\"[^>]*>v[^<]*</|id=\"versionInfo\" class=\"footer-version-link\">v${NEW_VERSION}</|" "index.html"
   rm -f "index.html.bak"
 fi
 
