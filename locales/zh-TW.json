@@ -77,6 +77,10 @@
     "noSets": "尚無已處理的套裝",
     "getStarted": "在上方輸入套裝編號開始使用"
   },
+  "notes": {
+    "title": "備註",
+    "placeholder": "新增關於此套裝的備註 — 狀態、缺少零件、存放位置……"
+  },
   "modal": {
     "restoreTitle": "恢復套裝",
     "deleteTitle": "刪除套裝？",

@@ -77,6 +77,10 @@
     "noSets": "Noch keine Sets bearbeitet",
     "getStarted": "Gib oben eine Set-Nummer ein, um loszulegen"
   },
+  "notes": {
+    "title": "Notizen",
+    "placeholder": "Notizen zu diesem Set — Zustand, fehlende Teile, Aufbewahrungsort…"
+  },
   "modal": {
     "restoreTitle": "Sets wiederherstellen",
     "deleteTitle": "Set l\u00f6schen?",

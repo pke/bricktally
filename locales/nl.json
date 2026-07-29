@@ -77,6 +77,10 @@
     "noSets": "Nog geen sets bewerkt",
     "getStarted": "Voer hierboven een setnummer in om te beginnen"
   },
+  "notes": {
+    "title": "Notities",
+    "placeholder": "Voeg notities toe over deze set — staat, ontbrekende onderdelen, opbergplek…"
+  },
   "modal": {
     "restoreTitle": "Sets herstellen",
     "deleteTitle": "Set verwijderen?",

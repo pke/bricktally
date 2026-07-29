@@ -77,6 +77,10 @@
     "noSets": "Ingen sæt arbejdet på endnu",
     "getStarted": "Indtast et sætnummer ovenfor for at komme i gang"
   },
+  "notes": {
+    "title": "Noter",
+    "placeholder": "Tilføj noter om dette sæt — stand, manglende dele, opbevaringssted…"
+  },
   "modal": {
     "restoreTitle": "Gendan sæt",
     "deleteTitle": "Slet sæt?",

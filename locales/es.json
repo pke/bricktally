@@ -77,6 +77,10 @@
     "noSets": "A\u00fan no se ha trabajado en ning\u00fan set",
     "getStarted": "Introduce un n\u00famero de set arriba para empezar"
   },
+  "notes": {
+    "title": "Notas",
+    "placeholder": "Añade notas sobre este set: estado, piezas que faltan, dónde está guardado…"
+  },
   "modal": {
     "restoreTitle": "Restaurar sets",
     "deleteTitle": "\u00bfEliminar set?",

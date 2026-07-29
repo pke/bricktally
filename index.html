@@ -123,6 +123,10 @@
                                 </div>
                             </div>
                         </div>
+                        <details id="setNotesSection" class="set-notes">
+                            <summary>📝 <span data-i18n="notes.title">Notes</span></summary>
+                            <textarea id="setNotesInput" class="set-notes-input" rows="3" maxlength="2000" oninput="scheduleNotesSave()" onchange="saveSetNotes()" placeholder="Add notes about this set — condition, missing parts, where it's stored…" aria-label="Notes" data-i18n="[placeholder]notes.placeholder;[aria-label]notes.title"></textarea>
+                        </details>
                     </div>
                 </div>
             </div>
@@ -841,6 +845,31 @@
             saveSetData(setNumber, existing);
         }
 
+        var notesSaveTimer = null;
+
+        window.scheduleNotesSave = function() {
+            clearTimeout(notesSaveTimer);
+            notesSaveTimer = setTimeout(saveSetNotes, 500);
+        };
+
+        window.saveSetNotes = function() {
+            clearTimeout(notesSaveTimer);
+            if (!currentSetNumber) return;
+            var data = getSetData(currentSetNumber);
+            if (!data) return;
+            var value = document.getElementById('setNotesInput').value.trim();
+            if (value) data.notes = value;
+            else delete data.notes;
+            saveSetData(currentSetNumber, data);
+        };
+
+        function populateSetNotes(fullNumber) {
+            var data = getSetData(fullNumber);
+            var input = document.getElementById('setNotesInput');
+            input.value = (data && data.notes) || '';
+            document.getElementById('setNotesSection').open = !!input.value;
+        }
+
         // Backfill theme_ids for sets that don't have one
         var _backfillRunning = false;
         function backfillThemeIds(sets) {
@@ -1019,6 +1048,8 @@
             item.className = 'set-history-item';
             item.setAttribute('data-set-number', setInfo.fullNumber);
 
+            var notesHtml = setInfo.notes ? html`<div class="set-history-item-notes" title="${setInfo.notes}">📝 ${setInfo.notes}</div>` : '';
+
             // innerHTML with escapeHtml() via html tagged template to prevent XSS from restored backup data
             item.innerHTML = html`
                 <img src="${setInfo.imageUrl || ''}" alt="${setInfo.name || ''}" class="set-history-item-image" onerror="handleImageError(this)" onclick="retryImageLoad(this)">
@@ -1029,6 +1060,7 @@
                     <div class="progress-bar" data-percentage="${percentage}%">
                         <div class="progress-fill" style="width: ${percentage}%;"></div>
                     </div>
+                    ${html.raw(notesHtml)}
                 </div>
                 <div class="set-history-item-actions">
                     <button class="backup" onclick="backupSingleSet(event, '${setInfo.fullNumber}')" title="${t('button.backupSet')}">📤</button>
@@ -1304,6 +1336,7 @@
                         lastAccessed: data.lastAccessed
                     },
                     progress: progress,
+                    notes: data.notes || '',
                     lastWorkedOn: data.lastAccessed || 0
                 });
             });
@@ -1496,6 +1529,14 @@
                     progress: restoreSet.progress || ''
                 };
 
+                // Restore notes from the backup; keep local notes when the
+                // backup predates the notes feature (no notes field at all)
+                if (restoreSet.notes !== undefined) {
+                    if (restoreSet.notes) consolidated.notes = restoreSet.notes;
+                } else if (localData && localData.notes) {
+                    consolidated.notes = localData.notes;
+                }
+
                 saveSetData(restoreSet.fullNumber, consolidated);
             });
 
@@ -1537,6 +1578,9 @@
         }
 
         function goToSetHistory() {
+            // Flush any pending notes edit before the current set is cleared
+            saveSetNotes();
+
             // Clear current set
             currentSetNumber = '';
             localStorage.removeItem('currentSetNumber');
@@ -2506,6 +2550,8 @@
 
             // Save set info for set history
             saveSetInfo(currentSetNumber, setData);
+
+            populateSetNotes(currentSetNumber);
 
             show('setInfo');
         }
@@ -3941,7 +3987,7 @@
     <footer class="app-footer">
         <span class="footer-tagline" data-i18n="footer.tagline">Made with ❤️ between building sessions for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.39.1 (6feb0a9)</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.40.0 (b7f1457)</a>
         <span class="footer-disclaimer" data-i18n="footer.disclaimer">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise, or endorse this app.</span>
         <div class="language-picker">
             <label data-i18n="languagePicker.label" for="languageSelect">Language</label>

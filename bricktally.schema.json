@@ -73,6 +73,10 @@
             "type": "string",
             "description": "Compressed progress string (partKey:qty pairs, comma-separated)"
           },
+          "notes": {
+            "type": "string",
+            "description": "Free-form user notes about the set"
+          },
           "lastWorkedOn": {
             "type": "number",
             "description": "Timestamp of when the set was last worked on (milliseconds since epoch)"

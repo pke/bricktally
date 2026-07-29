@@ -505,6 +505,36 @@ button.filter.active {
   margin: 10px 0;
 }
 
+.set-notes {
+  margin-top: 12px;
+}
+
+.set-notes summary {
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-secondary);
+  user-select: none;
+}
+
+.set-notes-input {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px 10px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+  resize: vertical;
+}
+
+.set-notes-input:focus {
+  outline: none;
+  border-color: var(--blue);
+}
+
 .collapsed-header {
   position: fixed;
   top: 0;
@@ -1211,6 +1241,15 @@ body.dark-mode .set-history-item.backup-selected {
 .set-history-item .progress-bar {
   height: 20px;
   margin: 0;
+}
+
+.set-history-item-notes {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .set-history-item-actions {

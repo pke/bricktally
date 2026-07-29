@@ -77,6 +77,10 @@
     "noSets": "No sets worked on yet",
     "getStarted": "Enter a set number above to get started"
   },
+  "notes": {
+    "title": "Notes",
+    "placeholder": "Add notes about this set — condition, missing parts, where it's stored…"
+  },
   "modal": {
     "restoreTitle": "Restore Sets",
     "deleteTitle": "Delete Set?",

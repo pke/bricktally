@@ -77,6 +77,10 @@
     "noSets": "Aucun set trait\u00e9 pour l'instant",
     "getStarted": "Entrez un num\u00e9ro de set ci-dessus pour commencer"
   },
+  "notes": {
+    "title": "Notes",
+    "placeholder": "Ajoutez des notes sur ce set — état, pièces manquantes, lieu de rangement…"
+  },
   "modal": {
     "restoreTitle": "Restaurer des sets",
     "deleteTitle": "Supprimer le set\u00a0?",
