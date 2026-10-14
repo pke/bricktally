@@ -3851,6 +3851,12 @@
             alert(t('export.brickLinkInstructions'));
         }
 
+        // Quote a CSV field when needed (RFC 4180: double any embedded quotes)
+        function csvField(value) {
+            var str = String(value);
+            return /[",\r\n]/.test(str) ? '"' + str.replace(/"/g, '""') + '"' : str;
+        }
+
         function exportToPickABrick() {
             if (!currentSetNumber) {
                 alert(t('error.noSetLoaded'));
@@ -3895,7 +3901,7 @@
             missingParts.forEach(function (part) {
                 // Pick a Brick uses Design ID (same as part number) and Element ID (part+color combination)
                 // Since we don't have Element IDs from Rebrickable, we'll use the part number
-                csv += ',' + part.partNum + ',' + part.color + ',' + part.quantity + ',"' + part.name + '"\n';
+                csv += ',' + csvField(part.partNum) + ',' + csvField(part.color) + ',' + part.quantity + ',"' + String(part.name).replace(/"/g, '""') + '"\n';
             });
 
             // Create download
@@ -4165,7 +4171,7 @@
     <footer class="app-footer">
         <span class="footer-tagline" data-i18n="footer.tagline">Made with ❤️ between building sessions for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.41.13</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.41.14</a>
         <span class="footer-disclaimer" data-i18n="footer.disclaimer">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise, or endorse this app.</span>
         <div class="language-picker">
             <label data-i18n="languagePicker.label" for="languageSelect">Language</label>
