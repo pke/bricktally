@@ -602,4 +602,21 @@ test.describe('Category 23: Column Toggles', () => {
     await page.locator('#columnsFilterSection .column-toggle[data-column="color"]').click();
     for (const toggle of await toggles('Farbe').all()) await expect(toggle).not.toHaveClass(/active/);
   });
+
+  test('23.2: Corrupt saved column preferences do not break startup', async ({ page }) => {
+    await mockAPIForSet(page, mockSets['TEST-001']);
+    const errors = [];
+    page.on('pageerror', err => errors.push(err.message));
+    await page.addInitScript(() => localStorage.setItem('visibleColumns', '{not json'));
+
+    // The deep link is handled late in startup, after column preferences load
+    await page.goto('/?set=99001-1');
+
+    await expect(page.locator('#setInfo')).toBeVisible();
+    expect(errors).toEqual([]);
+    for (const toggle of await page.locator('.column-toggle').all()) {
+      await expect(toggle).not.toHaveClass(/active/);
+    }
+  });
 });
+

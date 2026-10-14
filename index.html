@@ -1738,7 +1738,15 @@
             // Load column preferences
             var savedColumns = localStorage.getItem('visibleColumns');
             if (savedColumns) {
-                visibleColumns = JSON.parse(savedColumns);
+                try {
+                    var parsedColumns = JSON.parse(savedColumns);
+                    if (parsedColumns && typeof parsedColumns === 'object') {
+                        visibleColumns = parsedColumns;
+                    }
+                } catch (e) {
+                    // Corrupt preference: drop it and keep the defaults
+                    localStorage.removeItem('visibleColumns');
+                }
                 updateColumnToggles();
             }
 
@@ -4157,7 +4165,7 @@
     <footer class="app-footer">
         <span class="footer-tagline" data-i18n="footer.tagline">Made with ❤️ between building sessions for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.41.12</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.41.13</a>
         <span class="footer-disclaimer" data-i18n="footer.disclaimer">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise, or endorse this app.</span>
         <div class="language-picker">
             <label data-i18n="languagePicker.label" for="languageSelect">Language</label>
