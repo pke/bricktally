@@ -1,5 +1,19 @@
 [
   {
+    "version": "1.41.20",
+    "date": "2026-10-14",
+    "title": "Squashing Bugs Brick by Brick",
+    "entries": [
+      "Twin minifigures now count properly — one tap marks both, and the set can finally reach 100%",
+      "Your set history shows the same progress as the set itself, spares no longer drag a finished set below 100%",
+      "Switching quickly between sets can no longer mix up their progress",
+      "BrickTally starts reliably offline and keeps part images for when the Wi-Fi gives up",
+      "Shared set links survive the jump to your preferred language",
+      "Section headers, version details and restore previews now speak your language",
+      "Column toggles light up correctly in every language, and Pick a Brick CSVs handle quotes in part names"
+    ]
+  },
+  {
     "version": "1.41.3",
     "date": "2026-10-14",
     "title": "Locked & Loaded",
