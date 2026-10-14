@@ -4065,7 +4065,8 @@
                 var stripped = currentPath.replace(/^\/(en|de|fr|es|nl|da|ja|ko|ru|zh-CN|zh-TW)(\/|$)/, '/');
                 var target = saved === 'en' ? stripped : '/' + saved + stripped;
                 if (window.location.pathname !== target) {
-                    window.location.replace(target);
+                    // Keep ?set= deep links and any fragment across the redirect
+                    window.location.replace(target + window.location.search + window.location.hash);
                     return;
                 }
             }
@@ -4083,7 +4084,7 @@
     <footer class="app-footer">
         <span class="footer-tagline" data-i18n="footer.tagline">Made with ❤️ between building sessions for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.41.6</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.41.7</a>
         <span class="footer-disclaimer" data-i18n="footer.disclaimer">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise, or endorse this app.</span>
         <div class="language-picker">
             <label data-i18n="languagePicker.label" for="languageSelect">Language</label>

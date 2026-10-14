@@ -32,4 +32,22 @@ test.describe('Category 18: Internationalization', () => {
     await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
   });
 
+  test('18.5: Locale redirect keeps the deep-link query string', async ({ page }) => {
+    // Serve a stub for the locale page so this works without the Vercel locale routes
+    await page.route('**/de/**', route => route.fulfill({
+      status: 200,
+      contentType: 'text/html',
+      body: '<!doctype html><html lang="de"><body>de</body></html>'
+    }));
+    await page.addInitScript(() => localStorage.setItem('locale', 'de'));
+
+    await page.goto('/?set=10294-1#top');
+
+    await page.waitForURL(/\/de\//);
+    const url = new URL(page.url());
+    expect(url.pathname).toBe('/de/');
+    expect(url.search).toBe('?set=10294-1');
+    expect(url.hash).toBe('#top');
+  });
+
 });
