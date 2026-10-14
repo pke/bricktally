@@ -8,7 +8,8 @@ import {
   getLocalStorage,
   clearLocalStorage,
   waitForProgressUpdate,
-  getPartCount
+  getPartCount,
+  getProgressState
 } from '../helpers/test-utils.js';
 
 test.describe('Category CP: Compressed Progress Storage', () => {
@@ -236,5 +237,52 @@ test.describe('Category CP: Compressed Progress Storage', () => {
     // Verify counts are correct
     expect(await getPartCount(page, 0)).toBe(5);
     expect(await getPartCount(page, 1)).toBe(2);
+  });
+});
+
+test.describe('Set history progress matches the set view', () => {
+  test('complete set with untouched spares shows 100% in history', async ({ page }) => {
+    // TEST-004: 10 regular parts + 2 minifigs, plus 3 spare parts
+    await mockAPIForSet(page, mockSets['TEST-004']);
+    await page.goto('/');
+    await clearLocalStorage(page);
+    await page.reload();
+    await loadTestSet(page, '99004');
+
+    await fillQuantity(page, 0);
+    await fillQuantity(page, 1);
+    await page.locator('.minifig-card .minifig-name').click();
+    await waitForProgressUpdate(page);
+
+    const setView = await getProgressState(page);
+    expect(setView.percentage).toBe('100%');
+
+    // Back to the history list
+    await page.click('h1 a');
+    const item = page.locator('.set-history-item[data-set-number="99004-1"]');
+    await expect(item).toBeVisible();
+    await expect(item.locator('.progress-bar')).toHaveAttribute('data-percentage', '100%');
+    await expect(item.locator('.set-history-item-stats')).toContainText('12/12');
+
+    // The "complete" filter must agree
+    await page.selectOption('#filterSelect', 'complete');
+    await expect(page.locator('.set-history-item:visible')).toHaveCount(1);
+  });
+
+  test('history uses the same totals as the set view for a partial set', async ({ page }) => {
+    await mockAPIForSet(page, mockSets['TEST-004']);
+    await page.goto('/');
+    await clearLocalStorage(page);
+    await page.reload();
+    await loadTestSet(page, '99004');
+
+    await fillQuantity(page, 0); // 5 of 12
+    await fillQuantity(page, 2); // 3 spares fill in nothing missing elsewhere
+    await waitForProgressUpdate(page);
+    const setView = await getProgressState(page);
+
+    await page.click('h1 a');
+    const item = page.locator('.set-history-item[data-set-number="99004-1"]');
+    await expect(item.locator('.progress-bar')).toHaveAttribute('data-percentage', setView.percentage);
   });
 });
