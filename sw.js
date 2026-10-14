@@ -21,6 +21,7 @@ const STATIC_ASSETS = [
     '/assets/fireworks.json',
     '/js/lottie.min.js',
     '/js/pako.min.js',
+    '/js/i18next.min.js',
     '/changelog',
     '/changelog.json',
     '/data/themes.json'
