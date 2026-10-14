@@ -184,6 +184,41 @@ test.describe('Category 6: Completion & Celebration', () => {
     const fireworksVisible = await isFireworksVisible(page);
     expect(fireworksVisible).toBe(false);
   });
+
+  test('6.7: Repeated celebrations do not pile up style elements', async ({ page }) => {
+    await mockAPIForSet(page, mockSets['TEST-001']);
+    await page.addInitScript(() => localStorage.setItem('showCompleteParts', 'true'));
+    await page.goto('/');
+    await loadTestSet(page, '99001');
+
+    const celebrate = async () => {
+      await fillQuantity(page, 2);
+      await waitForProgressUpdate(page);
+      await page.getByRole('button', { name: 'Awesome!' }).click();
+    };
+
+    await fillQuantity(page, 0);
+    await fillQuantity(page, 1);
+    await celebrate();
+    await decrementPart(page, 2);
+    await waitForProgressUpdate(page);
+    await celebrate();
+
+    const injected = await page.evaluate(() =>
+      [...document.querySelectorAll('style')].filter(el => el.textContent.includes('scaleIn')).length
+    );
+    expect(injected).toBe(0);
+
+    // The animation itself still comes from the stylesheet
+    const hasKeyframes = await page.evaluate(() =>
+      [...document.styleSheets].some(sheet => {
+        try {
+          return [...sheet.cssRules].some(rule => rule.type === CSSRule.KEYFRAMES_RULE && rule.name === 'scaleIn');
+        } catch (e) { return false; }
+      })
+    );
+    expect(hasKeyframes).toBe(true);
+  });
 });
 
 test.describe('Category 8: localStorage Persistence', () => {
