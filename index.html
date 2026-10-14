@@ -838,11 +838,13 @@
                 var mode = arr[1];
                 var sum = 0;
                 for (var j = 2; j < arr.length; j++) {
+                    // Skip spare entries: they don't count toward the set total
+                    if (arr[j][3] === 1) continue;
                     sum += arr[j][2];
                 }
 
                 var completed = (mode === 0) ? sum : numParts - sum;
-                var percentage = numParts > 0 ? Math.round((completed / numParts) * 100) : 0;
+                var percentage = numParts > 0 ? Math.floor((completed / numParts) * 100) : 0;
                 return { completed: completed, total: numParts, percentage: percentage };
             } catch (e) {
                 return { completed: 0, total: numParts, percentage: 0 };
@@ -1028,7 +1030,7 @@
         function filterSets(sets, filterKey) {
             if (filterKey === 'all') return sets;
             return sets.filter(function(s) {
-                var prog = calculateProgressFromString(s.numParts || 0, s.progress || '');
+                var prog = getSetProgress(s);
                 switch (filterKey) {
                     case 'complete': return prog.percentage === 100;
                     case 'inProgress': return prog.percentage > 0 && prog.percentage < 100;
@@ -1057,8 +1059,8 @@
         }
 
         function createSetHistoryItem(setInfo) {
-            var totalCount = setInfo.numParts || 0;
-            var prog = calculateProgressFromString(totalCount, setInfo.progress || '');
+            var prog = getSetProgress(setInfo);
+            var totalCount = prog.total;
             var completedCount = prog.completed;
             var percentage = prog.percentage;
 
@@ -1226,11 +1228,11 @@
                 messageEl.innerHTML = '';
                 actionsHtml += '<button id="confirmDeleteBtn" onclick="confirmDelete()">' + t('button.delete') + '</button>';
             } else if (data.backup) {
-                var currentProg = calculateProgressFromString(data.numParts || 0, currentProgress);
+                var currentProg = getSetProgress(data);
                 var backupCompleted = data.backupCompleted || 0;
                 if (backupCompleted === currentProg.completed) {
                     // State 1: Backup is current
-                    var backupPercentage = data.numParts > 0 ? Math.round(backupCompleted / data.numParts * 100) : 0;
+                    var backupPercentage = currentProg.percentage;
                     messageEl.innerHTML = '<div class="delete-status-safe">' + t('modal.deleteSafe', { date: formatDate(data.backup), percentage: backupPercentage }) + '</div>';
                     actionsHtml += '<button id="confirmDeleteBtn" onclick="confirmDelete()">' + t('button.delete') + '</button>';
                 } else {
@@ -1309,6 +1311,17 @@
             return 'BrickTally/' + (match ? match[1] : '0.0.0');
         }
 
+        // Progress for a stored set: exact stats saved with the progress when
+        // available, otherwise estimated from the progress string
+        function getSetProgress(data) {
+            var stats = data.progressStats;
+            if (data.progress && stats && typeof stats.completed === 'number' && typeof stats.total === 'number') {
+                var percentage = stats.total > 0 ? Math.floor((stats.completed / stats.total) * 100) : 0;
+                return { completed: stats.completed, total: stats.total, percentage: percentage };
+            }
+            return calculateProgressFromString(data.numParts || 0, data.progress || '');
+        }
+
         function calculateProgressFromString(numParts, progressString) {
             if (!progressString) return { completed: 0, total: numParts, percentage: 0 };
 
@@ -1320,7 +1333,7 @@
                     var split = part.split(':');
                     completed += parseInt(split[1]) || 0;
                 });
-                var percentage = numParts > 0 ? Math.round((completed / numParts) * 100) : 0;
+                var percentage = numParts > 0 ? Math.floor((completed / numParts) * 100) : 0;
                 return { completed: completed, total: numParts, percentage: percentage };
             }
 
@@ -1389,7 +1402,7 @@
                 var data = getSetData(s.fullNumber);
                 if (data) {
                     data.backup = Date.now();
-                    data.backupCompleted = calculateProgressFromString(data.numParts || 0, s.progress).completed;
+                    data.backupCompleted = getSetProgress(data).completed;
                     saveSetData(s.fullNumber, data);
                 }
             });
@@ -1525,10 +1538,7 @@
                 var itemHtml = html`<img src="${imgUrl}" class="restore-set-image" onerror="handleImageError(this)"><div class="restore-set-info"><strong>${restoreSet.info.name || ''}</strong><span>${t('display.setYear', { number: restoreSet.info.number || '', year: String(restoreSet.info.year || '') })}</span></div>`;
 
                 if (hasConflict) {
-                    var localProgress = calculateProgressFromString(
-                        localData.numParts,
-                        localData.progress || ''
-                    );
+                    var localProgress = getSetProgress(localData);
 
                     var restoreIsNewer = restoreSet.lastWorkedOn > (localData.lastAccessed || 0);
                     itemHtml += html`<div class="restore-comparison"><div class="restore-local"><span>${t('restore.localProgress', { percentage: localProgress.percentage, date: formatDate(localData.lastAccessed) })}</span></div><div class="restore-imported"><span>${t('restore.restoreProgress', { percentage: restoreProgress.percentage, date: formatDate(restoreSet.lastWorkedOn) })}</span></div><div class="restore-choice"><input type="radio" name="restore-${restoreSet.fullNumber}" id="restore-keep-${restoreSet.fullNumber}" value="keep" ${html.raw(!restoreIsNewer ? 'checked' : '')}><label for="restore-keep-${restoreSet.fullNumber}" class="restore-choice-btn">${t('restore.keepLocal')}</label><input type="radio" name="restore-${restoreSet.fullNumber}" id="restore-import-${restoreSet.fullNumber}" value="import" ${html.raw(restoreIsNewer ? 'checked' : '')}><label for="restore-import-${restoreSet.fullNumber}" class="restore-choice-btn">${t('restore.overwrite')}</label></div></div>`;
@@ -3104,21 +3114,21 @@
             updateTableVisibility();
         }
 
-        function updateStats() {
-            var completedPieces = 0;
-            var totalPieces = 0;
-            var extraSparesCollected = 0;
+        // Set completion from regular parts and minifigs; spares only fill in
+        // for missing regular parts. Shared by the set view and set history.
+        function computeCompletion() {
+            var completed = 0;
+            var total = 0;
 
-            // Calculate set completion using regular parts, spare parts, and minifigs
             partsData.forEach(function (part) {
                 if (part.isSpare) return;
 
-                totalPieces += part.quantity;
+                total += part.quantity;
 
                 if (part.type === 'minifig') {
                     // Minifigs don't have spares
                     var key = getPartKey(part);
-                    completedPieces += (userCounts[key] || 0);
+                    completed += (userCounts[key] || 0);
                 } else {
                     // Regular parts can have spares
                     var regularKey = getPartKey(part);
@@ -3129,9 +3139,18 @@
                     var combinedCount = regularCount + spareCount;
 
                     // Count up to required quantity for completion
-                    completedPieces += Math.min(combinedCount, part.quantity);
+                    completed += Math.min(combinedCount, part.quantity);
                 }
             });
+
+            return { completed: completed, total: total };
+        }
+
+        function updateStats() {
+            var completion = computeCompletion();
+            var completedPieces = completion.completed;
+            var totalPieces = completion.total;
+            var extraSparesCollected = 0;
 
             // Check if set is complete (100%)
             var isComplete = completedPieces === totalPieces;
@@ -3190,6 +3209,8 @@
             var data = getSetData(currentSetNumber);
             if (data) {
                 data.progress = compressProgress(partsData, userCounts);
+                // Store the exact completion so set history matches the set view
+                data.progressStats = computeCompletion();
                 data.lastAccessed = Date.now();
                 saveSetData(currentSetNumber, data);
             }
@@ -4081,7 +4102,7 @@
     <footer class="app-footer">
         <span class="footer-tagline" data-i18n="footer.tagline">Made with ❤️ between building sessions for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.41.9</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.41.10</a>
         <span class="footer-disclaimer" data-i18n="footer.disclaimer">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise, or endorse this app.</span>
         <div class="language-picker">
             <label data-i18n="languagePicker.label" for="languageSelect">Language</label>
