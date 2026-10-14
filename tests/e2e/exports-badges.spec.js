@@ -143,6 +143,30 @@ test.describe('Category 9: Export Functions', () => {
     expect(csv).not.toContain('fig-005678');
   });
 
+  test('9.4b: Pick a Brick CSV escapes quotes and commas in names', async ({ page }) => {
+    const base = mockSets['TEST-001'];
+    const mockSet = {
+      ...base,
+      parts: [
+        { ...base.parts[0], part: { ...base.parts[0].part, name: 'Tile 1 x 2 with "LEGO" Print, Red' } },
+        ...base.parts.slice(1)
+      ]
+    };
+    await mockAPIForSet(page, mockSet);
+    await page.goto('/');
+    await loadTestSet(page, '99001');
+
+    const downloadPromise = page.waitForEvent('download');
+    await page.click('.filter-header:has-text("Export")');
+    await page.click('button:has-text("Pick a Brick CSV")');
+    const download = await downloadPromise;
+    const fs = await import('fs');
+    const csv = fs.readFileSync(await download.path(), 'utf-8');
+
+    const row = csv.split('\n').find(line => line.startsWith(',3001,'));
+    expect(row).toBe(',3001,Red,5,"Tile 1 x 2 with ""LEGO"" Print, Red"');
+  });
+
   test('9.5: Text export format', async ({ page }) => {
     await mockAPIForSet(page, mockSets['TEST-002']);
 
