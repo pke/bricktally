@@ -42,7 +42,10 @@ self.addEventListener('install', (event) => {
                 return cache.addAll(STATIC_ASSETS);
             })
             .catch((error) => {
+                // Fail the install so the browser keeps the previous worker and its
+                // caches instead of activating one with an incomplete precache
                 console.error('[BrickTally:ServiceWorker] Precaching failed:', error);
+                throw error;
             })
     );
 });
@@ -179,8 +182,12 @@ async function cacheFirst(request, cacheName) {
     try {
         const networkResponse = await fetch(request);
 
-        // Cache the new response if successful (only GET can be cached)
-        if (networkResponse.ok && request.method === 'GET') {
+        // Cache the new response if successful (only GET can be cached).
+        // Cross-origin <img> loads (Rebrickable CDN) are no-cors, so their
+        // responses are opaque: status 0 and ok=false even when they succeed.
+        const cacheable = networkResponse.ok ||
+            (networkResponse.type === 'opaque' && cacheName === IMAGE_CACHE);
+        if (cacheable && request.method === 'GET') {
             cache.put(request, networkResponse.clone());
             console.log('[BrickTally:Cache] Cached new resource:', request.url);
         }
