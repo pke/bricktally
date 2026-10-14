@@ -2,9 +2,14 @@ import { test, expect } from '@playwright/test';
 import { mockSets } from '../fixtures/mock-sets.js';
 import { mockAPIForSet, mockAPIForSetWithVersions, loadTestSet, fillQuantity, clearLocalStorage } from '../helpers/test-utils.js';
 
-// Render the app in German on the static dev server (locale JSON is fetched)
-async function useGerman(page) {
-  await page.addInitScript(() => { window.__LOCALE__ = 'de'; });
+// Switch the running app to German. Works whether the page has translations
+// embedded at build time (vercel dev, production) or fetches them (static server).
+async function switchToGerman(page) {
+  await page.evaluate(async () => {
+    const de = await (await fetch('/locales/de.json')).json();
+    i18next.addResourceBundle('de', 'translation', de);
+    await i18next.changeLanguage('de');
+  });
 }
 
 test.describe('Category 18: Internationalization', () => {
@@ -57,9 +62,9 @@ test.describe('Category 18: Internationalization', () => {
   });
 
   test('18.7: Section headers stay translated after loading and completing a set', async ({ page }) => {
-    await useGerman(page);
     await mockAPIForSet(page, mockSets['TEST-004']); // parts, spares and a minifig
     await page.goto('/');
+    await switchToGerman(page);
     await loadTestSet(page, '99004');
 
     await expect(page.locator('#partsHeader')).toHaveText('Teile');
@@ -74,9 +79,9 @@ test.describe('Category 18: Internationalization', () => {
   });
 
   test('18.8: Version picker details are translated', async ({ page }) => {
-    await useGerman(page);
     await mockAPIForSetWithVersions(page, mockSets['TEST-008'], mockSets['TEST-008-ALT']);
     await page.goto('/');
+    await switchToGerman(page);
     await page.locator('#setNumber').evaluate(el => { el.type = 'text'; });
     await page.locator('#setNumber').fill('99008');
     await page.locator('#setNumber').press('Enter');
@@ -88,10 +93,10 @@ test.describe('Category 18: Internationalization', () => {
   });
 
   test('18.9: Restore preview of a new set is translated', async ({ page }) => {
-    await useGerman(page);
     await page.goto('/');
     await clearLocalStorage(page);
     await page.reload();
+    await switchToGerman(page);
 
     const backup = {
       version: 1,
