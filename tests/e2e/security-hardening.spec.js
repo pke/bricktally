@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { deflateRawSync } from 'node:zlib';
 import { mockSets } from '../fixtures/mock-sets.js';
 import {
   mockAPIForSet,
@@ -230,5 +231,64 @@ test.describe('Security Hardening', () => {
     await page.waitForSelector('#setInfo:not(.hide)', { timeout: 10000 });
 
     expect(await getLocalStorage(page, 'currentSetNumber')).toBe('99008-2');
+  });
+
+  test('SH.10: Restore rejects an oversized progress string', async ({ page }) => {
+    await page.goto('/');
+    await clearLocalStorage(page);
+    await page.reload();
+    await page.waitForSelector('#landingContent', { timeout: 5000 });
+
+    let alertMessage = '';
+    page.on('dialog', async dialog => {
+      alertMessage = dialog.message();
+      await dialog.accept();
+    });
+
+    const restoreData = buildBricktally([
+      { fullNumber: '10294-1', name: 'Titanic', year: 2021, numParts: 9090, progress: 'A'.repeat(200000), lastWorkedOn: Date.now() }
+    ]);
+
+    await page.locator('#restoreFileInput').setInputFiles({
+      name: 'huge.bricktally',
+      mimeType: 'application/json',
+      buffer: Buffer.from(JSON.stringify(restoreData))
+    });
+
+    await page.waitForTimeout(500);
+    expect(alertMessage).toBeTruthy();
+    await expect(page.locator('.restore-modal')).toBeHidden();
+  });
+
+  test('SH.11: Restore rejects progress that inflates to an excessive size', async ({ page }) => {
+    await page.goto('/');
+    await clearLocalStorage(page);
+    await page.reload();
+    await page.waitForSelector('#landingContent', { timeout: 5000 });
+
+    let alertMessage = '';
+    page.on('dialog', async dialog => {
+      alertMessage = dialog.message();
+      await dialog.accept();
+    });
+
+    // ~6 MB of valid progress JSON that compresses to a few KB
+    const inflated = '[1,0' + ',["3001",5,0,0]'.repeat(400000) + ']';
+    const bomb = deflateRawSync(Buffer.from(inflated)).toString('base64url');
+    expect(bomb.length).toBeLessThan(64 * 1024);
+
+    const restoreData = buildBricktally([
+      { fullNumber: '10294-1', name: 'Titanic', year: 2021, numParts: 9090, progress: bomb, lastWorkedOn: Date.now() }
+    ]);
+
+    await page.locator('#restoreFileInput').setInputFiles({
+      name: 'bomb.bricktally',
+      mimeType: 'application/json',
+      buffer: Buffer.from(JSON.stringify(restoreData))
+    });
+
+    await page.waitForTimeout(500);
+    expect(alertMessage).toBeTruthy();
+    await expect(page.locator('.restore-modal')).toBeHidden();
   });
 });
