@@ -32,6 +32,23 @@ test.describe('Category 18: Internationalization', () => {
     await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
   });
 
+  test('18.6: Language picker has a visible themed border', async ({ page }) => {
+    await page.goto('/');
+    const border = await page.locator('#languageSelect').evaluate(el => {
+      const cs = getComputedStyle(el);
+      const token = getComputedStyle(document.documentElement).getPropertyValue('--border-color').trim();
+      const probe = document.createElement('div');
+      probe.style.color = token;
+      document.body.appendChild(probe);
+      const expected = getComputedStyle(probe).color;
+      probe.remove();
+      return { width: cs.borderTopWidth, style: cs.borderTopStyle, color: cs.borderTopColor, expected };
+    });
+    expect(border.width).toBe('1px');
+    expect(border.style).toBe('solid');
+    expect(border.color).toBe(border.expected);
+  });
+
   test('18.5: Locale redirect keeps the deep-link query string', async ({ page }) => {
     // Serve a stub for the locale page so this works without the Vercel locale routes
     await page.route('**/de/**', route => route.fulfill({
