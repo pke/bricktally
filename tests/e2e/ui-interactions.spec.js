@@ -573,3 +573,33 @@ test.describe('Category 16: Compact Desktop Header', () => {
     expect(headerBox.height).toBeLessThan(350);
   });
 });
+
+test.describe('Category 23: Column Toggles', () => {
+  test('23.1: Column toggle state is correct in a non-English UI', async ({ page }) => {
+    await mockAPIForSet(page, mockSets['TEST-001']);
+    await page.addInitScript(() => {
+      localStorage.setItem('visibleColumns', JSON.stringify({ partNum: true, name: false, color: true }));
+      // Simulate a translated UI (German labels) before the app applies toggle state
+      document.addEventListener('DOMContentLoaded', () => {
+        const labels = { color: 'Farbe', name: 'Name', partNum: 'Teilenummer' };
+        document.querySelectorAll('.column-toggle').forEach(btn => {
+          const column = btn.getAttribute('onclick').match(/toggleColumn\('(\w+)'/)[1];
+          btn.textContent = labels[column];
+        });
+      });
+    });
+    await page.goto('/');
+    await loadTestSet(page, '99001');
+
+    const toggles = (label) => page.locator('.column-toggle', { hasText: label });
+
+    for (const toggle of await toggles('Farbe').all()) await expect(toggle).toHaveClass(/active/);
+    for (const toggle of await toggles('Teilenummer').all()) await expect(toggle).toHaveClass(/active/);
+    for (const toggle of await toggles('Name').all()) await expect(toggle).not.toHaveClass(/active/);
+
+    // Toggling a column flips its state in both header locations
+    await page.locator('#columnsFilterSection > summary').click();
+    await page.locator('#columnsFilterSection .column-toggle[data-column="color"]').click();
+    for (const toggle of await toggles('Farbe').all()) await expect(toggle).not.toHaveClass(/active/);
+  });
+});

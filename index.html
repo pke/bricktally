@@ -157,9 +157,9 @@
                 <details id="infoFilterCollapsed" class="hide">
                     <summary data-i18n="section.columns">Columns</summary>
                     <div class="column-toggles" style="margin: 10px 0 0 0;">
-                        <button class="column-toggle" onclick="toggleColumn('color', event)" data-i18n="column.color">Color</button>
-                        <button class="column-toggle" onclick="toggleColumn('name', event)" data-i18n="column.name">Name</button>
-                        <button class="column-toggle" onclick="toggleColumn('partNum', event)" data-i18n="column.partNumber">Part Number</button>
+                        <button class="column-toggle" data-column="color" onclick="toggleColumn('color', event)" data-i18n="column.color">Color</button>
+                        <button class="column-toggle" data-column="name" onclick="toggleColumn('name', event)" data-i18n="column.name">Name</button>
+                        <button class="column-toggle" data-column="partNum" onclick="toggleColumn('partNum', event)" data-i18n="column.partNumber">Part Number</button>
                     </div>
                 </details>
             </div>
@@ -286,9 +286,9 @@
                             <span class="filter-arrow">▼</span>
                         </summary>
                         <div class="column-toggles filter-content-flex">
-                            <button class="column-toggle" onclick="toggleColumn('color', event)" data-i18n="column.color">Color</button>
-                            <button class="column-toggle" onclick="toggleColumn('name', event)" data-i18n="column.name">Name</button>
-                            <button class="column-toggle" onclick="toggleColumn('partNum', event)" data-i18n="column.partNumber">Part Number</button>
+                            <button class="column-toggle" data-column="color" onclick="toggleColumn('color', event)" data-i18n="column.color">Color</button>
+                            <button class="column-toggle" data-column="name" onclick="toggleColumn('name', event)" data-i18n="column.name">Name</button>
+                            <button class="column-toggle" data-column="partNum" onclick="toggleColumn('partNum', event)" data-i18n="column.partNumber">Part Number</button>
                         </div>
                     </details>
 
@@ -2220,24 +2220,8 @@
         }
 
         function updateColumnToggles() {
-            var toggles = document.querySelectorAll('.column-toggle');
-            toggles.forEach(function (toggle) {
-                var text = toggle.textContent.toLowerCase().trim();
-                var column = '';
-
-                if (text.includes('part number')) {
-                    column = 'partNum';
-                } else if (text.includes('name')) {
-                    column = 'name';
-                } else if (text.includes('color')) {
-                    column = 'color';
-                }
-
-                if (column && visibleColumns[column]) {
-                    toggle.classList.add('active');
-                } else if (column) {
-                    toggle.classList.remove('active');
-                }
+            document.querySelectorAll('.column-toggle').forEach(function (toggle) {
+                toggle.classList.toggle('active', !!visibleColumns[toggle.dataset.column]);
             });
         }
 
@@ -4084,7 +4068,7 @@
     <footer class="app-footer">
         <span class="footer-tagline" data-i18n="footer.tagline">Made with ❤️ between building sessions for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.41.7</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.41.8</a>
         <span class="footer-disclaimer" data-i18n="footer.disclaimer">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise, or endorse this app.</span>
         <div class="language-picker">
             <label data-i18n="languagePicker.label" for="languageSelect">Language</label>
