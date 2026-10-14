@@ -3649,17 +3649,30 @@
                 .substring(0, 30);             // Limit length
             var missingCount = data.totalPieces - data.completedPieces;
             var missingSuffix = missingCount === 0 ? 'complete' : missingCount + '-missing';
-            var filename = 'bricktally-' + data.setNumber + '-' + safeSetName + '-' + missingSuffix + '.png';
+            var safeSetNumber = String(data.setNumber).replace(/[^A-Za-z0-9._-]/g, '');
+            var filename = 'bricktally-' + safeSetNumber + '-' + safeSetName + '-' + missingSuffix + '.png';
 
             content.innerHTML = '<h2 style="margin-bottom: 20px; color: var(--text-primary);">' + t('modal.badgeTitle') + '</h2>' +
                 '<p style="color: var(--text-secondary); margin-bottom: 15px;">' + t('modal.badgeDescription') + '</p>' +
                 '<div style="margin: 20px 0; text-align: center;">' +
-                '<img src="' + imageDataUrl + '" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);" alt="BrickTally Badge">' +
-                '</div>' +
-                '<a id="badgeDownload" href="' + imageDataUrl + '" download="' + filename + '" style="display: block; text-decoration: none;">' +
-                '<button style="width: 100%; background: var(--green); font-size: 16px; padding: 12px;">' + t('button.downloadBadge') + '</button>' +
-                '</a>' +
-                '<button onclick="this.parentElement.parentElement.remove()" style="margin-top: 15px; width: 100%; background: var(--text-secondary);">' + t('button.close') + '</button>';
+                '<img style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);" alt="BrickTally Badge">' +
+                '</div>';
+            content.querySelector('img').src = imageDataUrl;
+
+            // Build the download link via DOM properties so nothing is parsed as HTML
+            var downloadLink = document.createElement('a');
+            downloadLink.id = 'badgeDownload';
+            downloadLink.className = 'badge-download-link';
+            downloadLink.href = imageDataUrl;
+            downloadLink.download = filename;
+            downloadLink.textContent = t('button.downloadBadge');
+            content.appendChild(downloadLink);
+
+            var closeButton = document.createElement('button');
+            closeButton.style.cssText = 'margin-top: 15px; width: 100%; background: var(--text-secondary);';
+            closeButton.textContent = t('button.close');
+            closeButton.onclick = function () { modal.remove(); };
+            content.appendChild(closeButton);
 
             modal.appendChild(content);
             document.body.appendChild(modal);
@@ -4068,7 +4081,7 @@
     <footer class="app-footer">
         <span class="footer-tagline" data-i18n="footer.tagline">Made with ❤️ between building sessions for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.41.8</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.41.9</a>
         <span class="footer-disclaimer" data-i18n="footer.disclaimer">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise, or endorse this app.</span>
         <div class="language-picker">
             <label data-i18n="languagePicker.label" for="languageSelect">Language</label>

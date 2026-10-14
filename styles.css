@@ -401,6 +401,19 @@ button:hover {
   background: var(--blue-dark);
 }
 
+/* Badge modal download link, styled as a primary button */
+.badge-download-link {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  text-align: center;
+  text-decoration: none;
+  color: white;
+  background: var(--green);
+  border-radius: 4px;
+}
+
 button:disabled {
   background: #ccc;
   cursor: not-allowed;
