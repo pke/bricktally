@@ -2131,7 +2131,7 @@
             var closeBtn = document.createElement('button');
             closeBtn.className = 'memory-close';
             closeBtn.textContent = '\u2715';
-            closeBtn.onclick = function() { overlay.remove(); };
+            closeBtn.onclick = function() { closeGame(); };
             header.appendChild(closeBtn);
             modal.appendChild(header);
 
@@ -2227,18 +2227,21 @@
             overlay.appendChild(modal);
             document.body.appendChild(overlay);
 
+            // Every way of closing goes through here so the Escape listener is removed
+            function closeGame() {
+                overlay.remove();
+                document.removeEventListener('keydown', onEscape);
+            }
+
             // Close on Escape
             function onEscape(e) {
-                if (e.key === 'Escape') {
-                    overlay.remove();
-                    document.removeEventListener('keydown', onEscape);
-                }
+                if (e.key === 'Escape') closeGame();
             }
             document.addEventListener('keydown', onEscape);
 
             // Close on overlay click
             overlay.onclick = function(e) {
-                if (e.target === overlay) overlay.remove();
+                if (e.target === overlay) closeGame();
             };
 
             function showWin() {
@@ -2247,7 +2250,7 @@
                     '<div class="memory-win-stats">' + t('game.stats', { pairs: totalPairs, moves: moves }) + '</div>' +
                     '<button class="memory-play-again">' + t('game.playAgain') + '</button>';
                 winMsg.querySelector('.memory-play-again').addEventListener('click', function() {
-                    overlay.remove();
+                    closeGame();
                     startMemoryGame();
                 });
             }
@@ -4166,7 +4169,7 @@
     <footer class="app-footer">
         <span class="footer-tagline" data-i18n="footer.tagline">Made with ❤️ between building sessions for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.41.16</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.41.17</a>
         <span class="footer-disclaimer" data-i18n="footer.disclaimer">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise, or endorse this app.</span>
         <div class="language-picker">
             <label data-i18n="languagePicker.label" for="languageSelect">Language</label>

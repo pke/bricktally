@@ -620,3 +620,37 @@ test.describe('Category 23: Column Toggles', () => {
   });
 });
 
+
+test.describe('Category 24: Memory Game', () => {
+  async function openGameWithListenerTracking(page) {
+    await page.goto('/');
+    return page.evaluate(() => {
+      // Track keydown listeners on document
+      window.__keydown = new Set();
+      const add = document.addEventListener.bind(document);
+      const remove = document.removeEventListener.bind(document);
+      document.addEventListener = (type, fn, opts) => { if (type === 'keydown') window.__keydown.add(fn); return add(type, fn, opts); };
+      document.removeEventListener = (type, fn, opts) => { if (type === 'keydown') window.__keydown.delete(fn); return remove(type, fn, opts); };
+
+      // Enough distinct images for a game
+      partsData = Array.from({ length: 8 }, (_, i) => ({ id: i, type: 'part', imageUrl: '/assets/favicon.svg?' + i, quantity: 1 }));
+      const baseline = window.__keydown.size;
+      startMemoryGame();
+      return baseline;
+    });
+  }
+
+  for (const [name, close] of [
+    ['close button', page => page.locator('.memory-close').click()],
+    ['overlay click', page => page.locator('.memory-overlay').click({ position: { x: 5, y: 5 } })],
+    ['Escape key', page => page.keyboard.press('Escape')]
+  ]) {
+    test(`24.1: Closing via ${name} removes the Escape listener`, async ({ page }) => {
+      const baseline = await openGameWithListenerTracking(page);
+      await expect(page.locator('.memory-overlay')).toBeVisible();
+      await close(page);
+      await expect(page.locator('.memory-overlay')).toHaveCount(0);
+      expect(await page.evaluate(() => window.__keydown.size)).toBe(baseline);
+    });
+  }
+});
