@@ -420,15 +420,13 @@ test.describe('Category 11: Color Filters', () => {
     await loadTestSet(page, '99007');
 
     // Get initial visible count (should be 3 different colors)
-    const initialCount = await page.locator('#tableContainer table tbody tr:not([data-color-hidden])').count();
-    expect(initialCount).toBe(3);
+    await expect(page.locator('#tableContainer table tbody tr:not([data-color-hidden])')).toHaveCount(3);
 
     // Apply Red filter
     await applyColorFilter(page, 'Red');
 
     // Should only show red parts
-    const visibleCount = await page.locator('#tableContainer table tbody tr:not([data-color-hidden])').count();
-    expect(visibleCount).toBe(1);
+    await expect(page.locator('#tableContainer table tbody tr:not([data-color-hidden])')).toHaveCount(1);
   });
 
   test('11.2: Multiple color filters', async ({ page }) => {
@@ -442,8 +440,7 @@ test.describe('Category 11: Color Filters', () => {
     await applyColorFilter(page, 'Blue');
 
     // Should show red + blue parts (2 parts)
-    const visibleCount = await page.locator('#tableContainer table tbody tr:not([data-color-hidden])').count();
-    expect(visibleCount).toBe(2);
+    await expect(page.locator('#tableContainer table tbody tr:not([data-color-hidden])')).toHaveCount(2);
   });
 
   test('11.3: Clear all filters', async ({ page }) => {
@@ -459,8 +456,7 @@ test.describe('Category 11: Color Filters', () => {
     await applyColorFilter(page, 'Red');
 
     // Should show all parts again
-    const visibleCount = await page.locator('#tableContainer table tbody tr:not([data-color-hidden])').count();
-    expect(visibleCount).toBe(3);
+    await expect(page.locator('#tableContainer table tbody tr:not([data-color-hidden])')).toHaveCount(3);
   });
 
   test("11.4: Filters don't affect minifigs", async ({ page }) => {
@@ -469,15 +465,14 @@ test.describe('Category 11: Color Filters', () => {
     await page.goto('/');
     await loadTestSet(page, '99002');
 
-    // Get minifig count before filter
-    const initialMinifigCount = await page.locator('.minifig-card').count();
+    // Minifigs render with the parts table
+    await expect(page.locator('.minifig-card')).toHaveCount(2);
 
     // Apply color filter to parts
     await applyColorFilter(page, 'Red');
 
     // Minifig count should be unchanged
-    const afterMinifigCount = await page.locator('.minifig-card').count();
-    expect(afterMinifigCount).toBe(initialMinifigCount);
+    await expect(page.locator('.minifig-card')).toHaveCount(2);
   });
 });
 
