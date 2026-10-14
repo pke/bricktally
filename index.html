@@ -1634,6 +1634,10 @@
             // Flush any pending notes edit before the current set is cleared
             saveSetNotes();
 
+            // Abandon any set load still in flight
+            currentLoadId++;
+            hide('loading');
+
             // Clear current set
             currentSetNumber = '';
             localStorage.removeItem('currentSetNumber');
@@ -2383,6 +2387,11 @@
             });
         }
 
+        // Identifies the latest set load. Starting a new load or leaving the set
+        // bumps it, so responses from an abandoned load are ignored.
+        var currentLoadId = 0;
+        var STALE_LOAD = {};
+
         function loadSetVersions(setNumberBase) {
             // Remove any existing suffix to get base number
             var baseNumber = setNumberBase.split('-')[0];
@@ -2431,10 +2440,12 @@
             document.getElementById('tableContainer').innerHTML = '';
 
             var baseNumber = setNumber.split('-')[0];
+            var loadId = ++currentLoadId;
 
             // First check for multiple versions
             loadSetVersions(baseNumber)
                 .then(function (versions) {
+                    if (loadId !== currentLoadId) return;
                     if (versions.length > 1) {
                         // Multiple versions exist - show selector
                         showVersionSelector(versions);
@@ -2446,6 +2457,7 @@
                     }
                 })
                 .catch(function (error) {
+                    if (loadId !== currentLoadId) return;
                     // If version check fails, try with -1 suffix
                     var finalSetNumber = setNumber.includes('-') ? setNumber : setNumber + '-1';
                     continueLoadSet(finalSetNumber);
@@ -2460,16 +2472,25 @@
             }
             hideSetHistory();
 
+            var loadId = ++currentLoadId;
+            function checkCurrent(value) {
+                if (loadId !== currentLoadId) throw STALE_LOAD;
+                return value;
+            }
+
             fetchWithRetry('/api/rebrickable?endpoint=/lego/sets/' + encodeURIComponent(setNumber) + '/')
+                .then(checkCurrent)
                 .then(function (response) {
                     return response.json();
                 })
+                .then(checkCurrent)
                 .then(function (setData) {
                     currentSetNumber = setNumber;
                     localStorage.setItem('currentSetNumber', setNumber);
                     displaySetInfo(setData);
                     return Promise.all([loadAllParts(setNumber), loadMinifigures(setNumber)]);
                 })
+                .then(checkCurrent)
                 .then(function (results) {
                     var allParts = results[0];
                     var minifigs = results[1];
@@ -2480,11 +2501,12 @@
                     processParts(allParts, minifigs);
                 })
                 .catch(function (error) {
+                    if (error === STALE_LOAD || loadId !== currentLoadId) return;
                     console.error('[BrickTally:API] Error:', error);
                     showError(error.message || t('error.loadFailed'));
                 })
                 .finally(function () {
-                    hide('loading');
+                    if (loadId === currentLoadId) hide('loading');
                 });
         }
 
@@ -4102,7 +4124,7 @@
     <footer class="app-footer">
         <span class="footer-tagline" data-i18n="footer.tagline">Made with ❤️ between building sessions for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.41.10</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.41.11</a>
         <span class="footer-disclaimer" data-i18n="footer.disclaimer">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise, or endorse this app.</span>
         <div class="language-picker">
             <label data-i18n="languagePicker.label" for="languageSelect">Language</label>
