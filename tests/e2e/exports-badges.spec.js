@@ -432,7 +432,7 @@ test.describe('Category 10: Badge Generation', () => {
 
     // Click download and verify file is created (10 missing since nothing counted)
     const downloadPromise = page.waitForEvent('download');
-    await page.click('#badgeDownload button');
+    await page.click('#badgeDownload');
     const download = await downloadPromise;
 
     expect(download.suggestedFilename()).toBe('bricktally-99001-basic-parts-set-10-missing.png');
@@ -455,5 +455,40 @@ test.describe('Category 10: Badge Generation', () => {
     await expect(modal.locator('text=eBay')).toBeVisible();
     await expect(modal.locator('text=Facebook Marketplace')).toBeVisible();
     await expect(modal.locator('text=Download Badge')).toBeVisible();
+  });
+});
+
+test.describe('Badge download link', () => {
+  test('download link is a single interactive element (no nested button)', async ({ page }) => {
+    await mockAPIForSet(page, mockSets['TEST-001']);
+    await page.goto('/');
+    await loadTestSet(page, '99001');
+
+    await page.click('.filter-header:has-text("Export")');
+    await page.click('button:has-text("Generate Badge")');
+
+    const link = page.locator('#badgeDownload');
+    await expect(link).toBeVisible();
+    await expect(link.locator('button, a, input')).toHaveCount(0);
+    await expect(page.getByRole('link', { name: 'Download Badge' })).toBeVisible();
+  });
+
+  test('set number cannot inject attributes into the download link', async ({ page }) => {
+    await page.goto('/');
+
+    await page.evaluate(() => {
+      showBadgeModal('data:image/png;base64,AAAA', {
+        setNumber: '1" onmouseover="window.__pwned=1" x="',
+        setName: 'Test Set',
+        totalPieces: 10,
+        completedPieces: 10
+      });
+    });
+
+    const link = page.locator('#badgeDownload');
+    await expect(link).toHaveCount(1);
+    const attrs = await link.evaluate(el => el.getAttributeNames().sort());
+    expect(attrs).not.toContain('onmouseover');
+    expect(await link.getAttribute('download')).toBe('bricktally-1onmouseoverwindow.__pwned1x-test-set-complete.png');
   });
 });
