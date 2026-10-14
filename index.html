@@ -604,10 +604,6 @@
             }
         };
 
-        window.handleImageLoad = function(img) {
-            // Currently unused
-        };
-
         window.retryImageLoad = function(img) {
             var src = img.getAttribute('src');
             if (!src) return;
@@ -2663,8 +2659,6 @@
             var versionParts = currentSetNumber.split('-');
             var versionNumber = versionParts[1];
             var displaySetNumber = versionParts[0]; // Show without suffix
-            var versionInfo = versionNumber !== '1' ?
-                ' <span style="color: var(--orange);">(Version ' + versionNumber + ')</span>' : '';
 
             document.getElementById('setName').textContent = setData.name;
             document.getElementById('setImageContainer').innerHTML =
@@ -2852,9 +2846,8 @@
                 var incrementBtnDisabled = isComplete ? ' disabled' : '';
 
                 var altText = part.color + ' ' + part.name + ' (' + part.partNum + ')';
-                var fallbackInfo = escapeHtml(part.color) + ' ' + escapeHtml(part.name) + '<br>' + escapeHtml(part.partNum);
                 var decrementHidden = currentCount === 0 ? ' data-hidden-when-zero' : '';
-                htmlStr += html`<tr id="row-${part.id}" data-complete="${isComplete}" data-color="${part.color}" data-fallback-info="${fallbackInfo}"><td class="col-img"><img src="${part.imageUrl}" alt="${altText}" class="part-image" data-part-id="${part.id}" onerror="handleImageError(this)" onload="handleImageLoad(this)"></td><td class="col-info" id="info-${part.id}">${html.raw(infoText)}</td><td class="col-controls"><div class="controls"><button id="dec-${part.id}" onclick="decrementPart(${part.id})"${html.raw(decrementHidden)}>-</button><span class="count-display" id="count-${part.id}"><span class="counted">${currentCount}</span>/<span class="qty-click" onclick="fillQuantity(${part.id})" title="${t('tooltip.fillQuantity')}">${part.quantity}</span></span><button id="inc-${part.id}" class="increment-btn${html.raw(incrementBtnClass)}" onclick="incrementPart(${part.id})"${html.raw(incrementBtnDisabled)}>${html.raw(incrementButtonText)}</button></div></td></tr>`;
+                htmlStr += html`<tr id="row-${part.id}" data-complete="${isComplete}" data-color="${part.color}"><td class="col-img"><img src="${part.imageUrl}" alt="${altText}" class="part-image" data-part-id="${part.id}" onerror="handleImageError(this)"></td><td class="col-info" id="info-${part.id}">${html.raw(infoText)}</td><td class="col-controls"><div class="controls"><button id="dec-${part.id}" onclick="decrementPart(${part.id})"${html.raw(decrementHidden)}>-</button><span class="count-display" id="count-${part.id}"><span class="counted">${currentCount}</span>/<span class="qty-click" onclick="fillQuantity(${part.id})" title="${t('tooltip.fillQuantity')}">${part.quantity}</span></span><button id="inc-${part.id}" class="increment-btn${html.raw(incrementBtnClass)}" onclick="incrementPart(${part.id})"${html.raw(incrementBtnDisabled)}>${html.raw(incrementButtonText)}</button></div></td></tr>`;
             });
 
             htmlStr += '</tbody></table>';
@@ -2936,9 +2929,8 @@
                 var incrementBtnDisabled = isComplete ? ' disabled' : '';
 
                 var altText = part.color + ' ' + part.name + ' (' + part.partNum + ')';
-                var fallbackInfo = escapeHtml(part.color) + ' ' + escapeHtml(part.name) + '<br>' + escapeHtml(part.partNum);
                 var decrementHidden = currentCount === 0 ? ' data-hidden-when-zero' : '';
-                htmlStr += html`<tr id="row-${part.id}" data-complete="${isComplete}" data-color="${part.color}" data-fallback-info="${fallbackInfo}"><td class="col-img"><img src="${part.imageUrl}" alt="${altText}" class="part-image" data-part-id="${part.id}" onerror="handleImageError(this)" onload="handleImageLoad(this)"></td><td class="col-info" id="info-${part.id}">${html.raw(infoText)}</td><td class="col-controls"><div class="controls"><button id="dec-${part.id}" onclick="decrementPart(${part.id})"${html.raw(decrementHidden)}>-</button><span class="count-display" id="count-${part.id}"><span class="counted">${currentCount}</span>/<span class="qty-click" onclick="fillQuantity(${part.id})" title="${t('tooltip.fillQuantity')}">${part.quantity}</span></span><button id="inc-${part.id}" class="increment-btn${html.raw(incrementBtnClass)}" onclick="incrementPart(${part.id})"${html.raw(incrementBtnDisabled)}>${html.raw(incrementButtonText)}</button></div></td></tr>`;
+                htmlStr += html`<tr id="row-${part.id}" data-complete="${isComplete}" data-color="${part.color}"><td class="col-img"><img src="${part.imageUrl}" alt="${altText}" class="part-image" data-part-id="${part.id}" onerror="handleImageError(this)"></td><td class="col-info" id="info-${part.id}">${html.raw(infoText)}</td><td class="col-controls"><div class="controls"><button id="dec-${part.id}" onclick="decrementPart(${part.id})"${html.raw(decrementHidden)}>-</button><span class="count-display" id="count-${part.id}"><span class="counted">${currentCount}</span>/<span class="qty-click" onclick="fillQuantity(${part.id})" title="${t('tooltip.fillQuantity')}">${part.quantity}</span></span><button id="inc-${part.id}" class="increment-btn${html.raw(incrementBtnClass)}" onclick="incrementPart(${part.id})"${html.raw(incrementBtnDisabled)}>${html.raw(incrementButtonText)}</button></div></td></tr>`;
             });
 
             htmlStr += '</tbody></table>';
@@ -2984,7 +2976,7 @@
                     }
                 }
 
-                htmlStr += html`<div class="minifig-card${isComplete ? ' complete' : ''}" data-complete="${isComplete}" id="minifig-${minifig.id}" onclick="toggleMinifig(${minifig.id})"><img src="${minifig.imageUrl}" alt="${minifig.name}" class="minifig-image" data-part-id="${minifig.id}" onclick="event.stopPropagation(); openMinifigLightbox(this)" onerror="handleImageError(this)" onload="handleImageLoad(this)"><div class="minifig-name">${title}</div><div class="minifig-id">${description}</div></div>`;
+                htmlStr += html`<div class="minifig-card${isComplete ? ' complete' : ''}" data-complete="${isComplete}" id="minifig-${minifig.id}" onclick="toggleMinifig(${minifig.id})"><img src="${minifig.imageUrl}" alt="${minifig.name}" class="minifig-image" data-part-id="${minifig.id}" onclick="event.stopPropagation(); openMinifigLightbox(this)" onerror="handleImageError(this)"><div class="minifig-name">${title}</div><div class="minifig-id">${description}</div></div>`;
             });
 
             htmlStr += '</div>';
@@ -4058,32 +4050,9 @@
         var wasComplete = false; // Add with global variables
 
         function checkAndCelebrate() {
-            var completedPieces = 0;
-            var totalPieces = 0;
-
-            // Calculate set completion using regular parts, spare parts, and minifigs
-            partsData.forEach(function (part) {
-                if (part.isSpare) return;
-
-                totalPieces += part.quantity;
-
-                if (part.type === 'minifig') {
-                    // Minifigs don't have spares
-                    var key = getPartKey(part);
-                    completedPieces += (userCounts[key] || 0);
-                } else {
-                    // Regular parts can have spares
-                    var regularKey = getPartKey(part);
-                    var spareKey = regularKey + '_s';
-
-                    var regularCount = userCounts[regularKey] || 0;
-                    var spareCount = userCounts[spareKey] || 0;
-                    var combinedCount = regularCount + spareCount;
-
-                    // Count up to required quantity for completion
-                    completedPieces += Math.min(combinedCount, part.quantity);
-                }
-            });
+            var completion = computeCompletion();
+            var completedPieces = completion.completed;
+            var totalPieces = completion.total;
 
             var isNowComplete = completedPieces === totalPieces && totalPieces > 0;
 
@@ -4169,7 +4138,7 @@
     <footer class="app-footer">
         <span class="footer-tagline" data-i18n="footer.tagline">Made with ❤️ between building sessions for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.41.19</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.41.20</a>
         <span class="footer-disclaimer" data-i18n="footer.disclaimer">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise, or endorse this app.</span>
         <div class="language-picker">
             <label data-i18n="languagePicker.label" for="languageSelect">Language</label>
