@@ -2954,13 +2954,15 @@
         }
 
         function toggleMinifig(partId) {
-            var part = partsData.find(function(p) { return p.id === partId; });
-            if (!part || part.type !== 'minifig') return;
+            // Minifig IDs come from the API and may coincide with a part's index,
+            // so match on type as well
+            var part = partsData.find(function(p) { return p.type === 'minifig' && p.id === partId; });
+            if (!part) return;
 
             var key = getPartKey(part);
-            // Toggle between 0 and 1
-            userCounts[key] = userCounts[key] === 1 ? 0 : 1;
-            updateRow(partId);
+            // Toggle between none and all copies of this figure
+            userCounts[key] = (userCounts[key] || 0) >= part.quantity ? 0 : part.quantity;
+            updateRow(partId, 'minifig');
             updateStats();
             updateTableVisibility();
             updateMinifigHeader();
@@ -3058,9 +3060,10 @@
             saveState();
         }
 
-        function updateRow(partId) {
-            // Find part by ID (not array index) to support both regular parts and minifigs
-            var part = partsData.find(function(p) { return p.id === partId; });
+        function updateRow(partId, type) {
+            // Find part by ID (not array index) to support both regular parts and minifigs.
+            // Pass type 'minifig' to disambiguate from a part with the same ID.
+            var part = partsData.find(function(p) { return p.id === partId && (!type || p.type === type); });
             if (!part) return;
             var key = getPartKey(part);
 
@@ -3069,7 +3072,7 @@
                 var card = document.getElementById('minifig-' + partId);
                 if (!card) return;
 
-                var isComplete = (userCounts[key] || 0) === 1;
+                var isComplete = (userCounts[key] || 0) >= part.quantity;
                 card.classList.toggle('complete', isComplete);
                 card.setAttribute('data-complete', isComplete ? 'true' : 'false');
 
@@ -4080,7 +4083,7 @@
     <footer class="app-footer">
         <span class="footer-tagline" data-i18n="footer.tagline">Made with ❤️ between building sessions for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.41.5</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.41.6</a>
         <span class="footer-disclaimer" data-i18n="footer.disclaimer">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise, or endorse this app.</span>
         <div class="language-picker">
             <label data-i18n="languagePicker.label" for="languageSelect">Language</label>

@@ -143,6 +143,46 @@ test.describe('Category 2: Progress Calculation - With Minifigures', () => {
     expect(progress.pieces).toMatch(/12\/12/);
   });
 
+  test('2.5: Minifig with quantity 2 completes with one tap and survives reload', async ({ page }) => {
+    // TEST-004 has a single minifig entry with quantity 2
+    await mockAPIForSet(page, mockSets['TEST-004']);
+    // Keep completed cards visible so they can be tapped again
+    await page.addInitScript(() => localStorage.setItem('showCompleteParts', 'true'));
+
+    await page.goto('/');
+    await loadTestSet(page, '99004');
+
+    await fillQuantity(page, 0); // 5 parts
+    await fillQuantity(page, 1); // 5 parts
+
+    const card = page.locator('.minifig-card');
+    await expect(card).toHaveCount(1);
+
+    // One tap marks both copies as found
+    await card.locator('.minifig-name').click();
+    await waitForProgressUpdate(page);
+    await expect(card).toHaveAttribute('data-complete', 'true');
+    let progress = await getProgressState(page);
+    expect(progress.percentage).toBe('100%');
+    expect(progress.pieces).toMatch(/12\/12/);
+
+    // Tapping again clears both copies
+    await card.locator('.minifig-name').click();
+    await waitForProgressUpdate(page);
+    await expect(card).toHaveAttribute('data-complete', 'false');
+    progress = await getProgressState(page);
+    expect(progress.pieces).toMatch(/10\/12/);
+
+    // Complete again and make sure the state round-trips through storage
+    await card.locator('.minifig-name').click();
+    await waitForProgressUpdate(page);
+    await page.reload();
+    await page.waitForSelector('#setInfo:not(.hide)');
+    await expect(page.locator('.minifig-card')).toHaveAttribute('data-complete', 'true');
+    progress = await getProgressState(page);
+    expect(progress.percentage).toBe('100%');
+  });
+
   test('2.4: Minifig section visibility', async ({ page }) => {
     // Test with set that has NO minifigs
     await mockAPIForSet(page, mockSets['TEST-001']);
