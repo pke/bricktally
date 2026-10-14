@@ -1576,7 +1576,7 @@
                     var restoreIsNewer = restoreSet.lastWorkedOn > (localData.lastAccessed || 0);
                     itemHtml += html`<div class="restore-comparison"><div class="restore-local"><span>${t('restore.localProgress', { percentage: localProgress.percentage, date: formatDate(localData.lastAccessed) })}</span></div><div class="restore-imported"><span>${t('restore.restoreProgress', { percentage: restoreProgress.percentage, date: formatDate(restoreSet.lastWorkedOn) })}</span></div><div class="restore-choice"><input type="radio" name="restore-${restoreSet.fullNumber}" id="restore-keep-${restoreSet.fullNumber}" value="keep" ${html.raw(!restoreIsNewer ? 'checked' : '')}><label for="restore-keep-${restoreSet.fullNumber}" class="restore-choice-btn">${t('restore.keepLocal')}</label><input type="radio" name="restore-${restoreSet.fullNumber}" id="restore-import-${restoreSet.fullNumber}" value="import" ${html.raw(restoreIsNewer ? 'checked' : '')}><label for="restore-import-${restoreSet.fullNumber}" class="restore-choice-btn">${t('restore.overwrite')}</label></div></div>`;
                 } else {
-                    itemHtml += html`<div class="restore-new"><span>${restoreProgress.percentage}% complete (${formatDate(restoreSet.lastWorkedOn)})</span></div>`;
+                    itemHtml += html`<div class="restore-new"><span>${t('restore.restoreProgress', { percentage: restoreProgress.percentage, date: formatDate(restoreSet.lastWorkedOn) })}</span></div>`;
                 }
 
                 itemEl.innerHTML = itemHtml;
@@ -2294,7 +2294,7 @@
             });
 
             if (minifigs.length === 0) {
-                header.textContent = 'Minifigures';
+                header.textContent = t('section.minifigures');
                 return;
             }
 
@@ -2305,9 +2305,9 @@
 
             // Show checkmark only when hide complete is ON and all minifigs are complete
             if (!showCompleteParts && allComplete) {
-                header.innerHTML = 'Minifigures <span style="color: var(--green);">✓</span>';
+                header.innerHTML = escapeHtml(t('section.minifigures')) + ' <span style="color: var(--green);">✓</span>';
             } else {
-                header.textContent = 'Minifigures';
+                header.textContent = t('section.minifigures');
             }
         }
 
@@ -2321,7 +2321,7 @@
             });
 
             if (regularParts.length === 0) {
-                header.textContent = 'Parts';
+                header.textContent = t('section.parts');
                 return;
             }
 
@@ -2336,9 +2336,9 @@
 
             // Show checkmark only when hide complete is ON and all parts are complete
             if (!showCompleteParts && allComplete) {
-                header.innerHTML = 'Parts <span style="color: var(--green);">✓</span>';
+                header.innerHTML = escapeHtml(t('section.parts')) + ' <span style="color: var(--green);">✓</span>';
             } else {
-                header.textContent = 'Parts';
+                header.textContent = t('section.parts');
             }
         }
 
@@ -2352,7 +2352,7 @@
             });
 
             if (spareParts.length === 0) {
-                header.textContent = 'Spare Parts';
+                header.textContent = t('section.spareParts');
                 return;
             }
 
@@ -2363,9 +2363,9 @@
 
             // Show checkmark only when hide complete is ON and all spare parts are complete
             if (!showCompleteParts && allComplete) {
-                header.innerHTML = 'Spare Parts <span style="color: var(--green);">✓</span>';
+                header.innerHTML = escapeHtml(t('section.spareParts')) + ' <span style="color: var(--green);">✓</span>';
             } else {
-                header.textContent = 'Spare Parts';
+                header.textContent = t('section.spareParts');
             }
         }
 
@@ -2568,7 +2568,7 @@
 
             versions.forEach(function (version) {
                 var imgUrl = version.set_img_url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="80"%3E%3Crect width="100" height="80" fill="%23ddd"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="12" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E';
-                htmlStr += html`<button class="version-select-btn" data-set-num="${version.set_num}" style="display: flex; align-items: center; gap: 15px; padding: 15px; background: var(--bg-tertiary); border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer; text-align: left; width: 100%;"><img src="${imgUrl}" style="width: 100px; height: 80px; object-fit: contain; border-radius: 4px;" class="version-selector-image" onerror="handleImageError(this)" onclick="event.stopPropagation(); retryImageLoad(this);"><div style="flex: 1;"><div style="font-weight: bold; color: var(--text-primary); margin-bottom: 5px;">${version.name || ''}</div><div style="color: var(--text-secondary); font-size: 14px;">Set: ${version.set_num || ''} | Year: ${String(version.year || '')} | Parts: ${version.num_parts}</div></div></button>`;
+                htmlStr += html`<button class="version-select-btn" data-set-num="${version.set_num}" style="display: flex; align-items: center; gap: 15px; padding: 15px; background: var(--bg-tertiary); border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer; text-align: left; width: 100%;"><img src="${imgUrl}" style="width: 100px; height: 80px; object-fit: contain; border-radius: 4px;" class="version-selector-image" onerror="handleImageError(this)" onclick="event.stopPropagation(); retryImageLoad(this);"><div style="flex: 1;"><div style="font-weight: bold; color: var(--text-primary); margin-bottom: 5px;">${version.name || ''}</div><div style="color: var(--text-secondary); font-size: 14px;">${t('display.setDetails', { number: version.set_num || '', year: String(version.year || ''), parts: String(version.num_parts || 0) })}</div></div></button>`;
             });
 
             htmlStr += '</div>' +
@@ -4169,7 +4169,7 @@
     <footer class="app-footer">
         <span class="footer-tagline" data-i18n="footer.tagline">Made with ❤️ between building sessions for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.41.18</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.41.19</a>
         <span class="footer-disclaimer" data-i18n="footer.disclaimer">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise, or endorse this app.</span>
         <div class="language-picker">
             <label data-i18n="languagePicker.label" for="languageSelect">Language</label>

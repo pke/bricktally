@@ -53,11 +53,11 @@ test.describe('Category 13: Version Selection', () => {
     await expect(versionButtons).toHaveCount(2);
 
     // Check first version details are shown
-    await expect(page.locator('text=Set: 99008-1')).toBeVisible();
+    await expect(page.locator('text=Set Number: 99008-1')).toBeVisible();
     await expect(page.locator('text=Year: 2024')).toBeVisible();
 
     // Check second version details are shown
-    await expect(page.locator('text=Set: 99008-2')).toBeVisible();
+    await expect(page.locator('text=Set Number: 99008-2')).toBeVisible();
     await expect(page.locator('text=Year: 2025')).toBeVisible();
   });
 

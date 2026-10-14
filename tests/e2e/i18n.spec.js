@@ -1,4 +1,11 @@
 import { test, expect } from '@playwright/test';
+import { mockSets } from '../fixtures/mock-sets.js';
+import { mockAPIForSet, mockAPIForSetWithVersions, loadTestSet, fillQuantity, clearLocalStorage } from '../helpers/test-utils.js';
+
+// Render the app in German on the static dev server (locale JSON is fetched)
+async function useGerman(page) {
+  await page.addInitScript(() => { window.__LOCALE__ = 'de'; });
+}
 
 test.describe('Category 18: Internationalization', () => {
 
@@ -47,6 +54,65 @@ test.describe('Category 18: Internationalization', () => {
     expect(border.width).toBe('1px');
     expect(border.style).toBe('solid');
     expect(border.color).toBe(border.expected);
+  });
+
+  test('18.7: Section headers stay translated after loading and completing a set', async ({ page }) => {
+    await useGerman(page);
+    await mockAPIForSet(page, mockSets['TEST-004']); // parts, spares and a minifig
+    await page.goto('/');
+    await loadTestSet(page, '99004');
+
+    await expect(page.locator('#partsHeader')).toHaveText('Teile');
+    await expect(page.locator('#sparePartsHeader')).toHaveText('Ersatzteile');
+    await expect(page.locator('#minifigHeader')).toHaveText('Minifiguren');
+
+    // Completing the regular parts switches to the "done" header variant
+    await fillQuantity(page, 0);
+    await fillQuantity(page, 1);
+    await expect(page.locator('#partsHeader')).toContainText('Teile');
+    await expect(page.locator('#partsHeader')).not.toContainText('Parts');
+  });
+
+  test('18.8: Version picker details are translated', async ({ page }) => {
+    await useGerman(page);
+    await mockAPIForSetWithVersions(page, mockSets['TEST-008'], mockSets['TEST-008-ALT']);
+    await page.goto('/');
+    await page.locator('#setNumber').evaluate(el => { el.type = 'text'; });
+    await page.locator('#setNumber').fill('99008');
+    await page.locator('#setNumber').press('Enter');
+
+    const firstVersion = page.locator('.version-select-btn').first();
+    await expect(firstVersion).toContainText('Set-Nummer:');
+    await expect(firstVersion).toContainText('Jahr:');
+    await expect(firstVersion).not.toContainText('Year:');
+  });
+
+  test('18.9: Restore preview of a new set is translated', async ({ page }) => {
+    await useGerman(page);
+    await page.goto('/');
+    await clearLocalStorage(page);
+    await page.reload();
+
+    const backup = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      app: 'BrickTally/1.41.3',
+      sets: [{
+        fullNumber: '10294-1',
+        info: { number: '10294', fullNumber: '10294-1', name: 'Titanic', year: 2021, numParts: 9090 },
+        progress: '',
+        lastWorkedOn: Date.now()
+      }]
+    };
+    await page.locator('#restoreFileInput').setInputFiles({
+      name: 'backup.bricktally',
+      mimeType: 'application/json',
+      buffer: Buffer.from(JSON.stringify(backup))
+    });
+
+    const item = page.locator('.restore-set-item');
+    await expect(item).toContainText('Wiederherstellen: 0%');
+    await expect(item).not.toContainText('complete');
   });
 
   test('18.5: Locale redirect keeps the deep-link query string', async ({ page }) => {
