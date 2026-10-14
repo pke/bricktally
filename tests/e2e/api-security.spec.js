@@ -37,4 +37,61 @@ test.describe('API Security', () => {
     const response = await page.request.get('/api/rebrickable?endpoint=/lego/sets/10294-1/');
     expect(response.status()).not.toBe(400);
   });
+
+  test('SSRF: rejects endpoint with fragment injection', async ({ page }) => {
+    await page.goto('/');
+
+    const response = await page.request.get('/api/rebrickable?endpoint=/lego/sets/10179-1%23x/');
+    expect(response.status()).toBe(400);
+
+    const body = await response.json();
+    expect(body.error).toBe('Invalid endpoint');
+  });
+
+  test('Allowlist: rejects non-set endpoints', async ({ page }) => {
+    await page.goto('/');
+
+    const response = await page.request.get('/api/rebrickable?endpoint=/users/abc/sets/');
+    expect(response.status()).toBe(400);
+
+    const body = await response.json();
+    expect(body.error).toBe('Invalid endpoint');
+  });
+
+  test('Rejects repeated endpoint params', async ({ page }) => {
+    await page.goto('/');
+
+    const response = await page.request.get('/api/rebrickable?endpoint=a&endpoint=b');
+    expect(response.status()).toBe(400);
+
+    const body = await response.json();
+    expect(body.error).toBe('Invalid endpoint');
+  });
+
+  test('Image proxy: rejects non-Rebrickable host', async ({ page }) => {
+    await page.goto('/');
+
+    const response = await page.request.get('/api/image-proxy?url=' + encodeURIComponent('https://evil.com/x.png'));
+    expect(response.status()).toBe(403);
+  });
+
+  test('Image proxy: rejects lookalike hostname', async ({ page }) => {
+    await page.goto('/');
+
+    const response = await page.request.get('/api/image-proxy?url=' + encodeURIComponent('https://cdn.rebrickable.com.evil.com/x.png'));
+    expect(response.status()).toBe(403);
+  });
+
+  test('Image proxy: rejects repeated url param', async ({ page }) => {
+    await page.goto('/');
+
+    const response = await page.request.get('/api/image-proxy?url=a&url=b');
+    expect(response.status()).toBe(400);
+  });
+
+  test('CSP header is present on pages', async ({ page }) => {
+    const response = await page.request.get('/');
+    const csp = response.headers()['content-security-policy'] || '';
+    expect(csp).toContain("object-src 'none'");
+  });
 });

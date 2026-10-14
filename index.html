@@ -562,9 +562,23 @@
 
         // Escape HTML to prevent XSS when interpolating into innerHTML
         function escapeHtml(str) {
-            var div = document.createElement('div');
-            div.textContent = str;
-            return div.innerHTML;
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        // Set number validation: full number (with version suffix) and bare base number
+        var SET_NUMBER_RE = /^[A-Za-z0-9][A-Za-z0-9._]*-\d+$/;
+        var BASE_SET_NUMBER_RE = /^[A-Za-z0-9][A-Za-z0-9._]*$/;
+        function isValidSetNumber(s) {
+            return typeof s === 'string' && SET_NUMBER_RE.test(s);
+        }
+        function isValidBaseSetNumber(s) {
+            return typeof s === 'string' && BASE_SET_NUMBER_RE.test(s);
         }
 
         // Tagged template literal that auto-escapes all interpolated values.
@@ -982,7 +996,7 @@
                 if (key && key.startsWith('set_')) {
                     try {
                         var data = JSON.parse(localStorage.getItem(key));
-                        if (data && data.fullNumber && data.name) {
+                        if (data && data.name && isValidSetNumber(data.fullNumber)) {
                             sets.push(data);
                         }
                     } catch (e) {
@@ -1067,10 +1081,22 @@
                     ${html.raw(notesHtml)}
                 </div>
                 <div class="set-history-item-actions">
-                    <button class="backup" onclick="backupSingleSet(event, '${setInfo.fullNumber}')" title="${t('button.backupSet')}">📤</button>
-                    <button class="reset" onclick="resetSetHistory(event, '${setInfo.fullNumber}')" title="${t('button.resetProgress')}">↻</button>
-                    <button class="delete" onclick="deleteSetHistory(event, '${setInfo.fullNumber}')" title="${t('button.deleteSet')}">✕</button>
+                    <button class="backup" title="${t('button.backupSet')}">📤</button>
+                    <button class="reset" title="${t('button.resetProgress')}">↻</button>
+                    <button class="delete" title="${t('button.deleteSet')}">✕</button>
                 </div>`;
+
+            // Attach handlers as listeners — an interpolated onclick would not be
+            // protected by HTML-escaping (the parser decodes entities first)
+            item.querySelector('.set-history-item-actions .backup').addEventListener('click', function(e) {
+                backupSingleSet(e, setInfo.fullNumber);
+            });
+            item.querySelector('.set-history-item-actions .reset').addEventListener('click', function(e) {
+                resetSetHistory(e, setInfo.fullNumber);
+            });
+            item.querySelector('.set-history-item-actions .delete').addEventListener('click', function(e) {
+                deleteSetHistory(e, setInfo.fullNumber);
+            });
 
             item.addEventListener('click', function(e) {
                 if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
@@ -1316,8 +1342,21 @@
             if (!Array.isArray(data.sets) || data.sets.length === 0) return false;
             for (var i = 0; i < data.sets.length; i++) {
                 var s = data.sets[i];
-                if (!s.fullNumber || !s.info || typeof s.lastWorkedOn !== 'number') return false;
-                if (!s.info.name || !s.info.fullNumber) return false;
+                if (!s || typeof s !== 'object') return false;
+                if (typeof s.fullNumber !== 'string' || !isValidSetNumber(s.fullNumber)) return false;
+                if (!s.info || typeof s.info !== 'object') return false;
+                if (s.fullNumber !== s.info.fullNumber) return false;
+                if (typeof s.info.name !== 'string' || s.info.name === '') return false;
+                if (s.info.number !== undefined && typeof s.info.number !== 'string') return false;
+                if (s.info.year !== undefined && typeof s.info.year !== 'number') return false;
+                if (s.info.numParts !== undefined && typeof s.info.numParts !== 'number') return false;
+                if (s.info.imageUrl !== undefined && s.info.imageUrl !== null && s.info.imageUrl !== '' &&
+                    (typeof s.info.imageUrl !== 'string' ||
+                     (s.info.imageUrl.indexOf('https://cdn.rebrickable.com/') !== 0 &&
+                      s.info.imageUrl.indexOf('data:image/svg+xml,') !== 0))) return false;
+                if (s.progress !== undefined && typeof s.progress !== 'string') return false;
+                if (s.notes !== undefined && (typeof s.notes !== 'string' || s.notes.length > 2000)) return false;
+                if (typeof s.lastWorkedOn !== 'number') return false;
             }
             return true;
         }
@@ -1809,7 +1848,10 @@
 
             var urlSet = new URLSearchParams(window.location.search).get('set');
             var savedSetNumber = urlSet || localStorage.getItem('currentSetNumber');
-            if (savedSetNumber) {
+            var isValidSavedNumber = savedSetNumber && (savedSetNumber.indexOf('-') === -1
+                ? isValidBaseSetNumber(savedSetNumber)
+                : isValidSetNumber(savedSetNumber));
+            if (savedSetNumber && isValidSavedNumber) {
                 // Extract base number without version suffix for display
                 var baseNumber = savedSetNumber.split('-')[0];
                 document.getElementById('setNumber').value = baseNumber;
@@ -1822,6 +1864,10 @@
                     loadSetDirect(savedSetNumber);
                 }
             } else {
+                // Invalid set number — drop it if it came from storage
+                if (savedSetNumber && !urlSet) {
+                    localStorage.removeItem('currentSetNumber');
+                }
                 // Show set history if no current set
                 showSetHistory();
             }
@@ -2376,6 +2422,16 @@
                 return;
             }
 
+            // Reject anything that isn't a plausible set number before it
+            // reaches the API proxy or the DOM
+            var validInput = setNumber.indexOf('-') === -1
+                ? isValidBaseSetNumber(setNumber)
+                : isValidSetNumber(setNumber);
+            if (!validInput) {
+                showError(t('error.loadFailed'));
+                return;
+            }
+
             show('loading');
             hide('error', 'tableContainer', 'statsSection', 'setInfo', 'filterSection', 'resetButton');
             document.getElementById('tableContainer').innerHTML = '';
@@ -2403,6 +2459,11 @@
         }
 
         function continueLoadSet(setNumber) {
+            if (!isValidSetNumber(setNumber)) {
+                hide('loading');
+                showError(t('error.loadFailed'));
+                return;
+            }
             hideSetHistory();
 
             fetchWithRetry('/api/rebrickable?endpoint=/lego/sets/' + encodeURIComponent(setNumber) + '/')
@@ -2447,13 +2508,20 @@
 
             versions.forEach(function (version) {
                 var imgUrl = version.set_img_url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="80"%3E%3Crect width="100" height="80" fill="%23ddd"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="12" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E';
-                htmlStr += html`<button onclick="selectVersion('${version.set_num}')" style="display: flex; align-items: center; gap: 15px; padding: 15px; background: var(--bg-tertiary); border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer; text-align: left; width: 100%;"><img src="${imgUrl}" style="width: 100px; height: 80px; object-fit: contain; border-radius: 4px;" class="version-selector-image" onerror="handleImageError(this)" onclick="event.stopPropagation(); retryImageLoad(this);"><div style="flex: 1;"><div style="font-weight: bold; color: var(--text-primary); margin-bottom: 5px;">${version.name || ''}</div><div style="color: var(--text-secondary); font-size: 14px;">Set: ${version.set_num || ''} | Year: ${String(version.year || '')} | Parts: ${version.num_parts}</div></div></button>`;
+                htmlStr += html`<button class="version-select-btn" data-set-num="${version.set_num}" style="display: flex; align-items: center; gap: 15px; padding: 15px; background: var(--bg-tertiary); border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer; text-align: left; width: 100%;"><img src="${imgUrl}" style="width: 100px; height: 80px; object-fit: contain; border-radius: 4px;" class="version-selector-image" onerror="handleImageError(this)" onclick="event.stopPropagation(); retryImageLoad(this);"><div style="flex: 1;"><div style="font-weight: bold; color: var(--text-primary); margin-bottom: 5px;">${version.name || ''}</div><div style="color: var(--text-secondary); font-size: 14px;">Set: ${version.set_num || ''} | Year: ${String(version.year || '')} | Parts: ${version.num_parts}</div></div></button>`;
             });
 
             htmlStr += '</div>' +
                 '<button onclick="this.parentElement.parentElement.remove()" style="margin-top: 20px; width: 100%; background: var(--text-secondary);">' + t('button.cancel') + '</button>';
 
             content.innerHTML = htmlStr;
+
+            content.querySelectorAll('.version-select-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    selectVersion(btn.getAttribute('data-set-num'));
+                });
+            });
+
             modal.appendChild(content);
             document.body.appendChild(modal);
 
@@ -2542,10 +2610,10 @@
             document.getElementById('setImageContainer').innerHTML =
                 html`<img src="${setImageUrl || ''}" alt="${setData.name || ''}" class="set-detail-image" onerror="handleImageError(this)" onclick="retryImageLoad(this)">`;
             var detailsText = versionNumber !== '1'
-                ? t('display.setDetailsVersioned', { number: displaySetNumber, version: versionNumber, year: String(setData.year), parts: String(setData.num_parts) })
-                : t('display.setDetails', { number: displaySetNumber, year: String(setData.year), parts: String(setData.num_parts) });
+                ? t('display.setDetailsVersioned', { number: escapeHtml(displaySetNumber), version: escapeHtml(versionNumber), year: escapeHtml(String(setData.year)), parts: escapeHtml(String(setData.num_parts)) })
+                : t('display.setDetails', { number: escapeHtml(displaySetNumber), year: escapeHtml(String(setData.year)), parts: escapeHtml(String(setData.num_parts)) });
             document.getElementById('setDetails').innerHTML = versionNumber !== '1'
-                ? detailsText.replace('[Version ' + versionNumber + ']', '<span style="color: var(--orange);">[Version ' + versionNumber + ']</span>')
+                ? detailsText.replace('[Version ' + escapeHtml(versionNumber) + ']', '<span style="color: var(--orange);">[Version ' + escapeHtml(versionNumber) + ']</span>')
                 : detailsText;
 
             // Update collapsed header set name
@@ -4012,7 +4080,7 @@
     <footer class="app-footer">
         <span class="footer-tagline" data-i18n="footer.tagline">Made with ❤️ between building sessions for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.41.2</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.41.3</a>
         <span class="footer-disclaimer" data-i18n="footer.disclaimer">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise, or endorse this app.</span>
         <div class="language-picker">
             <label data-i18n="languagePicker.label" for="languageSelect">Language</label>

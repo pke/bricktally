@@ -45,7 +45,7 @@ function buildBricktally(sets) {
         name: s.name,
         year: s.year,
         numParts: s.numParts,
-        imageUrl: s.imageUrl || '/assets/favicon.svg',
+        imageUrl: s.imageUrl,
         lastAccessed: s.lastWorkedOn
       },
       progress: s.progress || '',

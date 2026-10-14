@@ -49,7 +49,7 @@ test.describe('Category 13: Version Selection', () => {
     await expect(page.locator('h2:text("Multiple Set Versions Found")')).toBeVisible();
 
     // Check both versions are displayed in version buttons
-    const versionButtons = page.locator('button[onclick*="selectVersion"]');
+    const versionButtons = page.locator('.version-select-btn');
     await expect(versionButtons).toHaveCount(2);
 
     // Check first version details are shown
@@ -73,7 +73,7 @@ test.describe('Category 13: Version Selection', () => {
 
     // Wait for dialog and click first version (99008-1)
     await expect(page.locator('h2:text("Multiple Set Versions Found")')).toBeVisible();
-    await page.click('button[onclick*="selectVersion(\'99008-1\')"]');
+    await page.click('.version-select-btn[data-set-num="99008-1"]');
 
     // Verify correct set loaded
     await expect(page.locator('#setInfo')).not.toHaveClass(/hide/);
@@ -98,7 +98,7 @@ test.describe('Category 13: Version Selection', () => {
 
     // Wait for dialog and click second version (99008-2)
     await expect(page.locator('h2:text("Multiple Set Versions Found")')).toBeVisible();
-    await page.click('button[onclick*="selectVersion(\'99008-2\')"]');
+    await page.click('.version-select-btn[data-set-num="99008-2"]');
 
     // Verify correct set loaded
     await expect(page.locator('#setInfo')).not.toHaveClass(/hide/);

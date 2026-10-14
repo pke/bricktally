@@ -6,13 +6,12 @@ on:
   pull_request:
     branches: [master, main]
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
-    env:
-      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     steps:
       - uses: actions/checkout@v4
 
@@ -26,16 +25,24 @@ jobs:
         run: npm ci
 
       - name: Install Vercel CLI
-        run: npm i -g vercel
+        run: npm i -g vercel@64.0.2
 
       - name: Pull Vercel project settings
         run: vercel pull --yes --token=$VERCEL_TOKEN
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
       - name: Run E2E tests
         run: npx playwright test --project=chromium
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
       - name: Upload test results
         uses: actions/upload-artifact@v4

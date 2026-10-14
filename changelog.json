@@ -1,5 +1,14 @@
 [
   {
+    "version": "1.41.3",
+    "date": "2026-10-14",
+    "title": "Locked & Loaded",
+    "entries": [
+      "Bolted the doors and checked them twice — sneaky set numbers and crafty links can no longer smuggle scripts into BrickTally",
+      "Backup restores now give each file a thorough pat-down before letting your sets back in"
+    ]
+  },
+  {
     "version": "1.41.1",
     "date": "2026-07-29",
     "title": "Badge Glamour Shots",
