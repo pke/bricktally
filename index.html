@@ -745,6 +745,43 @@
                 .replace(/=+$/, '');
         }
 
+        // Limits for compressed progress strings. Real sets stay far below these
+        // (a 755-lot set is ~2 KB at worst); they stop crafted backups from
+        // inflating to gigabytes and hanging the tab.
+        var MAX_PROGRESS_LENGTH = 64 * 1024;
+        var MAX_PROGRESS_INFLATED = 1024 * 1024;
+
+        // base64url -> inflate -> JSON array, refusing oversized input or output
+        function decodeProgressArray(progressString) {
+            if (progressString.length > MAX_PROGRESS_LENGTH) {
+                throw new Error('Progress data too large');
+            }
+            var base64 = progressString.replace(/-/g, '+').replace(/_/g, '/');
+            while (base64.length % 4 !== 0) base64 += '=';
+            var binary = atob(base64);
+            var bytes = new Uint8Array(binary.length);
+            for (var i = 0; i < binary.length; i++) {
+                bytes[i] = binary.charCodeAt(i);
+            }
+
+            var inflator = new pako.Inflate({ raw: true, to: 'string' });
+            var inflatedSize = 0;
+            var chunks = [];
+            inflator.onData = function (chunk) {
+                inflatedSize += chunk.length;
+                if (inflatedSize > MAX_PROGRESS_INFLATED) {
+                    throw new Error('Progress data too large');
+                }
+                chunks.push(chunk);
+            };
+            inflator.push(bytes, true);
+            if (inflator.err) throw new Error(inflator.msg || 'Invalid progress data');
+
+            var arr = JSON.parse(chunks.join(''));
+            if (!Array.isArray(arr)) throw new Error('Invalid progress data');
+            return arr;
+        }
+
         function decompressProgress(progressString, parts) {
             var counts = {};
 
@@ -762,16 +799,7 @@
 
             // New compressed format: base64url -> inflate -> JSON
             try {
-                var base64 = progressString.replace(/-/g, '+').replace(/_/g, '/');
-                while (base64.length % 4 !== 0) base64 += '=';
-                var binary = atob(base64);
-                var bytes = new Uint8Array(binary.length);
-                for (var i = 0; i < binary.length; i++) {
-                    bytes[i] = binary.charCodeAt(i);
-                }
-
-                var inflated = pako.inflateRaw(bytes, { to: 'string' });
-                var arr = JSON.parse(inflated);
+                var arr = decodeProgressArray(progressString);
 
                 var mode = arr[1]; // 0 = picked, 1 = remaining
 
@@ -825,15 +853,7 @@
             if (!progressString) return { completed: 0, total: numParts, percentage: 0 };
 
             try {
-                var base64 = progressString.replace(/-/g, '+').replace(/_/g, '/');
-                while (base64.length % 4 !== 0) base64 += '=';
-                var binary = atob(base64);
-                var bytes = new Uint8Array(binary.length);
-                for (var i = 0; i < binary.length; i++) {
-                    bytes[i] = binary.charCodeAt(i);
-                }
-                var inflated = pako.inflateRaw(bytes, { to: 'string' });
-                var arr = JSON.parse(inflated);
+                var arr = decodeProgressArray(progressString);
 
                 var mode = arr[1];
                 var sum = 0;
@@ -1347,6 +1367,18 @@
             return months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
         }
 
+        function isValidProgressString(progress) {
+            if (progress.length > MAX_PROGRESS_LENGTH) return false;
+            // Legacy plain format ("3001_Red:5,…") needs no decompression
+            if (progress.indexOf(':') !== -1) return true;
+            try {
+                decodeProgressArray(progress);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
         function validateBricktally(data) {
             if (!data || typeof data !== 'object') return false;
             if (data.version !== 1) return false;
@@ -1368,6 +1400,7 @@
                      (s.info.imageUrl.indexOf('https://cdn.rebrickable.com/') !== 0 &&
                       s.info.imageUrl.indexOf('data:image/svg+xml,') !== 0))) return false;
                 if (s.progress !== undefined && typeof s.progress !== 'string') return false;
+                if (s.progress && !isValidProgressString(s.progress)) return false;
                 if (s.notes !== undefined && (typeof s.notes !== 'string' || s.notes.length > 2000)) return false;
                 if (typeof s.lastWorkedOn !== 'number') return false;
             }
@@ -4124,7 +4157,7 @@
     <footer class="app-footer">
         <span class="footer-tagline" data-i18n="footer.tagline">Made with ❤️ between building sessions for LEGO® enthusiasts</span>
         <!-- VERSION_PLACEHOLDER: updated by pre-commit hook -->
-        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.41.11</a>
+        <a href="/changelog" id="versionInfo" class="footer-version-link">v1.41.12</a>
         <span class="footer-disclaimer" data-i18n="footer.disclaimer">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise, or endorse this app.</span>
         <div class="language-picker">
             <label data-i18n="languagePicker.label" for="languageSelect">Language</label>
