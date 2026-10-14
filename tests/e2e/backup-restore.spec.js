@@ -46,7 +46,7 @@ function buildBricktally(sets) {
         name: s.name,
         year: s.year,
         numParts: s.numParts,
-        imageUrl: s.imageUrl || '/assets/favicon.svg',
+        imageUrl: s.imageUrl,
         lastAccessed: s.lastWorkedOn
       },
       progress: s.progress || '',
@@ -717,7 +717,7 @@ test.describe('Category 15: Backup/Restore', () => {
     await page.waitForSelector('#landingContent', { timeout: 5000 });
 
     const restoreData = buildBricktally([
-      { fullNumber: '10294-1', name: 'Titanic', year: 2021, numParts: 9090, progress: '0:5', lastWorkedOn: Date.now(), imageUrl: '/assets/favicon.svg' }
+      { fullNumber: '10294-1', name: 'Titanic', year: 2021, numParts: 9090, progress: '0:5', lastWorkedOn: Date.now() }
     ]);
 
     const fileInput = page.locator('#restoreFileInput');

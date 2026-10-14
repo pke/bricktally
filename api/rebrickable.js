@@ -1,32 +1,27 @@
 // Vercel Serverless Function to proxy Rebrickable API requests
 // This keeps the API key secure on the server side
 
-// Simple per-IP rate limiter (in-memory, per serverless instance)
-const rateLimit = new Map();
-const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
+import { isRateLimited } from './_rate-limit.js';
+
 const RATE_LIMIT_MAX = 30; // requests per window
 
-function isRateLimited(ip) {
-  const now = Date.now();
-  const entry = rateLimit.get(ip);
+// Allowlisted endpoint shape: /lego/sets/ or /lego/sets/<num>-<ver>/[parts/|minifigs/]
+const ENDPOINT_RE = /^lego\/sets\/(?:[A-Za-z0-9][A-Za-z0-9._]*-\d+\/(?:parts\/|minifigs\/)?)?$/;
 
-  if (!entry || now - entry.start > RATE_LIMIT_WINDOW) {
-    rateLimit.set(ip, { start: now, count: 1 });
-    return false;
-  }
-
-  entry.count++;
-  return entry.count > RATE_LIMIT_MAX;
-}
+// Only these query params are forwarded upstream
+const ALLOWED_QUERY_PARAMS = ['search', 'page', 'page_size'];
 
 // Allowed origins for CORS
 const ALLOWED_ORIGINS = [
   'https://bricktally.app',
   'https://www.bricktally.app',
+  'https://preview.bricktally.app',
   'http://localhost:3000',
   'http://127.0.0.1:3000',
   'http://localhost:5173',
-  'http://127.0.0.1:5173'
+  'http://127.0.0.1:5173',
+  'http://localhost:8080',
+  'http://127.0.0.1:8080'
 ];
 
 function getAllowedOrigin(req) {
@@ -43,9 +38,15 @@ function getAllowedOrigin(req) {
     return '*';
   }
 
-  // Development: be permissive
+  // Non-production: allow the deployment's own Vercel URLs only
   if (!isProduction) {
-    return origin;
+    const deploymentOrigins = [
+      process.env.VERCEL_URL && `https://${process.env.VERCEL_URL}`,
+      process.env.VERCEL_BRANCH_URL && `https://${process.env.VERCEL_BRANCH_URL}`
+    ].filter(Boolean);
+    if (deploymentOrigins.includes(origin)) {
+      return origin;
+    }
   }
 
   return null;
@@ -72,7 +73,7 @@ export default async function handler(req, res) {
 
   // Rate limit by IP
   const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || 'unknown';
-  if (isRateLimited(ip)) {
+  if (isRateLimited(ip, RATE_LIMIT_MAX)) {
     return res.status(429).json({ error: 'Too many requests' });
   }
 
@@ -87,9 +88,21 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing endpoint parameter' });
   }
 
+  // Repeated query params arrive as an array — reject non-string endpoints
+  if (typeof endpoint !== 'string') {
+    return res.status(400).json({ error: 'Invalid endpoint' });
+  }
+
   try {
     const baseUrl = 'https://rebrickable.com/api/v3';
     const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+
+    // Allowlist: only Rebrickable set lookups. This also rejects '#', '?'
+    // and anything that could escape the base URL.
+    if (!ENDPOINT_RE.test(cleanEndpoint)) {
+      return res.status(400).json({ error: 'Invalid endpoint' });
+    }
+
     const url = new URL(cleanEndpoint, baseUrl + '/');
 
     // Prevent SSRF — ensure the resolved URL stays within the Rebrickable API
@@ -97,8 +110,13 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Invalid endpoint' });
     }
 
-    Object.keys(otherParams).forEach(key => {
-      url.searchParams.append(key, otherParams[key]);
+    // Forward only the allowlisted query params; silently drop the rest
+    ALLOWED_QUERY_PARAMS.forEach(key => {
+      const value = otherParams[key];
+      if (value === undefined) return;
+      (Array.isArray(value) ? value : [value]).forEach(v => {
+        url.searchParams.append(key, v);
+      });
     });
 
     const response = await fetch(url.toString(), {
