@@ -502,7 +502,7 @@ test.describe('Category 15: Backup/Restore', () => {
     await expect(page.locator('.restore-modal')).toBeVisible({ timeout: 5000 });
 
     // Cancel restore
-    await page.click('#cancelRestoreBtn');
+    await page.locator('#restoreModalOverlay').click({ position: { x: 5, y: 5 } });
 
     // Modal should close
     await expect(page.locator('.restore-modal')).toBeHidden();
@@ -584,9 +584,9 @@ test.describe('Category 15: Backup/Restore', () => {
     // Should NOT have "Backup & Delete" button
     await expect(page.locator('#backupAndDeleteBtn')).toBeHidden();
 
-    // Should have Delete and Cancel buttons
+    // Destructive action stays explicit; dismissal is handled by the backdrop.
     await expect(page.locator('#confirmDeleteBtn')).toBeVisible();
-    await expect(page.locator('#cancelDeleteBtn')).toBeVisible();
+    await expect(page.locator('#cancelDeleteBtn')).toHaveCount(0);
   });
 
   test('15.21: Delete shows outdated warning when progress changed since backup', async ({ page }) => {
@@ -792,7 +792,7 @@ test.describe('Category 15: Backup/Restore', () => {
     await expect(page.locator('.delete-modal')).toBeVisible({ timeout: 5000 });
 
     // Cancel
-    await page.click('#cancelDeleteBtn');
+    await page.locator('#deleteModalOverlay').click({ position: { x: 5, y: 5 } });
 
     // Modal should close, set should still be there
     await expect(page.locator('.delete-modal')).toBeHidden();
@@ -820,8 +820,8 @@ test.describe('Category 15: Backup/Restore', () => {
     // Should NOT have "Backup & Delete" button
     await expect(page.locator('#backupAndDeleteBtn')).toBeHidden();
 
-    // Should have Delete and Cancel buttons
+    // Destructive action stays explicit; dismissal is handled by the backdrop.
     await expect(page.locator('#confirmDeleteBtn')).toBeVisible();
-    await expect(page.locator('#cancelDeleteBtn')).toBeVisible();
+    await expect(page.locator('#cancelDeleteBtn')).toHaveCount(0);
   });
 });

@@ -4,6 +4,7 @@ import { existsSync, readFileSync, writeFileSync, mkdirSync, rmSync, copyFileSyn
 import { resolve as pathResolve, join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -20,24 +21,34 @@ mkdirSync(DIST, { recursive: true });
 
 // Read template
 let template = readFileSync(join(ROOT, 'index.html'), 'utf8');
+const versionedAssets = ['styles.css', 'js/ui.js', 'js/landing.js'];
+const assetHash = createHash('sha256');
+[...versionedAssets, 'data/example-set.json', 'assets/examples/31109-1.jpg', 'assets/examples/3004-red.jpg']
+    .forEach(file => assetHash.update(file).update(readFileSync(join(ROOT, file))));
+const assetVersion = assetHash.digest('hex').slice(0, 12);
+// Even an older service worker must fetch CSS/JS that matches the new HTML.
+template = template.replace(/((?:href|src)=")(\/?(?:styles\.css|js\/(?:ui|landing)\.js))"/g,
+    '$1$2?v=' + assetVersion + '"');
 
-// Stamp the deployed commit hash into the footer version link. The post-commit
-// hook stamps only the version — a commit cannot contain its own hash — so the
-// hash is added here at build time, when HEAD is final.
-let commitSha = (process.env.VERCEL_GIT_COMMIT_SHA || '').slice(0, 7);
+// Build provenance belongs to the build, not the source commit itself.
+const buildDate = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit', day: '2-digit'
+}).format(new Date());
+let commitSha = process.env.VERCEL_GIT_COMMIT_SHA || '';
+let localChanges = false;
 if (!commitSha) {
     try {
-        commitSha = execFileSync('git', ['rev-parse', '--short', 'HEAD'], { cwd: ROOT }).toString().trim();
+        commitSha = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT }).toString().trim();
+        localChanges = !!execFileSync('git', ['status', '--porcelain'], { cwd: ROOT }).toString().trim();
     } catch (e) {
         commitSha = ''; // no git available — leave the footer as committed
     }
 }
-if (commitSha) {
-    template = template.replace(
-        /(id="versionInfo"[^>]*>v[\d.]+)(?: \([^)]*\))?(?=<)/,
-        '$1 (' + commitSha + ')'
-    );
-}
+if (!/^[a-f0-9]{7,40}$/i.test(commitSha)) commitSha = '';
+template = template.replace(
+    /(id="versionInfo"[^>]*>v[\d.]+)(?: \([^)]*\))?(?=<)/, '$1'
+).replace('id="versionInfo"', 'id="versionInfo" data-build-date="' + buildDate +
+    '" data-commit="' + commitSha + '" data-local-changes="' + localChanges + '"');
 
 // Helper: resolve nested key like "landing.heading" from translations object
 function resolveKey(obj, keyPath) {
@@ -71,8 +82,14 @@ function translateStaticHTML(html, translations) {
                 if (value === null) continue;
 
                 if (attr === 'html') {
-                    // Replace innerHTML: content between > and </
-                    line = line.replace(/(>)([\s\S]*?)(<\/)/, '$1' + value + '$3');
+                    // Match the translated element's closing tag, not a nested
+                    // link's closing tag, so no original text remains behind.
+                    const element = line.match(/<([a-z][\w:-]*)\b[^>]*\bdata-i18n=/i);
+                    if (element) {
+                        const start = line.indexOf('>', element.index) + 1;
+                        const end = line.lastIndexOf('</' + element[1] + '>');
+                        if (start > 0 && end >= start) line = line.slice(0, start) + value + line.slice(end);
+                    }
                 } else {
                     // Replace attribute value
                     const attrRegex = new RegExp('(' + attr + '=")([^"]*)(")');
@@ -179,7 +196,13 @@ const dirsToCopy = ['js', 'assets', 'locales', 'data'];
 assetsToCopy.forEach(function(file) {
     const src = join(ROOT, file);
     if (existsSync(src)) {
-        copyFileSync(src, join(DIST, file));
+        if (file === 'sw.js') {
+            const versioned = versionedAssets.map(asset => "    '/" + asset + '?v=' + assetVersion + "',").join('\n');
+            const worker = readFileSync(src, 'utf8')
+                .replace(/(const CACHE_VERSION = '[^']*)';/, '$1-' + assetVersion + "';")
+                .replace('const STATIC_ASSETS = [', 'const STATIC_ASSETS = [\n' + versioned);
+            writeFileSync(join(DIST, file), worker);
+        } else copyFileSync(src, join(DIST, file));
     }
 });
 

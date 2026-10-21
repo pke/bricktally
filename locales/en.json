@@ -60,13 +60,13 @@
   "landing": {
     "heading": "Verify Your LEGO Sets Are Complete",
     "description": "BrickTally helps you count every piece in your LEGO\u00ae sets before selling, storing, or building. Enter a set number to get a full parts checklist powered by the <a href=\"https://rebrickable.com/\" target=\"_blank\" rel=\"noopener\">Rebrickable</a> database.",
-    "featureTrack": "Track parts, spare parts, and minifigures separately",
-    "featureFilter": "Filter by colour to focus on one group at a time",
-    "featureExport": "Export missing parts to BrickLink, Pick a Brick, Rebrickable, or as a plain text list",
-    "featureBadge": "Generate a completion badge for eBay or marketplace listings",
+    "featureTrack": "Count parts, spare parts, and minifigures separately",
+    "featureFilter": "Choose a colour to focus on its parts",
+    "featureExport": "Export missing parts for BrickLink, Pick a Brick, Rebrickable, or as a text list to buy replacements",
+    "featureBadge": "Show buyers a completion badge for your set — see examples",
     "featureMobile": "Optimised for tablets and phones \u2014 always at your fingertips when sorting pieces",
-    "featurePwa": "Works offline as a PWA \u2014 install it on your device",
-    "featureBackup": "Backup and restore your progress across devices"
+    "featurePwa": "Use loaded sets offline — install BrickTally on your device",
+    "featureBackup": "Save your counts and take them to another device"
   },
   "display": {
     "pieces": "{{completed}}/{{total}} pieces",

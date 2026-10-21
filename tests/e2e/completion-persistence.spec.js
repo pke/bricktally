@@ -123,7 +123,8 @@ test.describe('Category 6: Completion & Celebration', () => {
     await waitForFireworks(page);
 
     // Dismiss the completion modal
-    await page.click('button:has-text("Awesome!")');
+    await page.locator('.celebration-dialog').waitFor();
+    await page.keyboard.press('Escape');
 
     // Wait for fireworks to disappear (they auto-hide after animation)
     await page.waitForFunction(
@@ -166,7 +167,8 @@ test.describe('Category 6: Completion & Celebration', () => {
     await waitForFireworks(page);
 
     // Dismiss the completion modal
-    await page.click('button:has-text("Awesome!")');
+    await page.locator('.celebration-dialog').waitFor();
+    await page.keyboard.press('Escape');
 
     // Wait for fireworks animation to finish
     await waitForFireworksDismissed(page);
@@ -194,7 +196,8 @@ test.describe('Category 6: Completion & Celebration', () => {
     const celebrate = async () => {
       await fillQuantity(page, 2);
       await waitForProgressUpdate(page);
-      await page.getByRole('button', { name: 'Awesome!' }).click();
+      await page.locator('.celebration-dialog').waitFor();
+      await page.keyboard.press('Escape');
     };
 
     await fillQuantity(page, 0);

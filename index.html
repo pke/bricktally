@@ -79,7 +79,6 @@
 <body>
     <!-- Lightbox -->
     <div class="lightbox" id="lightbox">
-        <span class="lightbox-close" id="lightboxClose">&times;</span>
         <img id="lightboxImage" src="" alt="">
     </div>
 
@@ -184,9 +183,9 @@
                     <li data-i18n="landing.featureTrack">Track parts, spare parts, and minifigures separately</li>
                     <li data-i18n="landing.featureFilter">Filter by colour to focus on one group at a time</li>
                     <li data-i18n="landing.featureExport">Export missing parts to BrickLink, Pick a Brick, Rebrickable, or as a plain text list</li>
-                    <li data-i18n="landing.featureBadge">Generate a completion badge for eBay or marketplace listings</li>
+                    <li><a href="#badge-examples" class="inline-link" onclick="showBadgeExamples(); return false" aria-haspopup="dialog" data-i18n="landing.featureBadge">Generate a completion badge for eBay or marketplace listings</a></li>
                     <li data-i18n="landing.featureMobile">Optimised for tablets and phones — always at your fingertips when sorting pieces</li>
-                    <li data-i18n="landing.featurePwa">Works offline as a PWA — install it on your device</li>
+                    <li><a href="#install" class="inline-link" onclick="showInstallHelp(); return false" aria-haspopup="dialog" data-i18n="landing.featurePwa">Use loaded sets offline — install BrickTally on your device</a></li>
                     <li data-i18n="landing.featureBackup">Backup and restore your progress across devices</li>
                 </ul>
                 <button onclick="restoreSets()" class="restore-btn landing-restore-btn" title="Restore a previous backup" data-i18n="button.restoreBackup;[title]tooltip.restoreBackup">📥 Restore a backup</button>
@@ -252,7 +251,6 @@
                     <h3 data-i18n="modal.restoreTitle">Restore Sets</h3>
                     <div id="restoreSetList" class="restore-set-list"></div>
                     <div class="restore-modal-actions">
-                        <button id="cancelRestoreBtn" onclick="cancelRestore()" data-i18n="button.cancel">Cancel</button>
                         <button id="executeRestoreBtn" onclick="executeRestore()" data-i18n="button.restoreSelected">Restore Selected</button>
                     </div>
                 </div>
@@ -482,31 +480,18 @@
                 window.location.reload();
             };
 
-            var laterBtn = document.createElement('button');
-            laterBtn.className = 'whats-new-later-btn';
-            laterBtn.textContent = t('button.maybeLater');
-            laterBtn.onclick = function() {
+            function dismissWhatsNew() {
                 if (version) localStorage.setItem('lastSeenVersion', version);
                 overlay.remove();
-            };
+            }
 
             actions.appendChild(updateBtn);
-            actions.appendChild(laterBtn);
             modal.appendChild(actions);
 
             overlay.appendChild(modal);
             document.body.appendChild(overlay);
 
-            // Dismiss on overlay click or Escape key
-            overlay.addEventListener('click', function(e) {
-                if (e.target === overlay) laterBtn.click();
-            });
-            document.addEventListener('keydown', function onEscape(e) {
-                if (e.key === 'Escape' && document.querySelector('.whats-new-overlay')) {
-                    laterBtn.click();
-                    document.removeEventListener('keydown', onEscape);
-                }
-            });
+            enableLightDismiss(overlay, modal, dismissWhatsNew);
         }
 
         var partsData = [];
@@ -1269,10 +1254,9 @@
                 actionsHtml += '<button id="backupAndDeleteBtn" onclick="backupAndDelete()">' + t('button.backupAndDelete') + '</button>';
             }
 
-            actionsHtml += '<button id="cancelDeleteBtn" onclick="cancelDelete()">' + t('button.cancel') + '</button>';
-
             actionsEl.innerHTML = actionsHtml;
             document.getElementById('deleteModalOverlay').setAttribute('data-visible', '');
+            enableLightDismiss(document.getElementById('deleteModalOverlay'), document.querySelector('.delete-modal'), cancelDelete);
         }
 
         window.cancelDelete = function() {
@@ -1582,6 +1566,7 @@
             });
 
             document.getElementById('restoreModalOverlay').setAttribute('data-visible', '');
+            enableLightDismiss(document.getElementById('restoreModalOverlay'), document.querySelector('.restore-modal'), cancelRestore);
         }
 
         window.cancelRestore = function() {
@@ -1758,7 +1743,6 @@
             // Setup lightbox event listeners
             var lightbox = document.getElementById('lightbox');
             var lightboxImage = document.getElementById('lightboxImage');
-            var lightboxClose = document.getElementById('lightboxClose');
             var lightboxOriginRect = null;
             var lightboxOriginImage = null;
 
@@ -1788,6 +1772,7 @@
 
                 // Show lightbox
                 lightbox.style.display = 'flex';
+                enableLightDismiss(lightbox, lightboxImage, closeLightbox);
 
                 // Force reflow
                 lightboxImage.offsetHeight;
@@ -1853,23 +1838,6 @@
                     }, 300);
                 }
             }
-
-            // Close on X button
-            lightboxClose.addEventListener('click', closeLightbox);
-
-            // Close on background click
-            lightbox.addEventListener('click', function(e) {
-                if (e.target === lightbox) {
-                    closeLightbox();
-                }
-            });
-
-            // Close on ESC key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && lightbox.classList.contains('active')) {
-                    closeLightbox();
-                }
-            });
 
             // Easter egg: long-press set image to launch memory game
             (function() {
@@ -2099,11 +2067,6 @@
             header.className = 'memory-header';
             header.innerHTML = '<span class="memory-title">' + t('game.title') + '</span><span class="memory-moves">' + t('game.moves') + ' <span id="memoryMoveCount">0</span></span>';
 
-            var closeBtn = document.createElement('button');
-            closeBtn.className = 'memory-close';
-            closeBtn.textContent = '\u2715';
-            closeBtn.onclick = function() { closeGame(); };
-            header.appendChild(closeBtn);
             modal.appendChild(header);
 
             // Grid
@@ -2198,22 +2161,9 @@
             overlay.appendChild(modal);
             document.body.appendChild(overlay);
 
-            // Every way of closing goes through here so the Escape listener is removed
-            function closeGame() {
+            var closeGame = enableLightDismiss(overlay, modal, function () {
                 overlay.remove();
-                document.removeEventListener('keydown', onEscape);
-            }
-
-            // Close on Escape
-            function onEscape(e) {
-                if (e.key === 'Escape') closeGame();
-            }
-            document.addEventListener('keydown', onEscape);
-
-            // Close on overlay click
-            overlay.onclick = function(e) {
-                if (e.target === overlay) closeGame();
-            };
+            });
 
             function showWin() {
                 winMsg.classList.remove('hide');
@@ -2542,8 +2492,7 @@
                 htmlStr += html`<button class="version-select-btn" data-set-num="${version.set_num}" style="display: flex; align-items: center; gap: 15px; padding: 15px; background: var(--bg-tertiary); border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer; text-align: left; width: 100%;"><img src="${imgUrl}" style="width: 100px; height: 80px; object-fit: contain; border-radius: 4px;" class="version-selector-image" onerror="handleImageError(this)" onclick="event.stopPropagation(); retryImageLoad(this);"><div style="flex: 1;"><div style="font-weight: bold; color: var(--text-primary); margin-bottom: 5px;">${version.name || ''}</div><div style="color: var(--text-secondary); font-size: 14px;">${t('display.setDetails', { number: version.set_num || '', year: String(version.year || ''), parts: String(version.num_parts || 0) })}</div></div></button>`;
             });
 
-            htmlStr += '</div>' +
-                '<button onclick="this.parentElement.parentElement.remove()" style="margin-top: 20px; width: 100%; background: var(--text-secondary);">' + t('button.cancel') + '</button>';
+            htmlStr += '</div>';
 
             content.innerHTML = htmlStr;
 
@@ -2556,9 +2505,7 @@
             modal.appendChild(content);
             document.body.appendChild(modal);
 
-            modal.onclick = function (e) {
-                if (e.target === modal) modal.remove();
-            };
+            enableLightDismiss(modal, content, function () { modal.remove(); });
         }
 
         function selectVersion(setNumber) {
@@ -3532,7 +3479,7 @@
             });
         }
 
-        function drawBadgeWithImages(data, loadedImages) {
+        function drawBadgeWithImages(data, loadedImages, previewOnly) {
             var canvas = document.createElement('canvas');
             var ctx = canvas.getContext('2d');
 
@@ -3727,7 +3674,7 @@
                     if (part.color) {
                         ctx.font = '11px Arial, sans-serif';
                         ctx.fillStyle = 'rgba(255,255,255,0.7)';
-                        ctx.fillText(part.color, nameX, rowY + 38);
+                        ctx.fillText(colorLabel(part.color), nameX, rowY + 38);
                     }
                 }
 
@@ -3748,6 +3695,7 @@
 
             // Convert to data URL and show modal
             var dataUrl = canvas.toDataURL('image/png');
+            if (previewOnly) return dataUrl;
             showBadgeModal(dataUrl, data);
         }
 
@@ -3812,18 +3760,10 @@
             downloadLink.textContent = t('button.downloadBadge');
             content.appendChild(downloadLink);
 
-            var closeButton = document.createElement('button');
-            closeButton.style.cssText = 'margin-top: 15px; width: 100%; background: var(--text-secondary);';
-            closeButton.textContent = t('button.close');
-            closeButton.onclick = function () { modal.remove(); };
-            content.appendChild(closeButton);
-
             modal.appendChild(content);
             document.body.appendChild(modal);
 
-            modal.onclick = function (e) {
-                if (e.target === modal) modal.remove();
-            };
+            enableLightDismiss(modal, content, function () { modal.remove(); });
         }
 
         function exportToBrickLink() {
@@ -4153,11 +4093,12 @@
             // Show congratulations message
             setTimeout(function () {
                 var congrats = document.createElement('div');
+                congrats.className = 'celebration-dialog';
                 congrats.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--bg-secondary); padding: 40px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); z-index: 10001; text-align: center; animation: scaleIn 0.3s ease;';
                 congrats.innerHTML = '<h2 style="color: var(--green); font-size: 36px; margin-bottom: 15px;">' + t('celebration.title') + '</h2>' +
-                    '<p style="color: var(--text-primary); font-size: 18px; margin-bottom: 20px;">' + t('celebration.message') + '</p>' +
-                    '<button onclick="this.parentElement.remove()" style="padding: 12px 30px; font-size: 16px;">' + t('celebration.button') + '</button>';
+                    '<p style="color: var(--text-primary); font-size: 18px; margin-bottom: 20px;">' + t('celebration.message') + '</p>';
                 document.body.appendChild(congrats);
+                enableLightDismiss(congrats, congrats, function () { congrats.remove(); });
             }, 1000);
         }
 
@@ -4223,6 +4164,7 @@
         </div>
     </footer>
     <script src="/js/ui.js"></script>
+    <script src="/js/landing.js"></script>
 </body>
 
 </html>

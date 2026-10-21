@@ -527,7 +527,7 @@ test.describe('Category 12: Lightbox', () => {
     await page.click('.part-image');
 
     // Close lightbox
-    await page.click('#lightboxClose');
+    await page.keyboard.press('Escape');
 
     // Lightbox should be closed
     const lightboxActive = await page.locator('#lightbox').evaluate((el) => el.classList.contains('active'));
@@ -636,7 +636,6 @@ test.describe('Category 24: Memory Game', () => {
   }
 
   for (const [name, close] of [
-    ['close button', page => page.locator('.memory-close').click()],
     ['overlay click', page => page.locator('.memory-overlay').click({ position: { x: 5, y: 5 } })],
     ['Escape key', page => page.keyboard.press('Escape')]
   ]) {

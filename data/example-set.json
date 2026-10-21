@@ -1,0 +1,50 @@
+{
+  "source": "https://rebrickable.com/sets/31109-1/pirate-ship/",
+  "retrievedAt": "2026-10-15T11:44:03.481Z",
+  "set": {
+    "number": "31109-1",
+    "name": "Pirate Ship",
+    "numParts": 1260,
+    "image": "https://cdn.rebrickable.com/media/sets/31109-1/64495.jpg"
+  },
+  "badgeImage": "/assets/examples/31109-1.jpg",
+  "badgePartImage": "/assets/examples/3004-red.jpg",
+  "items": [
+    {
+      "type": "part",
+      "partNum": "3004",
+      "name": "Brick 1 x 2",
+      "color": "Red",
+      "colorId": 4,
+      "quantity": 3,
+      "image": "/media/parts/elements/300421.jpg"
+    },
+    {
+      "type": "part",
+      "partNum": "3023",
+      "name": "Plate 1 x 2",
+      "color": "Blue",
+      "colorId": 1,
+      "quantity": 2,
+      "image": "/media/parts/elements/302323.jpg"
+    },
+    {
+      "type": "part",
+      "partNum": "3069b",
+      "name": "Tile 1 x 2 with Groove",
+      "color": "Black",
+      "colorId": 0,
+      "quantity": 4,
+      "image": "/media/parts/elements/306926.jpg"
+    },
+    {
+      "type": "minifig",
+      "partNum": "fig-010121",
+      "name": "Pirate Captain, Blue Jacket, Peg Leg, Bicorne Hat with White Plume",
+      "color": "",
+      "colorId": 0,
+      "quantity": 1,
+      "image": "/media/sets/fig-010121/111577.jpg"
+    }
+  ]
+}

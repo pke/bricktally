@@ -2431,6 +2431,10 @@ body.verify-page {
 }
 
 .footer-version-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 4px;
   color: var(--text-secondary);
   text-decoration: none;
   font-size: inherit;
@@ -2726,3 +2730,55 @@ body.color-overview-open #sparePartsSection,
 body.color-overview-open #spareTableContainer,
 body.color-overview-open #missingSparesHint { display: none !important; }
 #partsSection, #sparePartsSection { scroll-margin-top: 140px; }
+
+.inline-link {
+  display: inline;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--blue);
+  font: inherit;
+  text-align: start;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.inline-link:hover { background: none; transform: none; }
+.inline-link:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+.help-dialog {
+  margin: auto;
+  width: min(760px, calc(100% - 32px));
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  padding: 24px;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+.help-dialog::backdrop { background: rgb(0 0 0 / 65%); }
+.help-dialog-header { display: flex; align-items: start; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+.help-dialog-header h2 { margin: 0; min-width: 0; overflow-wrap: anywhere; font-size: 22px; }
+.help-dialog-content { line-height: 1.5; }
+.help-dialog-content p { margin: 12px 0; }
+.help-dialog [hidden] { display: none !important; }
+.badge-example-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; margin-top: 20px; }
+.badge-example-grid figcaption { font-weight: bold; margin-bottom: 10px; }
+.badge-example-grid img { display: block; width: 100%; height: auto; border-radius: 8px; }
+.install-platforms { display: flex; flex-wrap: wrap; gap: 8px; border: 0; padding: 0; margin: 20px 0; min-width: 0; }
+.install-platforms legend { margin-bottom: 8px; font-weight: bold; }
+.install-platforms label { position: relative; display: flex; align-items: center; gap: 8px; padding: 8px 12px; min-height: 44px; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; }
+.install-platforms label:has(input:checked) { border-color: var(--blue); background: var(--blue); color: var(--bg-primary); }
+.install-platforms label:has(input:focus-visible) { outline: 2px solid var(--blue); outline-offset: 3px; }
+.install-platforms input { position: absolute; width: 1px; height: 1px; padding: 0; margin: 0; opacity: 0; clip-path: inset(50%); }
+.platform-icon { width: 24px; height: 24px; fill: currentColor; flex-shrink: 0; }
+.install-steps { padding-left: 24px; margin: 16px 0; list-style: decimal outside; }
+.install-steps li { display: list-item; margin-bottom: 8px; }
+.build-details dt { font-weight: bold; margin-top: 12px; }
+.build-details dd { margin: 4px 0 12px; overflow-wrap: anywhere; }
+@media (max-width: 600px) {
+  .badge-example-grid { grid-template-columns: 1fr; }
+  .help-dialog { padding: 20px; }
+  .help-dialog-header { flex-wrap: wrap; gap: 12px; }
+  .help-dialog-header h2 { flex-basis: 100%; }
+}

@@ -110,7 +110,7 @@ test.describe('Category 13: Version Selection', () => {
     await expect(page.locator('#tableContainer')).toContainText('0/10');
   });
 
-  test('13.6: Cancel version selection closes dialog', async ({ page }) => {
+  test('13.6: Escape cancels version selection', async ({ page }) => {
     const mockSet1 = mockSets['TEST-008'];
     const mockSet2 = mockSets['TEST-008-ALT'];
 
@@ -122,8 +122,7 @@ test.describe('Category 13: Version Selection', () => {
 
     await expect(page.locator('text=Multiple Set Versions Found')).toBeVisible();
 
-    // Click cancel button in the version dialog (not import/export toolbar)
-    await page.locator('button:has-text("Cancel"):visible').click();
+    await page.keyboard.press('Escape');
 
     // Dialog should close
     await expect(page.locator('text=Multiple Set Versions Found')).not.toBeVisible();
