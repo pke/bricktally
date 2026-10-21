@@ -1,0 +1,145 @@
+{
+  "locale": "nl",
+  "template": "04",
+  "copy": {
+    "language": "Nederlands",
+    "brand": "BrickTally",
+    "claim": "Elk Steentje Telt",
+    "description": "Controleer of je LEGO® sets 100% compleet zijn",
+    "features": [
+      "Tel elk steentje in je set",
+      "Volg je voortgang met visuele feedback",
+      "Exporteer ontbrekende onderdelen om ze na te bestellen"
+    ]
+  },
+  "layout": {
+    "scale": 1,
+    "fonts": {
+      "brand": "Arial",
+      "body": "Arial"
+    },
+    "textBox": {
+      "x": 64,
+      "width": 478,
+      "bottom": 535
+    },
+    "blocks": [
+      {
+        "key": "brand",
+        "original": "BrickTally",
+        "font": "Arial",
+        "size": 74,
+        "weight": 700,
+        "lineHeight": 94.72,
+        "lines": [
+          {
+            "text": "BrickTally",
+            "x": 64,
+            "baseline": 188,
+            "width": 348.25,
+            "top": 135,
+            "bottom": 203
+          }
+        ]
+      },
+      {
+        "key": "claim",
+        "original": "Elk Steentje Telt",
+        "font": "Arial",
+        "size": 34,
+        "weight": 700,
+        "lineHeight": 43.52,
+        "lines": [
+          {
+            "text": "Elk Steentje Telt",
+            "x": 64,
+            "baseline": 244,
+            "width": 260.1099853515625,
+            "top": 219,
+            "bottom": 251
+          }
+        ]
+      },
+      {
+        "key": "description",
+        "original": "Controleer of je LEGO® sets 100% compleet zijn",
+        "font": "Arial",
+        "size": 21,
+        "weight": 400,
+        "lineHeight": 26.88,
+        "lines": [
+          {
+            "text": "Controleer of je LEGO® sets 100% compleet zijn",
+            "x": 64,
+            "baseline": 296,
+            "width": 455.5199890136719,
+            "top": 280,
+            "bottom": 300
+          }
+        ]
+      },
+      {
+        "key": "feature1",
+        "original": "Tel elk steentje in je set",
+        "font": "Arial",
+        "size": 19,
+        "weight": 400,
+        "lineHeight": 24.32,
+        "lines": [
+          {
+            "text": "Tel elk steentje in je set",
+            "x": 100,
+            "baseline": 373,
+            "width": 196.44000244140625,
+            "top": 359,
+            "bottom": 377
+          }
+        ]
+      },
+      {
+        "key": "feature2",
+        "original": "Volg je voortgang met visuele feedback",
+        "font": "Arial",
+        "size": 19,
+        "weight": 400,
+        "lineHeight": 24.32,
+        "lines": [
+          {
+            "text": "Volg je voortgang met visuele feedback",
+            "x": 100,
+            "baseline": 422,
+            "width": 330.6000061035156,
+            "top": 408,
+            "bottom": 426
+          }
+        ]
+      },
+      {
+        "key": "feature3",
+        "original": "Exporteer ontbrekende onderdelen om ze na te bestellen",
+        "font": "Arial",
+        "size": 19,
+        "weight": 400,
+        "lineHeight": 24.32,
+        "lines": [
+          {
+            "text": "Exporteer ontbrekende",
+            "x": 100,
+            "baseline": 471,
+            "width": 193.2899932861328,
+            "top": 457,
+            "bottom": 475
+          },
+          {
+            "text": "onderdelen om ze na te bestellen",
+            "x": 100,
+            "baseline": 495.32,
+            "width": 280.9700012207031,
+            "top": 481.32,
+            "bottom": 495.32
+          }
+        ]
+      }
+    ]
+  }
+}

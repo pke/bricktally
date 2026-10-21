@@ -1,0 +1,137 @@
+{
+  "locale": "zh-CN",
+  "template": "04",
+  "copy": {
+    "language": "简体中文",
+    "brand": "BrickTally",
+    "claim": "每块积木都很重要",
+    "description": "确认您的 LEGO® 套装零件是否 100% 齐全",
+    "features": [
+      "清点套装中的每块积木",
+      "直观查看清点进度",
+      "导出缺少的零件以便补购"
+    ]
+  },
+  "layout": {
+    "scale": 1,
+    "fonts": {
+      "brand": "Arial",
+      "body": "DengXian"
+    },
+    "textBox": {
+      "x": 64,
+      "width": 478,
+      "bottom": 535
+    },
+    "blocks": [
+      {
+        "key": "brand",
+        "original": "BrickTally",
+        "font": "Arial",
+        "size": 74,
+        "weight": 700,
+        "lineHeight": 94.72,
+        "lines": [
+          {
+            "text": "BrickTally",
+            "x": 64,
+            "baseline": 188,
+            "width": 348.25,
+            "top": 135,
+            "bottom": 203
+          }
+        ]
+      },
+      {
+        "key": "claim",
+        "original": "每块积木都很重要",
+        "font": "DengXian",
+        "size": 34,
+        "weight": 700,
+        "lineHeight": 43.52,
+        "lines": [
+          {
+            "text": "每块积木都很重要",
+            "x": 64,
+            "baseline": 244,
+            "width": 272,
+            "top": 215,
+            "bottom": 249
+          }
+        ]
+      },
+      {
+        "key": "description",
+        "original": "确认您的 LEGO® 套装零件是否 100% 齐全",
+        "font": "DengXian",
+        "size": 21,
+        "weight": 400,
+        "lineHeight": 26.88,
+        "lines": [
+          {
+            "text": "确认您的 LEGO® 套装零件是否 100% 齐全",
+            "x": 64,
+            "baseline": 296,
+            "width": 401.75,
+            "top": 278,
+            "bottom": 299
+          }
+        ]
+      },
+      {
+        "key": "feature1",
+        "original": "清点套装中的每块积木",
+        "font": "DengXian",
+        "size": 19,
+        "weight": 400,
+        "lineHeight": 24.32,
+        "lines": [
+          {
+            "text": "清点套装中的每块积木",
+            "x": 100,
+            "baseline": 373,
+            "width": 190,
+            "top": 357,
+            "bottom": 376
+          }
+        ]
+      },
+      {
+        "key": "feature2",
+        "original": "直观查看清点进度",
+        "font": "DengXian",
+        "size": 19,
+        "weight": 400,
+        "lineHeight": 24.32,
+        "lines": [
+          {
+            "text": "直观查看清点进度",
+            "x": 100,
+            "baseline": 422,
+            "width": 152,
+            "top": 405,
+            "bottom": 425
+          }
+        ]
+      },
+      {
+        "key": "feature3",
+        "original": "导出缺少的零件以便补购",
+        "font": "DengXian",
+        "size": 19,
+        "weight": 400,
+        "lineHeight": 24.32,
+        "lines": [
+          {
+            "text": "导出缺少的零件以便补购",
+            "x": 100,
+            "baseline": 471,
+            "width": 209,
+            "top": 455,
+            "bottom": 474
+          }
+        ]
+      }
+    ]
+  }
+}

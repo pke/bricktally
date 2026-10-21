@@ -1,0 +1,137 @@
+{
+  "locale": "zh-TW",
+  "template": "04",
+  "copy": {
+    "language": "繁體中文",
+    "brand": "BrickTally",
+    "claim": "每塊積木都很重要",
+    "description": "確認您的 LEGO® 套裝零件是否 100% 齊全",
+    "features": [
+      "清點套裝中的每塊積木",
+      "直觀查看清點進度",
+      "匯出缺少的零件以便補購"
+    ]
+  },
+  "layout": {
+    "scale": 1,
+    "fonts": {
+      "brand": "Arial",
+      "body": "Microsoft JhengHei"
+    },
+    "textBox": {
+      "x": 64,
+      "width": 478,
+      "bottom": 535
+    },
+    "blocks": [
+      {
+        "key": "brand",
+        "original": "BrickTally",
+        "font": "Arial",
+        "size": 74,
+        "weight": 700,
+        "lineHeight": 94.72,
+        "lines": [
+          {
+            "text": "BrickTally",
+            "x": 64,
+            "baseline": 188,
+            "width": 348.25,
+            "top": 135,
+            "bottom": 203
+          }
+        ]
+      },
+      {
+        "key": "claim",
+        "original": "每塊積木都很重要",
+        "font": "Microsoft JhengHei",
+        "size": 34,
+        "weight": 700,
+        "lineHeight": 43.52,
+        "lines": [
+          {
+            "text": "每塊積木都很重要",
+            "x": 64,
+            "baseline": 244,
+            "width": 272,
+            "top": 215,
+            "bottom": 247
+          }
+        ]
+      },
+      {
+        "key": "description",
+        "original": "確認您的 LEGO® 套裝零件是否 100% 齊全",
+        "font": "Microsoft JhengHei",
+        "size": 21,
+        "weight": 400,
+        "lineHeight": 26.88,
+        "lines": [
+          {
+            "text": "確認您的 LEGO® 套裝零件是否 100% 齊全",
+            "x": 64,
+            "baseline": 296,
+            "width": 402.8699951171875,
+            "top": 278,
+            "bottom": 298
+          }
+        ]
+      },
+      {
+        "key": "feature1",
+        "original": "清點套裝中的每塊積木",
+        "font": "Microsoft JhengHei",
+        "size": 19,
+        "weight": 400,
+        "lineHeight": 24.32,
+        "lines": [
+          {
+            "text": "清點套裝中的每塊積木",
+            "x": 100,
+            "baseline": 373,
+            "width": 190,
+            "top": 356,
+            "bottom": 375
+          }
+        ]
+      },
+      {
+        "key": "feature2",
+        "original": "直觀查看清點進度",
+        "font": "Microsoft JhengHei",
+        "size": 19,
+        "weight": 400,
+        "lineHeight": 24.32,
+        "lines": [
+          {
+            "text": "直觀查看清點進度",
+            "x": 100,
+            "baseline": 422,
+            "width": 152,
+            "top": 405,
+            "bottom": 424
+          }
+        ]
+      },
+      {
+        "key": "feature3",
+        "original": "匯出缺少的零件以便補購",
+        "font": "Microsoft JhengHei",
+        "size": 19,
+        "weight": 400,
+        "lineHeight": 24.32,
+        "lines": [
+          {
+            "text": "匯出缺少的零件以便補購",
+            "x": 100,
+            "baseline": 471,
+            "width": 209,
+            "top": 454,
+            "bottom": 473
+          }
+        ]
+      }
+    ]
+  }
+}

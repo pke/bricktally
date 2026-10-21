@@ -1,0 +1,13 @@
+{
+  "name": "bricktally-og-renderer",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "render": "node render-og.cjs",
+    "test": "node --test test-renderer.cjs"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "0.1.100",
+    "sharp": "0.35.5"
+  }
+}

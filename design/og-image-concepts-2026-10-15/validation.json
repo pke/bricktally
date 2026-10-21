@@ -1,0 +1,84 @@
+{
+  "count": 10,
+  "expectedCopy": [
+    "BrickTally",
+    "Every Brick Counts",
+    "Verify your LEGO® sets are 100% complete",
+    "Count every brick in your set",
+    "Track progress with visual feedback",
+    "Export missing pieces for reordering"
+  ],
+  "sourceCopyMatches": true,
+  "images": [
+    {
+      "id": "01",
+      "file": "01-cobalt-studio-og.png",
+      "width": 1200,
+      "height": 630,
+      "exactCopy": true
+    },
+    {
+      "id": "02",
+      "file": "02-porcelain-light-og.png",
+      "width": 1200,
+      "height": 630,
+      "exactCopy": true
+    },
+    {
+      "id": "03",
+      "file": "03-floating-inventory-og.png",
+      "width": 1200,
+      "height": 630,
+      "exactCopy": true
+    },
+    {
+      "id": "04",
+      "file": "04-sorting-table-og.png",
+      "width": 1200,
+      "height": 630,
+      "exactCopy": true
+    },
+    {
+      "id": "05",
+      "file": "05-the-click-og.png",
+      "width": 1200,
+      "height": 630,
+      "exactCopy": true
+    },
+    {
+      "id": "06",
+      "file": "06-midnight-macro-og.png",
+      "width": 1200,
+      "height": 630,
+      "exactCopy": true
+    },
+    {
+      "id": "07",
+      "file": "07-completion-stage-og.png",
+      "width": 1200,
+      "height": 630,
+      "exactCopy": true
+    },
+    {
+      "id": "08",
+      "file": "08-engineering-view-og.png",
+      "width": 1200,
+      "height": 630,
+      "exactCopy": true
+    },
+    {
+      "id": "09",
+      "file": "09-colour-flow-og.png",
+      "width": 1200,
+      "height": 630,
+      "exactCopy": true
+    },
+    {
+      "id": "10",
+      "file": "10-glass-gallery-og.png",
+      "width": 1200,
+      "height": 630,
+      "exactCopy": true
+    }
+  ]
+}

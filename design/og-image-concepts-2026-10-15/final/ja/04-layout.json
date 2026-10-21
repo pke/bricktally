@@ -1,0 +1,137 @@
+{
+  "locale": "ja",
+  "template": "04",
+  "copy": {
+    "language": "日本語",
+    "brand": "BrickTally",
+    "claim": "すべてのブロックをカウント",
+    "description": "LEGO®セットが100%そろっているか確認",
+    "features": [
+      "セット内のすべてのブロックをカウント",
+      "進捗状況をひと目で確認",
+      "不足パーツをエクスポートして追加注文"
+    ]
+  },
+  "layout": {
+    "scale": 1,
+    "fonts": {
+      "brand": "Arial",
+      "body": "Yu Gothic"
+    },
+    "textBox": {
+      "x": 64,
+      "width": 478,
+      "bottom": 535
+    },
+    "blocks": [
+      {
+        "key": "brand",
+        "original": "BrickTally",
+        "font": "Arial",
+        "size": 74,
+        "weight": 700,
+        "lineHeight": 94.72,
+        "lines": [
+          {
+            "text": "BrickTally",
+            "x": 64,
+            "baseline": 188,
+            "width": 348.25,
+            "top": 135,
+            "bottom": 203
+          }
+        ]
+      },
+      {
+        "key": "claim",
+        "original": "すべてのブロックをカウント",
+        "font": "Yu Gothic",
+        "size": 34,
+        "weight": 700,
+        "lineHeight": 43.52,
+        "lines": [
+          {
+            "text": "すべてのブロックをカウント",
+            "x": 64,
+            "baseline": 244,
+            "width": 438.95001220703125,
+            "top": 216,
+            "bottom": 246
+          }
+        ]
+      },
+      {
+        "key": "description",
+        "original": "LEGO®セットが100%そろっているか確認",
+        "font": "Yu Gothic",
+        "size": 21,
+        "weight": 400,
+        "lineHeight": 26.88,
+        "lines": [
+          {
+            "text": "LEGO®セットが100%そろっているか確認",
+            "x": 64,
+            "baseline": 296,
+            "width": 385.9200134277344,
+            "top": 279,
+            "bottom": 296
+          }
+        ]
+      },
+      {
+        "key": "feature1",
+        "original": "セット内のすべてのブロックをカウント",
+        "font": "Yu Gothic",
+        "size": 19,
+        "weight": 400,
+        "lineHeight": 24.32,
+        "lines": [
+          {
+            "text": "セット内のすべてのブロックをカウント",
+            "x": 100,
+            "baseline": 373,
+            "width": 342,
+            "top": 358,
+            "bottom": 374
+          }
+        ]
+      },
+      {
+        "key": "feature2",
+        "original": "進捗状況をひと目で確認",
+        "font": "Yu Gothic",
+        "size": 19,
+        "weight": 400,
+        "lineHeight": 24.32,
+        "lines": [
+          {
+            "text": "進捗状況をひと目で確認",
+            "x": 100,
+            "baseline": 422,
+            "width": 209,
+            "top": 406,
+            "bottom": 424
+          }
+        ]
+      },
+      {
+        "key": "feature3",
+        "original": "不足パーツをエクスポートして追加注文",
+        "font": "Yu Gothic",
+        "size": 19,
+        "weight": 400,
+        "lineHeight": 24.32,
+        "lines": [
+          {
+            "text": "不足パーツをエクスポートして追加注文",
+            "x": 100,
+            "baseline": 471,
+            "width": 342,
+            "top": 456,
+            "bottom": 473
+          }
+        ]
+      }
+    ]
+  }
+}

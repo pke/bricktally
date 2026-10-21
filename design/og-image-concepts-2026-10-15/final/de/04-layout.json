@@ -1,0 +1,145 @@
+{
+  "locale": "de",
+  "template": "04",
+  "copy": {
+    "language": "Deutsch",
+    "brand": "BrickTally",
+    "claim": "Jeder Stein zählt",
+    "description": "Prüfe, ob deine LEGO® Sets zu 100 % vollständig sind",
+    "features": [
+      "Zähle jeden Stein in deinem Set",
+      "Verfolge deinen Fortschritt auf einen Blick",
+      "Exportiere fehlende Teile zum Nachbestellen"
+    ]
+  },
+  "layout": {
+    "scale": 1,
+    "fonts": {
+      "brand": "Arial",
+      "body": "Arial"
+    },
+    "textBox": {
+      "x": 64,
+      "width": 478,
+      "bottom": 535
+    },
+    "blocks": [
+      {
+        "key": "brand",
+        "original": "BrickTally",
+        "font": "Arial",
+        "size": 74,
+        "weight": 700,
+        "lineHeight": 94.72,
+        "lines": [
+          {
+            "text": "BrickTally",
+            "x": 64,
+            "baseline": 188,
+            "width": 348.25,
+            "top": 135,
+            "bottom": 203
+          }
+        ]
+      },
+      {
+        "key": "claim",
+        "original": "Jeder Stein zählt",
+        "font": "Arial",
+        "size": 34,
+        "weight": 700,
+        "lineHeight": 43.52,
+        "lines": [
+          {
+            "text": "Jeder Stein zählt",
+            "x": 64,
+            "baseline": 244,
+            "width": 270.19000244140625,
+            "top": 219,
+            "bottom": 244
+          }
+        ]
+      },
+      {
+        "key": "description",
+        "original": "Prüfe, ob deine LEGO® Sets zu 100 % vollständig sind",
+        "font": "Arial",
+        "size": 21,
+        "weight": 400,
+        "lineHeight": 26.88,
+        "lines": [
+          {
+            "text": "Prüfe, ob deine LEGO® Sets",
+            "x": 64,
+            "baseline": 296,
+            "width": 269.95001220703125,
+            "top": 280,
+            "bottom": 299
+          },
+          {
+            "text": "zu 100 % vollständig sind",
+            "x": 64,
+            "baseline": 322.88,
+            "width": 236.97999572753906,
+            "top": 307.88,
+            "bottom": 326.88
+          }
+        ]
+      },
+      {
+        "key": "feature1",
+        "original": "Zähle jeden Stein in deinem Set",
+        "font": "Arial",
+        "size": 19,
+        "weight": 400,
+        "lineHeight": 24.32,
+        "lines": [
+          {
+            "text": "Zähle jeden Stein in deinem Set",
+            "x": 100,
+            "baseline": 399.88,
+            "width": 269.3399963378906,
+            "top": 385.88,
+            "bottom": 403.88
+          }
+        ]
+      },
+      {
+        "key": "feature2",
+        "original": "Verfolge deinen Fortschritt auf einen Blick",
+        "font": "Arial",
+        "size": 19,
+        "weight": 400,
+        "lineHeight": 24.32,
+        "lines": [
+          {
+            "text": "Verfolge deinen Fortschritt auf einen Blick",
+            "x": 100,
+            "baseline": 448.88,
+            "width": 350.6400146484375,
+            "top": 434.88,
+            "bottom": 452.88
+          }
+        ]
+      },
+      {
+        "key": "feature3",
+        "original": "Exportiere fehlende Teile zum Nachbestellen",
+        "font": "Arial",
+        "size": 19,
+        "weight": 400,
+        "lineHeight": 24.32,
+        "lines": [
+          {
+            "text": "Exportiere fehlende Teile zum Nachbestellen",
+            "x": 100,
+            "baseline": 497.88,
+            "width": 375.6499938964844,
+            "top": 483.88,
+            "bottom": 501.88
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,197 @@
+{
+  "pngCount": 20,
+  "englishTemplates": 10,
+  "localized04": [
+    "da",
+    "de",
+    "en",
+    "es",
+    "fr",
+    "ja",
+    "ko",
+    "nl",
+    "ru",
+    "zh-CN",
+    "zh-TW"
+  ],
+  "supportedLocales": [
+    "en",
+    "de",
+    "fr",
+    "es",
+    "nl",
+    "da",
+    "ja",
+    "ko",
+    "ru",
+    "zh-CN",
+    "zh-TW"
+  ],
+  "checks": [
+    {
+      "file": "da/04-sorting-table-og.png",
+      "dimensions": true,
+      "pngSHA256Matches": true,
+      "renderingUnchanged": true,
+      "copyMatches": true,
+      "decorativeLine": false
+    },
+    {
+      "file": "de/04-sorting-table-og.png",
+      "dimensions": true,
+      "pngSHA256Matches": true,
+      "renderingUnchanged": true,
+      "copyMatches": true,
+      "decorativeLine": false
+    },
+    {
+      "file": "en/01-cobalt-studio-og.png",
+      "dimensions": true,
+      "pngSHA256Matches": true,
+      "renderingUnchanged": true,
+      "copyMatches": true,
+      "decorativeLine": false
+    },
+    {
+      "file": "en/02-porcelain-light-og.png",
+      "dimensions": true,
+      "pngSHA256Matches": true,
+      "renderingUnchanged": true,
+      "copyMatches": true,
+      "decorativeLine": false
+    },
+    {
+      "file": "en/03-floating-inventory-og.png",
+      "dimensions": true,
+      "pngSHA256Matches": true,
+      "renderingUnchanged": true,
+      "copyMatches": true,
+      "decorativeLine": false
+    },
+    {
+      "file": "en/04-sorting-table-og.png",
+      "dimensions": true,
+      "pngSHA256Matches": true,
+      "renderingUnchanged": true,
+      "copyMatches": true,
+      "decorativeLine": false
+    },
+    {
+      "file": "en/05-the-click-og.png",
+      "dimensions": true,
+      "pngSHA256Matches": true,
+      "renderingUnchanged": true,
+      "copyMatches": true,
+      "decorativeLine": false
+    },
+    {
+      "file": "en/06-midnight-macro-og.png",
+      "dimensions": true,
+      "pngSHA256Matches": true,
+      "renderingUnchanged": true,
+      "copyMatches": true,
+      "decorativeLine": false
+    },
+    {
+      "file": "en/07-completion-stage-og.png",
+      "dimensions": true,
+      "pngSHA256Matches": true,
+      "renderingUnchanged": true,
+      "copyMatches": true,
+      "decorativeLine": false
+    },
+    {
+      "file": "en/08-engineering-view-og.png",
+      "dimensions": true,
+      "pngSHA256Matches": true,
+      "renderingUnchanged": true,
+      "copyMatches": true,
+      "decorativeLine": false
+    },
+    {
+      "file": "en/09-colour-flow-og.png",
+      "dimensions": true,
+      "pngSHA256Matches": true,
+      "renderingUnchanged": true,
+      "copyMatches": true,
+      "decorativeLine": false
+    },
+    {
+      "file": "en/10-glass-gallery-og.png",
+      "dimensions": true,
+      "pngSHA256Matches": true,
+      "renderingUnchanged": true,
+      "copyMatches": true,
+      "decorativeLine": false
+    },
+    {
+      "file": "es/04-sorting-table-og.png",
+      "dimensions": true,
+      "pngSHA256Matches": true,
+      "renderingUnchanged": true,
+      "copyMatches": true,
+      "decorativeLine": false
+    },
+    {
+      "file": "fr/04-sorting-table-og.png",
+      "dimensions": true,
+      "pngSHA256Matches": true,
+      "renderingUnchanged": true,
+      "copyMatches": true,
+      "decorativeLine": false
+    },
+    {
+      "file": "ja/04-sorting-table-og.png",
+      "dimensions": true,
+      "pngSHA256Matches": true,
+      "renderingUnchanged": true,
+      "copyMatches": true,
+      "decorativeLine": false
+    },
+    {
+      "file": "ko/04-sorting-table-og.png",
+      "dimensions": true,
+      "pngSHA256Matches": true,
+      "renderingUnchanged": true,
+      "copyMatches": true,
+      "decorativeLine": false
+    },
+    {
+      "file": "nl/04-sorting-table-og.png",
+      "dimensions": true,
+      "pngSHA256Matches": true,
+      "renderingUnchanged": true,
+      "copyMatches": true,
+      "decorativeLine": false
+    },
+    {
+      "file": "ru/04-sorting-table-og.png",
+      "dimensions": true,
+      "pngSHA256Matches": true,
+      "renderingUnchanged": true,
+      "copyMatches": true,
+      "decorativeLine": false
+    },
+    {
+      "file": "zh-CN/04-sorting-table-og.png",
+      "dimensions": true,
+      "pngSHA256Matches": true,
+      "renderingUnchanged": true,
+      "copyMatches": true,
+      "decorativeLine": false
+    },
+    {
+      "file": "zh-TW/04-sorting-table-og.png",
+      "dimensions": true,
+      "pngSHA256Matches": true,
+      "renderingUnchanged": true,
+      "copyMatches": true,
+      "decorativeLine": false
+    }
+  ],
+  "tests": {
+    "passed": 8,
+    "failed": 0,
+    "futureLayoutCombinations": 110
+  }
+}

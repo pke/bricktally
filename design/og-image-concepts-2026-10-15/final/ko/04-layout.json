@@ -1,0 +1,137 @@
+{
+  "locale": "ko",
+  "template": "04",
+  "copy": {
+    "language": "한국어",
+    "brand": "BrickTally",
+    "claim": "모든 브릭을 세어보세요",
+    "description": "LEGO® 세트가 100% 완성되었는지 확인하세요",
+    "features": [
+      "세트의 모든 브릭을 세어보세요",
+      "진행 상황을 한눈에 확인하세요",
+      "누락된 부품을 내보내 추가 주문하세요"
+    ]
+  },
+  "layout": {
+    "scale": 1,
+    "fonts": {
+      "brand": "Arial",
+      "body": "Malgun Gothic"
+    },
+    "textBox": {
+      "x": 64,
+      "width": 478,
+      "bottom": 535
+    },
+    "blocks": [
+      {
+        "key": "brand",
+        "original": "BrickTally",
+        "font": "Arial",
+        "size": 74,
+        "weight": 700,
+        "lineHeight": 94.72,
+        "lines": [
+          {
+            "text": "BrickTally",
+            "x": 64,
+            "baseline": 188,
+            "width": 348.25,
+            "top": 135,
+            "bottom": 203
+          }
+        ]
+      },
+      {
+        "key": "claim",
+        "original": "모든 브릭을 세어보세요",
+        "font": "Malgun Gothic",
+        "size": 34,
+        "weight": 700,
+        "lineHeight": 43.52,
+        "lines": [
+          {
+            "text": "모든 브릭을 세어보세요",
+            "x": 64,
+            "baseline": 244,
+            "width": 363.9100036621094,
+            "top": 214,
+            "bottom": 248
+          }
+        ]
+      },
+      {
+        "key": "description",
+        "original": "LEGO® 세트가 100% 완성되었는지 확인하세요",
+        "font": "Malgun Gothic",
+        "size": 21,
+        "weight": 400,
+        "lineHeight": 26.88,
+        "lines": [
+          {
+            "text": "LEGO® 세트가 100% 완성되었는지 확인하세요",
+            "x": 64,
+            "baseline": 296,
+            "width": 446.9100036621094,
+            "top": 280,
+            "bottom": 296
+          }
+        ]
+      },
+      {
+        "key": "feature1",
+        "original": "세트의 모든 브릭을 세어보세요",
+        "font": "Malgun Gothic",
+        "size": 19,
+        "weight": 400,
+        "lineHeight": 24.32,
+        "lines": [
+          {
+            "text": "세트의 모든 브릭을 세어보세요",
+            "x": 100,
+            "baseline": 373,
+            "width": 267.0400085449219,
+            "top": 356,
+            "bottom": 375
+          }
+        ]
+      },
+      {
+        "key": "feature2",
+        "original": "진행 상황을 한눈에 확인하세요",
+        "font": "Malgun Gothic",
+        "size": 19,
+        "weight": 400,
+        "lineHeight": 24.32,
+        "lines": [
+          {
+            "text": "진행 상황을 한눈에 확인하세요",
+            "x": 100,
+            "baseline": 422,
+            "width": 267.0400085449219,
+            "top": 405,
+            "bottom": 424
+          }
+        ]
+      },
+      {
+        "key": "feature3",
+        "original": "누락된 부품을 내보내 추가 주문하세요",
+        "font": "Malgun Gothic",
+        "size": 19,
+        "weight": 400,
+        "lineHeight": 24.32,
+        "lines": [
+          {
+            "text": "누락된 부품을 내보내 추가 주문하세요",
+            "x": 100,
+            "baseline": 471,
+            "width": 330.7200012207031,
+            "top": 454,
+            "bottom": 473
+          }
+        ]
+      }
+    ]
+  }
+}

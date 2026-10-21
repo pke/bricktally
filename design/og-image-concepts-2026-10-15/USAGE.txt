@@ -1,0 +1,83 @@
+BrickTally: finale OG-Bilder und wiederverwendbarer Renderer
+=========================================================
+
+Ausgabe: final/review.html
+- Alle zehn englischen Fassungen ohne dekorativen Strich.
+- Entwurf 04 Sorting Table in allen elf unterstützten Projektsprachen.
+- 20 eindeutige PNGs mit 1200 x 630 Pixeln (Englisch 04 ist in beiden Gruppen enthalten).
+- Originale Imagegen-Renderings bleiben unverändert unter renderings/ erhalten.
+
+Dateien für spätere Textänderungen
+---------------------------------
+copy.json                 Texte: brand, claim, description, drei features pro Sprache.
+templates.json            Zehn Hintergründe, helle/dunkle Palette, Textflächen.
+render-og.cjs             CLI, Textmessung, Umbruch und PNG-/SVG-Export.
+render-gallery.cjs        Vergleichsübersichten und Galerie.
+final/<locale>/           Fertige PNGs, Schriftkonturen-SVGs, Text-/Layoutnachweise.
+final/render-manifest.json Sprachen, Schriftwahl, Skalierung und SHA-256-Nachweise.
+test-renderer.cjs         Eingabe-, Layout-, CJK-, Wiederverwendungs- und Exporttests.
+
+Schnellstart (Node.js mit Intl.Segmenter; Node 22 oder neuer empfohlen)
+------------------------------------------------------------------
+Im Konzeptordner:
+  npm install
+  node render-og.cjs --template all --locale en
+  node render-og.cjs --template 04 --locale all
+  npm test
+
+Die benötigten Bibliotheken sind im eigenen package.json gepinnt:
+  @napi-rs/canvas 0.1.100
+  sharp 0.35.5
+Auf diesem Rechner werden alternativ die bereits installierten Codex-Runtime-
+Bibliotheken verwendet. Es wurde keine Abhängigkeit im Anwendungsprojekt geändert.
+Optional kann OG_NODE_MODULES auf ein vorhandenes node_modules-Verzeichnis zeigen.
+
+Spätere Kampagne / neue Texte
+-----------------------------
+1. copy.json kopieren, z.B. nach campaign-copy.json.
+2. Gewünschte Texte in den betreffenden Sprachobjekten ersetzen.
+3. Ausführen:
+  node render-og.cjs --template all --locale de --copy campaign-copy.json --out campaign-output
+  node render-og.cjs --template 04,10 --locale en,fr --copy campaign-copy.json --out campaign-output
+
+--template all oder eine kommaseparierte Auswahl aus 01 bis 10.
+--locale all oder eine kommaseparierte Auswahl unterstützter Projektsprachen.
+--copy und --out werden relativ zum aktuellen Arbeitsverzeichnis aufgelöst.
+Ohne --out wird in diesem Konzeptordner unter final/ exportiert.
+Die Sprachliste wird bei jedem Lauf aus scripts/build-i18n.js gelesen und gegen
+vorhandene locales/*.json geprüft. Für neue Projektsprachen muss zuerst eine
+vollständige passende OG-Übersetzung in copy.json ergänzt werden. Keine stille
+englische Ersatzfassung. Bestehende Exportgruppen bleiben bei weiteren Läufen
+in der Galerie erhalten; nur ausgewählte Sprach-/Vorlagenpaare werden ersetzt.
+
+Text und Typografie
+-------------------
+Die englischen Inhalte sind wortgleich mit dem bisherigen og-image.svg.
+Die Claims aller anderen Sprachen entsprechen den vorhandenen meta.title-
+Übersetzungen. Beschreibung und drei Vorteile sind sinngleiche OG-Übersetzungen;
+sie werden separat gepflegt, nicht aus den längeren Landing-Page-Texten gezogen.
+Die dekorative Linie oberhalb BrickTally wurde aus der finalen Textebene entfernt.
+Umbrüche werden gemessen und ausgewogen gesetzt, nötigenfalls wird die Schrift
+innerhalb einer kleinen lesbaren Spanne reduziert. Zu lange Inhalte führen vor
+dem Export zu einer Fehlermeldung; es gibt weder Abschneiden noch Ellipsen.
+Bild und Texte bleiben getrennt, daher ist für Textänderungen kein neuer
+Imagegen-Aufruf nötig. Die Zeichen auf dem gerenderten Stein sind Bestandteil
+des Hintergrundbildes; sie werden nicht durch copy.json verändert.
+
+Schriften
+---------
+Der Renderer nutzt installierte Schriften und prüft die erforderlichen Familien.
+Windows: Arial; Yu Gothic (ja), Malgun Gothic (ko), DengXian (zh-CN),
+Microsoft JhengHei (zh-TW). Andere Systeme: Liberation Sans/Noto Sans/DejaVu Sans
+für lateinische/kyrillische Texte und passende Noto Sans CJK JP/KR/SC/TC-Schriften.
+Zusätzliche Schriftdateien können mit --font-dir /pfad/zu/fonts geladen werden.
+Schriftdateien werden aus Lizenzgründen nicht aus Windows in das Projekt kopiert.
+SVG-Textebenen werden beim Export in Pfade umgewandelt; PNGs und fertige SVGs
+benötigen später keine installierte Schrift mehr. Bearbeitbare Texte bleiben
+in copy.json und den zugehörigen Layout-JSON-Dateien erhalten.
+
+Die Anwendungsdateien, Sprachdateien, der Set-Editor und das aktuell eingebundene
+OG-Bild wurden durch diese Arbeit nicht verändert. Keine automatische Einbindung
+in scripts/build-i18n.js und kein Commit. Der alte build-og-concepts.cjs-Einstieg
+ruft nun denselben neuen Renderer auf; der Akzentstrich kann darüber nicht
+versehentlich wieder erscheinen.

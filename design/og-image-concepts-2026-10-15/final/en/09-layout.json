@@ -1,0 +1,137 @@
+{
+  "locale": "en",
+  "template": "09",
+  "copy": {
+    "language": "English",
+    "brand": "BrickTally",
+    "claim": "Every Brick Counts",
+    "description": "Verify your LEGO® sets are 100% complete",
+    "features": [
+      "Count every brick in your set",
+      "Track progress with visual feedback",
+      "Export missing pieces for reordering"
+    ]
+  },
+  "layout": {
+    "scale": 1,
+    "fonts": {
+      "brand": "Arial",
+      "body": "Arial"
+    },
+    "textBox": {
+      "x": 64,
+      "width": 478,
+      "bottom": 535
+    },
+    "blocks": [
+      {
+        "key": "brand",
+        "original": "BrickTally",
+        "font": "Arial",
+        "size": 74,
+        "weight": 700,
+        "lineHeight": 94.72,
+        "lines": [
+          {
+            "text": "BrickTally",
+            "x": 64,
+            "baseline": 188,
+            "width": 348.25,
+            "top": 135,
+            "bottom": 203
+          }
+        ]
+      },
+      {
+        "key": "claim",
+        "original": "Every Brick Counts",
+        "font": "Arial",
+        "size": 34,
+        "weight": 700,
+        "lineHeight": 43.52,
+        "lines": [
+          {
+            "text": "Every Brick Counts",
+            "x": 64,
+            "baseline": 244,
+            "width": 313.6700134277344,
+            "top": 219,
+            "bottom": 251
+          }
+        ]
+      },
+      {
+        "key": "description",
+        "original": "Verify your LEGO® sets are 100% complete",
+        "font": "Arial",
+        "size": 21,
+        "weight": 400,
+        "lineHeight": 26.88,
+        "lines": [
+          {
+            "text": "Verify your LEGO® sets are 100% complete",
+            "x": 64,
+            "baseline": 296,
+            "width": 409.989990234375,
+            "top": 280,
+            "bottom": 300
+          }
+        ]
+      },
+      {
+        "key": "feature1",
+        "original": "Count every brick in your set",
+        "font": "Arial",
+        "size": 19,
+        "weight": 400,
+        "lineHeight": 24.32,
+        "lines": [
+          {
+            "text": "Count every brick in your set",
+            "x": 100,
+            "baseline": 373,
+            "width": 240.77000427246094,
+            "top": 359,
+            "bottom": 377
+          }
+        ]
+      },
+      {
+        "key": "feature2",
+        "original": "Track progress with visual feedback",
+        "font": "Arial",
+        "size": 19,
+        "weight": 400,
+        "lineHeight": 24.32,
+        "lines": [
+          {
+            "text": "Track progress with visual feedback",
+            "x": 100,
+            "baseline": 422,
+            "width": 301.30999755859375,
+            "top": 408,
+            "bottom": 426
+          }
+        ]
+      },
+      {
+        "key": "feature3",
+        "original": "Export missing pieces for reordering",
+        "font": "Arial",
+        "size": 19,
+        "weight": 400,
+        "lineHeight": 24.32,
+        "lines": [
+          {
+            "text": "Export missing pieces for reordering",
+            "x": 100,
+            "baseline": 471,
+            "width": 304.1300048828125,
+            "top": 457,
+            "bottom": 475
+          }
+        ]
+      }
+    ]
+  }
+}

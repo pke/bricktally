@@ -1,0 +1,137 @@
+{
+  "locale": "da",
+  "template": "04",
+  "copy": {
+    "language": "Dansk",
+    "brand": "BrickTally",
+    "claim": "Hver Klods Tæller",
+    "description": "Kontrollér, at dine LEGO® sæt er 100 % komplette",
+    "features": [
+      "Tæl hver klods i dit sæt",
+      "Følg dine fremskridt visuelt",
+      "Eksportér manglende dele til genbestilling"
+    ]
+  },
+  "layout": {
+    "scale": 1,
+    "fonts": {
+      "brand": "Arial",
+      "body": "Arial"
+    },
+    "textBox": {
+      "x": 64,
+      "width": 478,
+      "bottom": 535
+    },
+    "blocks": [
+      {
+        "key": "brand",
+        "original": "BrickTally",
+        "font": "Arial",
+        "size": 74,
+        "weight": 700,
+        "lineHeight": 94.72,
+        "lines": [
+          {
+            "text": "BrickTally",
+            "x": 64,
+            "baseline": 188,
+            "width": 348.25,
+            "top": 135,
+            "bottom": 203
+          }
+        ]
+      },
+      {
+        "key": "claim",
+        "original": "Hver Klods Tæller",
+        "font": "Arial",
+        "size": 34,
+        "weight": 700,
+        "lineHeight": 43.52,
+        "lines": [
+          {
+            "text": "Hver Klods Tæller",
+            "x": 64,
+            "baseline": 244,
+            "width": 290.9800109863281,
+            "top": 220,
+            "bottom": 244
+          }
+        ]
+      },
+      {
+        "key": "description",
+        "original": "Kontrollér, at dine LEGO® sæt er 100 % komplette",
+        "font": "Arial",
+        "size": 21,
+        "weight": 400,
+        "lineHeight": 26.88,
+        "lines": [
+          {
+            "text": "Kontrollér, at dine LEGO® sæt er 100 % komplette",
+            "x": 64,
+            "baseline": 296,
+            "width": 470.7099914550781,
+            "top": 280,
+            "bottom": 300
+          }
+        ]
+      },
+      {
+        "key": "feature1",
+        "original": "Tæl hver klods i dit sæt",
+        "font": "Arial",
+        "size": 19,
+        "weight": 400,
+        "lineHeight": 24.32,
+        "lines": [
+          {
+            "text": "Tæl hver klods i dit sæt",
+            "x": 100,
+            "baseline": 373,
+            "width": 196.38999938964844,
+            "top": 359,
+            "bottom": 373
+          }
+        ]
+      },
+      {
+        "key": "feature2",
+        "original": "Følg dine fremskridt visuelt",
+        "font": "Arial",
+        "size": 19,
+        "weight": 400,
+        "lineHeight": 24.32,
+        "lines": [
+          {
+            "text": "Følg dine fremskridt visuelt",
+            "x": 100,
+            "baseline": 422,
+            "width": 227.00999450683594,
+            "top": 408,
+            "bottom": 426
+          }
+        ]
+      },
+      {
+        "key": "feature3",
+        "original": "Eksportér manglende dele til genbestilling",
+        "font": "Arial",
+        "size": 19,
+        "weight": 400,
+        "lineHeight": 24.32,
+        "lines": [
+          {
+            "text": "Eksportér manglende dele til genbestilling",
+            "x": 100,
+            "baseline": 471,
+            "width": 351.7099914550781,
+            "top": 457,
+            "bottom": 475
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "locale": "fr",
+  "template": "04",
+  "copy": {
+    "language": "Français",
+    "brand": "BrickTally",
+    "claim": "Chaque brique compte",
+    "description": "Vérifiez que vos sets LEGO® sont complets à 100 %",
+    "features": [
+      "Comptez chaque brique de votre set",
+      "Suivez votre progression visuellement",
+      "Exportez les pièces manquantes pour les commander"
+    ]
+  },
+  "layout": {
+    "scale": 0.95,
+    "fonts": {
+      "brand": "Arial",
+      "body": "Arial"
+    },
+    "textBox": {
+      "x": 64,
+      "width": 478,
+      "bottom": 535
+    },
+    "blocks": [
+      {
+        "key": "brand",
+        "original": "BrickTally",
+        "font": "Arial",
+        "size": 70.3,
+        "weight": 700,
+        "lineHeight": 89.984,
+        "lines": [
+          {
+            "text": "BrickTally",
+            "x": 64,
+            "baseline": 188,
+            "width": 330.82000732421875,
+            "top": 138,
+            "bottom": 203
+          }
+        ]
+      },
+      {
+        "key": "claim",
+        "original": "Chaque brique compte",
+        "font": "Arial",
+        "size": 32.3,
+        "weight": 700,
+        "lineHeight": 41.343999999999994,
+        "lines": [
+          {
+            "text": "Chaque brique compte",
+            "x": 64,
+            "baseline": 241.2,
+            "width": 349.9200134277344,
+            "top": 218.2,
+            "bottom": 247.2
+          }
+        ]
+      },
+      {
+        "key": "description",
+        "original": "Vérifiez que vos sets LEGO® sont complets à 100 %",
+        "font": "Arial",
+        "size": 19.95,
+        "weight": 400,
+        "lineHeight": 25.536,
+        "lines": [
+          {
+            "text": "Vérifiez que vos sets LEGO® sont complets à 100 %",
+            "x": 64,
+            "baseline": 290.59999999999997,
+            "width": 466.8299865722656,
+            "top": 274.59999999999997,
+            "bottom": 294.59999999999997
+          }
+        ]
+      },
+      {
+        "key": "feature1",
+        "original": "Comptez chaque brique de votre set",
+        "font": "Arial",
+        "size": 18.05,
+        "weight": 400,
+        "lineHeight": 23.104000000000003,
+        "lines": [
+          {
+            "text": "Comptez chaque brique de votre set",
+            "x": 100,
+            "baseline": 363.74999999999994,
+            "width": 290.92999267578125,
+            "top": 349.74999999999994,
+            "bottom": 367.74999999999994
+          }
+        ]
+      },
+      {
+        "key": "feature2",
+        "original": "Suivez votre progression visuellement",
+        "font": "Arial",
+        "size": 18.05,
+        "weight": 400,
+        "lineHeight": 23.104000000000003,
+        "lines": [
+          {
+            "text": "Suivez votre progression visuellement",
+            "x": 100,
+            "baseline": 410.29999999999995,
+            "width": 303.92999267578125,
+            "top": 396.29999999999995,
+            "bottom": 414.29999999999995
+          }
+        ]
+      },
+      {
+        "key": "feature3",
+        "original": "Exportez les pièces manquantes pour les commander",
+        "font": "Arial",
+        "size": 18.05,
+        "weight": 400,
+        "lineHeight": 23.104000000000003,
+        "lines": [
+          {
+            "text": "Exportez les pièces manquantes pour les commander",
+            "x": 100,
+            "baseline": 456.84999999999997,
+            "width": 430.3399963378906,
+            "top": 442.84999999999997,
+            "bottom": 460.84999999999997
+          }
+        ]
+      }
+    ]
+  }
+}

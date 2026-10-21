@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "locales": {
+    "en": {
+      "language": "English",
+      "brand": "BrickTally",
+      "claim": "Every Brick Counts",
+      "description": "Verify your LEGO® sets are 100% complete",
+      "features": [
+        "Count every brick in your set",
+        "Track progress with visual feedback",
+        "Export missing pieces for reordering"
+      ]
+    },
+    "de": {
+      "language": "Deutsch",
+      "brand": "BrickTally",
+      "claim": "Jeder Stein zählt",
+      "description": "Prüfe, ob deine LEGO® Sets zu 100 % vollständig sind",
+      "features": [
+        "Zähle jeden Stein in deinem Set",
+        "Verfolge deinen Fortschritt auf einen Blick",
+        "Exportiere fehlende Teile zum Nachbestellen"
+      ]
+    },
+    "fr": {
+      "language": "Français",
+      "brand": "BrickTally",
+      "claim": "Chaque brique compte",
+      "description": "Vérifiez que vos sets LEGO® sont complets à 100 %",
+      "features": [
+        "Comptez chaque brique de votre set",
+        "Suivez votre progression visuellement",
+        "Exportez les pièces manquantes pour les commander"
+      ]
+    },
+    "es": {
+      "language": "Español",
+      "brand": "BrickTally",
+      "claim": "Cada pieza cuenta",
+      "description": "Comprueba que tus sets LEGO® están completos al 100 %",
+      "features": [
+        "Cuenta cada pieza de tu set",
+        "Sigue tu progreso de forma visual",
+        "Exporta las piezas que faltan para pedirlas"
+      ]
+    },
+    "nl": {
+      "language": "Nederlands",
+      "brand": "BrickTally",
+      "claim": "Elk Steentje Telt",
+      "description": "Controleer of je LEGO® sets 100% compleet zijn",
+      "features": [
+        "Tel elk steentje in je set",
+        "Volg je voortgang met visuele feedback",
+        "Exporteer ontbrekende onderdelen om ze na te bestellen"
+      ]
+    },
+    "da": {
+      "language": "Dansk",
+      "brand": "BrickTally",
+      "claim": "Hver Klods Tæller",
+      "description": "Kontrollér, at dine LEGO® sæt er 100 % komplette",
+      "features": [
+        "Tæl hver klods i dit sæt",
+        "Følg dine fremskridt visuelt",
+        "Eksportér manglende dele til genbestilling"
+      ]
+    },
+    "ja": {
+      "language": "日本語",
+      "brand": "BrickTally",
+      "claim": "すべてのブロックをカウント",
+      "description": "LEGO®セットが100%そろっているか確認",
+      "features": [
+        "セット内のすべてのブロックをカウント",
+        "進捗状況をひと目で確認",
+        "不足パーツをエクスポートして追加注文"
+      ]
+    },
+    "ko": {
+      "language": "한국어",
+      "brand": "BrickTally",
+      "claim": "모든 브릭을 세어보세요",
+      "description": "LEGO® 세트가 100% 완성되었는지 확인하세요",
+      "features": [
+        "세트의 모든 브릭을 세어보세요",
+        "진행 상황을 한눈에 확인하세요",
+        "누락된 부품을 내보내 추가 주문하세요"
+      ]
+    },
+    "ru": {
+      "language": "Русский",
+      "brand": "BrickTally",
+      "claim": "Каждый кубик на счету",
+      "description": "Проверьте, что ваши наборы LEGO® укомплектованы на 100 %",
+      "features": [
+        "Посчитайте каждый кубик в наборе",
+        "Следите за прогрессом наглядно",
+        "Экспортируйте список недостающих деталей для заказа"
+      ]
+    },
+    "zh-CN": {
+      "language": "简体中文",
+      "brand": "BrickTally",
+      "claim": "每块积木都很重要",
+      "description": "确认您的 LEGO® 套装零件是否 100% 齐全",
+      "features": [
+        "清点套装中的每块积木",
+        "直观查看清点进度",
+        "导出缺少的零件以便补购"
+      ]
+    },
+    "zh-TW": {
+      "language": "繁體中文",
+      "brand": "BrickTally",
+      "claim": "每塊積木都很重要",
+      "description": "確認您的 LEGO® 套裝零件是否 100% 齊全",
+      "features": [
+        "清點套裝中的每塊積木",
+        "直觀查看清點進度",
+        "匯出缺少的零件以便補購"
+      ]
+    }
+  }
+}

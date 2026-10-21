@@ -1,0 +1,398 @@
+{
+  "schemaVersion": 1,
+  "supportedLocales": [
+    "en",
+    "de",
+    "fr",
+    "es",
+    "nl",
+    "da",
+    "ja",
+    "ko",
+    "ru",
+    "zh-CN",
+    "zh-TW"
+  ],
+  "images": [
+    {
+      "template": "04",
+      "name": "Sorting Table",
+      "locale": "da",
+      "language": "Dansk",
+      "file": "da/04-sorting-table-og.png",
+      "width": 1200,
+      "height": 630,
+      "source": "renderings/04-sorting-table.png",
+      "backgroundSHA256": "1545fa70a12852e1b63dfe8aa7a7d1ac8aa5200af0e469ea47c82c484fef7e9d",
+      "copySHA256": "e2be8beb6c96a619a2a9496d617ada779639a85c620d2f4dde26dfaf50d9313d",
+      "imageSHA256": "48effa84ff73a0132936b04c0d0adacc0204ff63816166c7144331cee69fabf7",
+      "fonts": {
+        "brand": "Arial",
+        "body": "Arial"
+      },
+      "fontScale": 1,
+      "decorativeLine": false
+    },
+    {
+      "template": "04",
+      "name": "Sorting Table",
+      "locale": "de",
+      "language": "Deutsch",
+      "file": "de/04-sorting-table-og.png",
+      "width": 1200,
+      "height": 630,
+      "source": "renderings/04-sorting-table.png",
+      "backgroundSHA256": "1545fa70a12852e1b63dfe8aa7a7d1ac8aa5200af0e469ea47c82c484fef7e9d",
+      "copySHA256": "efd3ad00d4756b880ab6f487b8937777ca38f38533916fb1d05021224bec3213",
+      "imageSHA256": "2c877542ea5b718fb2c170ce9d0a6760a1df99f2ae49e2163167e44cc5f51033",
+      "fonts": {
+        "brand": "Arial",
+        "body": "Arial"
+      },
+      "fontScale": 1,
+      "decorativeLine": false
+    },
+    {
+      "template": "01",
+      "name": "Cobalt Studio",
+      "locale": "en",
+      "language": "English",
+      "file": "en/01-cobalt-studio-og.png",
+      "width": 1200,
+      "height": 630,
+      "source": "renderings/01-cobalt-studio.png",
+      "backgroundSHA256": "57d67f09b40f0b7ebd8d8482a94a0a848cee19e96f9d2839cba2791af44687ff",
+      "copySHA256": "68c0ccc8895393405266c8e7bdb935bb9f59280cafe2bc17cbddf1b6a41e76f2",
+      "imageSHA256": "2f791b374a5e9fe4e025c8c4a74dd3467b27153556f0aca567da87fe04befca0",
+      "fonts": {
+        "brand": "Arial",
+        "body": "Arial"
+      },
+      "fontScale": 1,
+      "decorativeLine": false
+    },
+    {
+      "template": "02",
+      "name": "Porcelain Light",
+      "locale": "en",
+      "language": "English",
+      "file": "en/02-porcelain-light-og.png",
+      "width": 1200,
+      "height": 630,
+      "source": "renderings/02-porcelain-light.png",
+      "backgroundSHA256": "8a4405f1b3864efe0210c6e1a83ca5235d6c5b716bb5968864aab1049b3fd02b",
+      "copySHA256": "68c0ccc8895393405266c8e7bdb935bb9f59280cafe2bc17cbddf1b6a41e76f2",
+      "imageSHA256": "a260ade58f2ea8019cf9431f03d7e18df15744784fde9ad2f85276ff588a217e",
+      "fonts": {
+        "brand": "Arial",
+        "body": "Arial"
+      },
+      "fontScale": 1,
+      "decorativeLine": false
+    },
+    {
+      "template": "03",
+      "name": "Floating Inventory",
+      "locale": "en",
+      "language": "English",
+      "file": "en/03-floating-inventory-og.png",
+      "width": 1200,
+      "height": 630,
+      "source": "renderings/03-floating-inventory.png",
+      "backgroundSHA256": "cc2e7ecfe82ad3e33a50d090812420d3ae88384cf8f6a4985e1bdb6c987e5b9f",
+      "copySHA256": "68c0ccc8895393405266c8e7bdb935bb9f59280cafe2bc17cbddf1b6a41e76f2",
+      "imageSHA256": "f06e5b0e36a79f31b3746d2e1864bdf10401298fc3ef742196a97c73e2e6d7c3",
+      "fonts": {
+        "brand": "Arial",
+        "body": "Arial"
+      },
+      "fontScale": 1,
+      "decorativeLine": false
+    },
+    {
+      "template": "04",
+      "name": "Sorting Table",
+      "locale": "en",
+      "language": "English",
+      "file": "en/04-sorting-table-og.png",
+      "width": 1200,
+      "height": 630,
+      "source": "renderings/04-sorting-table.png",
+      "backgroundSHA256": "1545fa70a12852e1b63dfe8aa7a7d1ac8aa5200af0e469ea47c82c484fef7e9d",
+      "copySHA256": "68c0ccc8895393405266c8e7bdb935bb9f59280cafe2bc17cbddf1b6a41e76f2",
+      "imageSHA256": "68297e9f50763dbadf9d0895e2b3ed0ff932a0ca8ae7a2beaeebfd31b04dab23",
+      "fonts": {
+        "brand": "Arial",
+        "body": "Arial"
+      },
+      "fontScale": 1,
+      "decorativeLine": false
+    },
+    {
+      "template": "05",
+      "name": "The Click",
+      "locale": "en",
+      "language": "English",
+      "file": "en/05-the-click-og.png",
+      "width": 1200,
+      "height": 630,
+      "source": "renderings/05-the-click.png",
+      "backgroundSHA256": "43184335e5dc0eabab05a27a3a349556cddae4bb7808b863499d44b596220cd2",
+      "copySHA256": "68c0ccc8895393405266c8e7bdb935bb9f59280cafe2bc17cbddf1b6a41e76f2",
+      "imageSHA256": "649bb799a23ee5c1c708afb6d191d5f0e278197be2c88bd1ea7010ddab3e7baa",
+      "fonts": {
+        "brand": "Arial",
+        "body": "Arial"
+      },
+      "fontScale": 1,
+      "decorativeLine": false
+    },
+    {
+      "template": "06",
+      "name": "Midnight Macro",
+      "locale": "en",
+      "language": "English",
+      "file": "en/06-midnight-macro-og.png",
+      "width": 1200,
+      "height": 630,
+      "source": "renderings/06-midnight-macro.png",
+      "backgroundSHA256": "816cba73b460dd6e0f0e87f2a0ac72ce70d41e42cb84ba1b4bb611b0d0d1ce1e",
+      "copySHA256": "68c0ccc8895393405266c8e7bdb935bb9f59280cafe2bc17cbddf1b6a41e76f2",
+      "imageSHA256": "501f267eda26e622368e9279d9ac096ecec97b553ae7d043bb389b09804257f0",
+      "fonts": {
+        "brand": "Arial",
+        "body": "Arial"
+      },
+      "fontScale": 1,
+      "decorativeLine": false
+    },
+    {
+      "template": "07",
+      "name": "Completion Stage",
+      "locale": "en",
+      "language": "English",
+      "file": "en/07-completion-stage-og.png",
+      "width": 1200,
+      "height": 630,
+      "source": "renderings/07-completion-stage.png",
+      "backgroundSHA256": "ff1aaafd08de1e28c952163990f0d48dc33e1164d1c36d44ee24f2ca997e2f8e",
+      "copySHA256": "68c0ccc8895393405266c8e7bdb935bb9f59280cafe2bc17cbddf1b6a41e76f2",
+      "imageSHA256": "673da6d7658a6f6bf9d92c45128097a1c85adb3cfdc00f153c71816fa727c4cd",
+      "fonts": {
+        "brand": "Arial",
+        "body": "Arial"
+      },
+      "fontScale": 1,
+      "decorativeLine": false
+    },
+    {
+      "template": "08",
+      "name": "Engineering View",
+      "locale": "en",
+      "language": "English",
+      "file": "en/08-engineering-view-og.png",
+      "width": 1200,
+      "height": 630,
+      "source": "renderings/08-engineering-view.png",
+      "backgroundSHA256": "88f3ffc8a77e6f1767f00f1d86babb6a78e610c4707a8c460260555052d00490",
+      "copySHA256": "68c0ccc8895393405266c8e7bdb935bb9f59280cafe2bc17cbddf1b6a41e76f2",
+      "imageSHA256": "a52bd182900d6048f86d4837453c25b98a4253b03fe3e684b4ab048e884b38b2",
+      "fonts": {
+        "brand": "Arial",
+        "body": "Arial"
+      },
+      "fontScale": 1,
+      "decorativeLine": false
+    },
+    {
+      "template": "09",
+      "name": "Colour Flow",
+      "locale": "en",
+      "language": "English",
+      "file": "en/09-colour-flow-og.png",
+      "width": 1200,
+      "height": 630,
+      "source": "renderings/09-colour-flow.png",
+      "backgroundSHA256": "984f3735086964eebf563791cfabc467b24beb34dbcf10c6d696e07ce03cdf97",
+      "copySHA256": "68c0ccc8895393405266c8e7bdb935bb9f59280cafe2bc17cbddf1b6a41e76f2",
+      "imageSHA256": "15f0567e093af222871d5fbbd56061b18bbf19e26c53e5fca09cb67e5081dafa",
+      "fonts": {
+        "brand": "Arial",
+        "body": "Arial"
+      },
+      "fontScale": 1,
+      "decorativeLine": false
+    },
+    {
+      "template": "10",
+      "name": "Glass Gallery",
+      "locale": "en",
+      "language": "English",
+      "file": "en/10-glass-gallery-og.png",
+      "width": 1200,
+      "height": 630,
+      "source": "renderings/10-glass-gallery.png",
+      "backgroundSHA256": "f4b8b20fad0fabfb37b7d4321938abcf548ad277421551f811503868459c6600",
+      "copySHA256": "68c0ccc8895393405266c8e7bdb935bb9f59280cafe2bc17cbddf1b6a41e76f2",
+      "imageSHA256": "83fcba8478835ccbfc91c020017cdd180b5ab767535f4728fa566ff74a3c52b5",
+      "fonts": {
+        "brand": "Arial",
+        "body": "Arial"
+      },
+      "fontScale": 1,
+      "decorativeLine": false
+    },
+    {
+      "template": "04",
+      "name": "Sorting Table",
+      "locale": "es",
+      "language": "Español",
+      "file": "es/04-sorting-table-og.png",
+      "width": 1200,
+      "height": 630,
+      "source": "renderings/04-sorting-table.png",
+      "backgroundSHA256": "1545fa70a12852e1b63dfe8aa7a7d1ac8aa5200af0e469ea47c82c484fef7e9d",
+      "copySHA256": "bc3419b93206695ea8091caa3c820317ef6ae122d46c9afde1e5af07508fcddb",
+      "imageSHA256": "49ca00d7f2a0b4b6243b36be49484c3ae1bcec8ef9ef53b9593e4ab798cc99f3",
+      "fonts": {
+        "brand": "Arial",
+        "body": "Arial"
+      },
+      "fontScale": 1,
+      "decorativeLine": false
+    },
+    {
+      "template": "04",
+      "name": "Sorting Table",
+      "locale": "fr",
+      "language": "Français",
+      "file": "fr/04-sorting-table-og.png",
+      "width": 1200,
+      "height": 630,
+      "source": "renderings/04-sorting-table.png",
+      "backgroundSHA256": "1545fa70a12852e1b63dfe8aa7a7d1ac8aa5200af0e469ea47c82c484fef7e9d",
+      "copySHA256": "a605dc636ba865abf579bd91cec2fbcd80d48b88c267e15a53222219d93ede71",
+      "imageSHA256": "d486cb35641ea4f89942bac3a29e89d594ac4eac5a59c7d74f010b61a5b4000c",
+      "fonts": {
+        "brand": "Arial",
+        "body": "Arial"
+      },
+      "fontScale": 0.95,
+      "decorativeLine": false
+    },
+    {
+      "template": "04",
+      "name": "Sorting Table",
+      "locale": "ja",
+      "language": "日本語",
+      "file": "ja/04-sorting-table-og.png",
+      "width": 1200,
+      "height": 630,
+      "source": "renderings/04-sorting-table.png",
+      "backgroundSHA256": "1545fa70a12852e1b63dfe8aa7a7d1ac8aa5200af0e469ea47c82c484fef7e9d",
+      "copySHA256": "f5cd0be63bdef0a5e3267e7a03ef3a01c2523fbee9a2cf315ee167eafb5b7bcf",
+      "imageSHA256": "59662c7be28f851cc8c7941b61335f46f9056c4235a13d702b762fbd0544f047",
+      "fonts": {
+        "brand": "Arial",
+        "body": "Yu Gothic"
+      },
+      "fontScale": 1,
+      "decorativeLine": false
+    },
+    {
+      "template": "04",
+      "name": "Sorting Table",
+      "locale": "ko",
+      "language": "한국어",
+      "file": "ko/04-sorting-table-og.png",
+      "width": 1200,
+      "height": 630,
+      "source": "renderings/04-sorting-table.png",
+      "backgroundSHA256": "1545fa70a12852e1b63dfe8aa7a7d1ac8aa5200af0e469ea47c82c484fef7e9d",
+      "copySHA256": "963f3edc3a211994622d2ace6052d23e418e1101d54055779ed8e637b1137e80",
+      "imageSHA256": "00afa6a8b890e8abe5c1c28b6ed14f0aaca29c34b34f4986e9b3bf58e159ac9a",
+      "fonts": {
+        "brand": "Arial",
+        "body": "Malgun Gothic"
+      },
+      "fontScale": 1,
+      "decorativeLine": false
+    },
+    {
+      "template": "04",
+      "name": "Sorting Table",
+      "locale": "nl",
+      "language": "Nederlands",
+      "file": "nl/04-sorting-table-og.png",
+      "width": 1200,
+      "height": 630,
+      "source": "renderings/04-sorting-table.png",
+      "backgroundSHA256": "1545fa70a12852e1b63dfe8aa7a7d1ac8aa5200af0e469ea47c82c484fef7e9d",
+      "copySHA256": "9b7a933f3d6d59644426ef055bdac979778c01431ac9a746c8dc19a89b7d5796",
+      "imageSHA256": "1088f55c13d5e3f0af75883c5ee68207b90f02a558619b0f53b11a78f6c96df3",
+      "fonts": {
+        "brand": "Arial",
+        "body": "Arial"
+      },
+      "fontScale": 1,
+      "decorativeLine": false
+    },
+    {
+      "template": "04",
+      "name": "Sorting Table",
+      "locale": "ru",
+      "language": "Русский",
+      "file": "ru/04-sorting-table-og.png",
+      "width": 1200,
+      "height": 630,
+      "source": "renderings/04-sorting-table.png",
+      "backgroundSHA256": "1545fa70a12852e1b63dfe8aa7a7d1ac8aa5200af0e469ea47c82c484fef7e9d",
+      "copySHA256": "18a9090693f8b26a0400929df6b27959754e778b032fe0c8848d057db0e9673c",
+      "imageSHA256": "3bdabc3fee24d58ac19790ba37b92787bc6419d702ccc43b5f4b4b12ad03ce3c",
+      "fonts": {
+        "brand": "Arial",
+        "body": "Arial"
+      },
+      "fontScale": 1,
+      "decorativeLine": false
+    },
+    {
+      "template": "04",
+      "name": "Sorting Table",
+      "locale": "zh-CN",
+      "language": "简体中文",
+      "file": "zh-CN/04-sorting-table-og.png",
+      "width": 1200,
+      "height": 630,
+      "source": "renderings/04-sorting-table.png",
+      "backgroundSHA256": "1545fa70a12852e1b63dfe8aa7a7d1ac8aa5200af0e469ea47c82c484fef7e9d",
+      "copySHA256": "2b6ea323a1461a973b08a30c83f92d5fb5a5f898207701ebddde561bcedbd560",
+      "imageSHA256": "cc6d8002d559f52c09b4dbd3afebd71e6913c9109354de9b36792e518cd164e3",
+      "fonts": {
+        "brand": "Arial",
+        "body": "DengXian"
+      },
+      "fontScale": 1,
+      "decorativeLine": false
+    },
+    {
+      "template": "04",
+      "name": "Sorting Table",
+      "locale": "zh-TW",
+      "language": "繁體中文",
+      "file": "zh-TW/04-sorting-table-og.png",
+      "width": 1200,
+      "height": 630,
+      "source": "renderings/04-sorting-table.png",
+      "backgroundSHA256": "1545fa70a12852e1b63dfe8aa7a7d1ac8aa5200af0e469ea47c82c484fef7e9d",
+      "copySHA256": "c7c13f3938f93808463320aebd4715229a1f63e9718e54b1c752e8e4cf43db0d",
+      "imageSHA256": "17c4dd9480e239df0593e781006cde56ae1a819c39770e6a4c1011e36dd9ab58",
+      "fonts": {
+        "brand": "Arial",
+        "body": "Microsoft JhengHei"
+      },
+      "fontScale": 1,
+      "decorativeLine": false
+    }
+  ]
+}
