@@ -189,6 +189,7 @@
                     <li data-i18n="landing.featureBackup">Backup and restore your progress across devices</li>
                 </ul>
                 <button onclick="restoreSets()" class="restore-btn landing-restore-btn" title="Restore a previous backup" data-i18n="button.restoreBackup;[title]tooltip.restoreBackup">📥 Restore a backup</button>
+                <button type="button" onclick="openMissingFile()" class="restore-btn landing-restore-btn" data-i18n="button.openMissing">Open a missing-parts file</button>
             </section>
 
             <div id="loading" class="text-center p-20 hide"><span data-i18n="display.loading">Loading set data…</span><div class="loading-spinner"></div></div>
@@ -197,6 +198,7 @@
             <!-- Set History Section -->
             <section id="setHistorySection" class="set-history hide">
                 <div class="backup-restore-toolbar">
+                    <button type="button" onclick="openMissingFile()" class="restore-btn" data-i18n="button.openMissing">Open a missing-parts file</button>
                     <button onclick="restoreSets()" class="restore-btn" title="Restore sets" data-i18n="button.restore;[title]tooltip.restoreSets">📥 Restore</button>
                     <button id="backupAllBtn" onclick="startBackupAll()" class="backup-all-btn hide" title="Backup all sets" data-i18n="button.backupAll;[title]tooltip.backupAll">📤 Backup All</button>
                     <button id="backupSelectedBtn" onclick="executeBackupAll()" class="backup-selected-btn" title="Backup selected sets" data-i18n="button.backupSelected;[title]tooltip.backupSelected">📤 Backup Selected</button>
@@ -285,6 +287,7 @@
                             <span class="filter-arrow">▼</span>
                         </summary>
                         <div class="filter-content-stack">
+                            <button type="button" id="shareMissingButton" onclick="shareMissingParts()" class="export-btn" data-i18n="button.shareMissing">Share missing parts</button>
                             <button onclick="generateBadge()" class="export-btn" style="background: var(--green);" data-i18n="button.generateBadge">🏷️ Generate Badge</button>
                             <button onclick="exportToBrickLink()" class="export-btn" style="background: var(--orange);" data-i18n="button.exportBrickLink">📦 BrickLink XML</button>
                             <button onclick="exportToPickABrick()" class="export-btn" style="background: var(--red);" data-i18n="button.exportPickABrick">🧱 Pick a Brick CSV</button>
@@ -1687,6 +1690,10 @@
         }
 
         window.onload = function () {
+            if (window.isMissingShareView && window.isMissingShareView()) {
+                window.showMissingShareFromLink();
+                return;
+            }
             migrateLocalStorage();
 
             // Detect preview environment and add banner
@@ -4165,6 +4172,7 @@
     </footer>
     <script src="/js/ui.js"></script>
     <script src="/js/landing.js"></script>
+    <script type="module" src="/js/missing-share.js"></script>
 </body>
 
 </html>

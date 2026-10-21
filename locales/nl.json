@@ -12,6 +12,8 @@
     "keywords": "LEGO\u00ae, set verificatie, steentjes tellen, complete set checker, LEGO\u00ae inventaris, LEGO\u00ae verkopen, gebruikte LEGO\u00ae sets"
   },
   "button": {
+    "shareMissing": "Ontbrekende onderdelen delen",
+    "openMissing": "Bestand met ontbrekende onderdelen openen",
     "cancel": "Annuleren",
     "delete": "Verwijderen",
     "backupAndDelete": "Back-up & Verwijderen",

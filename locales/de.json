@@ -85,6 +85,32 @@
     "trans_purple": "Transparentes Violett",
     "unknown": "Unbekannt"
   },
+  "share": {
+    "title": "Fehlende Teile",
+    "shareTitle": "Fehlende Teile teilen",
+    "date": "Erstellt: {{date}}",
+    "parts_one": "{{count}} fehlendes Teil",
+    "parts_other": "{{count}} fehlende Teile",
+    "figures_one": "{{count}} Figur",
+    "figures_other": "{{count}} Figuren",
+    "summary": "{{parts}} und {{figures}}",
+    "copy": "Link kopieren",
+    "copied": "Link kopiert.",
+    "selectCopy": "Markiere und kopiere den Link oben.",
+    "linkLabel": "Link für den Käufer",
+    "file": "Fehlteildatei",
+    "csv": "CSV-Tabelle",
+    "text": "Textliste",
+    "rebrickable": "Rebrickable CSV (Teile)",
+    "figuresNote": "Die Rebrickable-CSV enthält Einzelteile. Figuren stehen in der Textliste, CSV-Tabelle und Fehlteildatei.",
+    "fileFallback": "Die Liste ist für einen Link zu groß und wurde als Datei heruntergeladen. Der Käufer kann sie hier über „Fehlteildatei öffnen“ ansehen.",
+    "open": "Fehlteildatei öffnen",
+    "home": "Zurück zu BrickTally",
+    "invalid": "Dieser Link oder diese Datei ist ungültig, zu groß oder hat ein nicht unterstütztes Format.",
+    "failed": "Die Liste konnte nicht geteilt werden. Bitte versuche es erneut.",
+    "version": "Set {{number}}",
+    "empty": "In dieser Liste fehlen keine Teile."
+  },
   "help": {
     "badgeTerm": "Vollständigkeitsabzeichen",
     "installTerm": "BrickTally installieren",
@@ -134,6 +160,8 @@
     "keywords": "LEGO\u00ae, Set-\u00dcberpr\u00fcfung, Steine z\u00e4hlen, Vollst\u00e4ndigkeitspr\u00fcfer, LEGO\u00ae-Inventar, LEGO\u00ae verkaufen, gebrauchte LEGO\u00ae-Sets"
   },
   "button": {
+    "shareMissing": "Fehlende Teile teilen",
+    "openMissing": "Fehlteildatei öffnen",
     "cancel": "Abbrechen",
     "delete": "L\u00f6schen",
     "backupAndDelete": "Sichern & L\u00f6schen",

@@ -12,6 +12,8 @@
     "keywords": "LEGO\u00ae, セット検証, ブロック数え, 完全セットチェッカー, LEGO\u00aeインベントリ, LEGO\u00ae売却, 中古LEGO\u00aeセット"
   },
   "button": {
+    "shareMissing": "不足パーツを共有",
+    "openMissing": "不足パーツのファイルを開く",
     "cancel": "キャンセル",
     "delete": "削除",
     "backupAndDelete": "バックアップして削除",

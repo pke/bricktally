@@ -12,6 +12,8 @@
     "keywords": "LEGO\u00ae, v\u00e9rification de set, comptage de briques, v\u00e9rificateur de compl\u00e9tude, inventaire LEGO\u00ae, vendre LEGO\u00ae, sets LEGO\u00ae d'occasion"
   },
   "button": {
+    "shareMissing": "Partager les pièces manquantes",
+    "openMissing": "Ouvrir une liste de pièces manquantes",
     "cancel": "Annuler",
     "delete": "Supprimer",
     "backupAndDelete": "Sauvegarder & Supprimer",

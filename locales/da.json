@@ -12,6 +12,8 @@
     "keywords": "LEGO®, sæt verificering, klodstælling, komplet sæt checker, LEGO® inventar, sælg LEGO®, brugte LEGO® sæt"
   },
   "button": {
+    "shareMissing": "Del manglende dele",
+    "openMissing": "Åbn fil med manglende dele",
     "cancel": "Annuller",
     "delete": "Slet",
     "backupAndDelete": "Sikkerhedskopiér & Slet",

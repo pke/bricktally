@@ -12,6 +12,8 @@
     "keywords": "LEGO\u00ae, set verification, brick counting, complete set checker, LEGO\u00ae inventory, sell LEGO\u00ae, used LEGO\u00ae sets"
   },
   "button": {
+    "shareMissing": "Share missing parts",
+    "openMissing": "Open a missing-parts file",
     "cancel": "Cancel",
     "delete": "Delete",
     "backupAndDelete": "Backup & Delete",

@@ -12,6 +12,8 @@
     "keywords": "LEGO\u00ae, 套裝驗證, 積木清點, 完整性檢查, LEGO\u00ae 庫存, 出售 LEGO\u00ae, 二手 LEGO\u00ae 套裝"
   },
   "button": {
+    "shareMissing": "分享缺少的零件",
+    "openMissing": "開啟缺少零件檔案",
     "cancel": "取消",
     "delete": "刪除",
     "backupAndDelete": "備份並刪除",

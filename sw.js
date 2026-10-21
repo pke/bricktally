@@ -1,6 +1,6 @@
 // BrickTally Service Worker
 // Version: 1
-const CACHE_VERSION = 'v20261015-landing-help';
+const CACHE_VERSION = 'v20261015-missing-share';
 const STATIC_CACHE = `bricktally-static-${CACHE_VERSION}`;
 const API_CACHE = `bricktally-api-${CACHE_VERSION}`;
 const IMAGE_CACHE = `bricktally-images-${CACHE_VERSION}`;
@@ -24,6 +24,8 @@ const STATIC_ASSETS = [
     '/js/i18next.min.js',
     '/js/landing.js',
     '/js/ui.js',
+    '/js/missing-share.js',
+    '/js/missing-codec.js',
     '/changelog',
     '/changelog.json',
     '/data/themes.json',

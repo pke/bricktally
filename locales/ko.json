@@ -12,6 +12,8 @@
     "keywords": "LEGO\u00ae, 세트 검증, 브릭 세기, 완전 세트 확인, LEGO\u00ae 인벤토리, LEGO\u00ae 판매, 중고 LEGO\u00ae 세트"
   },
   "button": {
+    "shareMissing": "누락된 부품 공유",
+    "openMissing": "누락된 부품 파일 열기",
     "cancel": "취소",
     "delete": "삭제",
     "backupAndDelete": "백업 후 삭제",

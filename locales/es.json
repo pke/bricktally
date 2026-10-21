@@ -12,6 +12,8 @@
     "keywords": "LEGO\u00ae, verificaci\u00f3n de sets, conteo de piezas, verificador de completitud, inventario LEGO\u00ae, vender LEGO\u00ae, sets LEGO\u00ae usados"
   },
   "button": {
+    "shareMissing": "Compartir piezas faltantes",
+    "openMissing": "Abrir lista de piezas faltantes",
     "cancel": "Cancelar",
     "delete": "Eliminar",
     "backupAndDelete": "Respaldar y Eliminar",

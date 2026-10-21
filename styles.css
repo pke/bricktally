@@ -2776,6 +2776,26 @@ body.color-overview-open #missingSparesHint { display: none !important; }
 .install-steps li { display: list-item; margin-bottom: 8px; }
 .build-details dt { font-weight: bold; margin-top: 12px; }
 .build-details dd { margin: 4px 0 12px; overflow-wrap: anywhere; }
+.missing-share-mode .content-area > :not(#missingShareSection),
+.missing-share-mode .full-header .input-group,
+.missing-share-mode #setInfo,
+.missing-share-mode #collapsedHeader { display: none !important; }
+.missing-share-mode .main-content { width: 100%; max-width: 850px; }
+.missing-share-mode .content-area { width: 100%; max-width: none; }
+.missing-share-panel { padding: 20px; overflow-wrap: anywhere; }
+.missing-share-panel h2 { margin: 16px 0; }
+.missing-share-panel p { margin: 10px 0; line-height: 1.5; }
+.shared-set-name { font-size: 20px; font-weight: bold; }
+.missing-share-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0; }
+.missing-share-actions button { min-height: 44px; }
+.missing-share-list { list-style: none; padding: 0; }
+.missing-share-list li { display: grid; grid-template-columns: 40px 64px minmax(0, 1fr); align-items: center; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--border-color); }
+.missing-share-thumbnail { width: 64px; height: 64px; display: grid; place-items: center; background: white; color: #777; border-radius: 6px; overflow: hidden; }
+.missing-share-thumbnail img { display: block; width: 64px; height: 64px; object-fit: contain; }
+.missing-share-list strong { overflow-wrap: anywhere; }
+.missing-share-list strong, .missing-share-list code, .missing-share-list li div > span { display: block; }
+.missing-share-quantity { font-weight: bold; }
+#missingShareLink { display: block; width: 100%; margin: 12px 0; padding: 10px; font: inherit; resize: vertical; }
 @media (max-width: 600px) {
   .badge-example-grid { grid-template-columns: 1fr; }
   .help-dialog { padding: 20px; }

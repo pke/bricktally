@@ -21,13 +21,13 @@ mkdirSync(DIST, { recursive: true });
 
 // Read template
 let template = readFileSync(join(ROOT, 'index.html'), 'utf8');
-const versionedAssets = ['styles.css', 'js/ui.js', 'js/landing.js'];
+const versionedAssets = ['styles.css', 'js/ui.js', 'js/landing.js', 'js/missing-share.js', 'js/missing-codec.js'];
 const assetHash = createHash('sha256');
 [...versionedAssets, 'data/example-set.json', 'assets/examples/31109-1.jpg', 'assets/examples/3004-red.jpg']
     .forEach(file => assetHash.update(file).update(readFileSync(join(ROOT, file))));
 const assetVersion = assetHash.digest('hex').slice(0, 12);
 // Even an older service worker must fetch CSS/JS that matches the new HTML.
-template = template.replace(/((?:href|src)=")(\/?(?:styles\.css|js\/(?:ui|landing)\.js))"/g,
+template = template.replace(/((?:href|src)=")(\/?(?:styles\.css|js\/(?:ui|landing|missing-share)\.js))"/g,
     '$1$2?v=' + assetVersion + '"');
 
 // Build provenance belongs to the build, not the source commit itself.
@@ -212,6 +212,9 @@ dirsToCopy.forEach(function(dir) {
         cpSync(src, join(DIST, dir), { recursive: true });
     }
 });
+const shareModule = readFileSync(join(ROOT, 'js', 'missing-share.js'), 'utf8')
+    .replace("from './missing-codec.js'", "from './missing-codec.js?v=" + assetVersion + "'");
+writeFileSync(join(DIST, 'js', 'missing-share.js'), shareModule);
 
 // Copy api/ directory (Vercel serverless functions)
 const apiSrc = join(ROOT, 'api');
