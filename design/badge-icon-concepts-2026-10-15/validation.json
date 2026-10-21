@@ -1,0 +1,32 @@
+{
+  "icons": [
+    {
+      "id": "A",
+      "width": 1254,
+      "height": 1254,
+      "hasAlpha": true
+    },
+    {
+      "id": "B",
+      "width": 1254,
+      "height": 1254,
+      "hasAlpha": true
+    },
+    {
+      "id": "C",
+      "width": 1254,
+      "height": 1254,
+      "hasAlpha": true
+    },
+    {
+      "id": "D",
+      "width": 1254,
+      "height": 1254,
+      "hasAlpha": true
+    }
+  ],
+  "overview": {
+    "width": 1800,
+    "height": 1740
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "imagegenOriginals": 10,
+  "originals": [
+    {
+      "id": "01",
+      "file": "01-blue-hero-brick.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "png"
+    },
+    {
+      "id": "02",
+      "file": "02-tally-print.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "png"
+    },
+    {
+      "id": "03",
+      "file": "03-click-complete.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "png"
+    },
+    {
+      "id": "04",
+      "file": "04-stud-blueprint.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "png"
+    },
+    {
+      "id": "05",
+      "file": "05-happy-counter.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "png"
+    },
+    {
+      "id": "06",
+      "file": "06-stud-progress.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "png"
+    },
+    {
+      "id": "07",
+      "file": "07-brick-emblem.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "png"
+    },
+    {
+      "id": "08",
+      "file": "08-night-brick.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "png"
+    },
+    {
+      "id": "09",
+      "file": "09-collector-stamp.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "png"
+    },
+    {
+      "id": "10",
+      "file": "10-brick-scan.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "png"
+    }
+  ],
+  "overview": {
+    "width": 3000,
+    "height": 1590
+  }
+}
