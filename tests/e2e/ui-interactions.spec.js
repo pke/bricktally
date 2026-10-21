@@ -429,18 +429,18 @@ test.describe('Category 11: Color Filters', () => {
     await expect(page.locator('#tableContainer table tbody tr:not([data-color-hidden])')).toHaveCount(1);
   });
 
-  test('11.2: Multiple color filters', async ({ page }) => {
+  test('11.2: Selecting another colour replaces the current colour', async ({ page }) => {
     await mockAPIForSet(page, mockSets['TEST-007']);
 
     await page.goto('/');
     await loadTestSet(page, '99007');
 
-    // Apply Red and Blue filters
+    // Navigate from Red to Blue through the overview.
     await applyColorFilter(page, 'Red');
     await applyColorFilter(page, 'Blue');
 
-    // Should show red + blue parts (2 parts)
-    await expect(page.locator('#tableContainer table tbody tr:not([data-color-hidden])')).toHaveCount(2);
+    await expect(page.locator('#tableContainer table tbody tr:not([data-color-hidden])')).toHaveCount(1);
+    await expect(page.locator('#tableContainer table tbody tr:not([data-color-hidden])')).toHaveAttribute('data-color', 'Blue');
   });
 
   test('11.3: Clear all filters', async ({ page }) => {
@@ -452,8 +452,8 @@ test.describe('Category 11: Color Filters', () => {
     // Apply filter
     await applyColorFilter(page, 'Red');
 
-    // Deselect filter
-    await applyColorFilter(page, 'Red');
+    // Return to all colours.
+    await applyColorFilter(page, 'All');
 
     // Should show all parts again
     await expect(page.locator('#tableContainer table tbody tr:not([data-color-hidden])')).toHaveCount(3);

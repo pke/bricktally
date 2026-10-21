@@ -1,4 +1,10 @@
 {
+  "zoom": {
+    "colours": "Farveoversigt",
+    "parts": "Dele",
+    "allParts": "Alle farver",
+    "hint": "Knib sammen for at se farver. Spred fingrene eller vælg en farve for at se dens dele."
+  },
   "meta": {
     "title": "BrickTally - Hver Klods Tæller",
     "description": "Kontrollér, at dine LEGO® sæt er komplette, før du sælger eller opbevarer dem. Tæl hver brik og følg flere sæt med BrickTally.",

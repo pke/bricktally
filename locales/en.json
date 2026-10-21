@@ -1,4 +1,10 @@
 {
+  "zoom": {
+    "colours": "Colour overview",
+    "parts": "Parts",
+    "allParts": "All colours",
+    "hint": "Pinch together for colours. Spread fingers or select a colour to see its parts."
+  },
   "meta": {
     "title": "BrickTally - Every Brick Counts",
     "description": "Verify your LEGO\u00ae sets are complete before selling or storing. Count every piece and track multiple sets with BrickTally.",

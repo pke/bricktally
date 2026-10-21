@@ -150,10 +150,7 @@
                 </div>
             </div>
             <div class="collapsed-filters">
-                <details id="colorFilterCollapsed" class="hide">
-                    <summary data-i18n="section.colours">Colours</summary>
-                    <div id="colorFiltersCollapsed" class="filters"></div>
-                </details>
+                <button type="button" onclick="setColorZoom(true)" data-i18n="zoom.colours">Colour overview</button>
                 <details id="infoFilterCollapsed" class="hide">
                     <summary data-i18n="section.columns">Columns</summary>
                     <div class="column-toggles" style="margin: 10px 0 0 0;">
@@ -272,14 +269,6 @@
 
             <div id="filterSection" class="hide">
                 <div class="filter-headers">
-                    <details class="filter-section" id="colorFilterSection">
-                        <summary class="filter-header">
-                            <span data-i18n="section.colours">Colours</span>
-                            <span class="filter-arrow">▼</span>
-                        </summary>
-                        <div id="colorFilters" class="filters filter-content-flex"></div>
-                    </details>
-
                     <details class="filter-section" id="columnsFilterSection">
                         <summary class="filter-header">
                             <span data-i18n="section.columns">Columns</span>
@@ -307,6 +296,17 @@
                     </details>
                 </div>
             </div>
+
+            <section id="colorZoomSection" class="hide" aria-labelledby="colorZoomStatus">
+                <div class="color-zoom-toolbar">
+                    <button type="button" id="colorZoomOut" onclick="setColorZoom(true)" aria-controls="colorOverview" title="Colour overview" aria-label="Colour overview" data-i18n="[title]zoom.colours;[aria-label]zoom.colours">−</button>
+                    <span id="colorZoomStatus" role="status" aria-live="polite"></span>
+                    <button type="button" id="colorZoomIn" onclick="setColorZoom(false)" aria-controls="tableContainer" title="Parts" aria-label="Parts" data-i18n="[title]zoom.parts;[aria-label]zoom.parts">+</button>
+                    <button type="button" id="colorZoomAll" onclick="showAllColors()" data-i18n="zoom.allParts">All colours</button>
+                </div>
+                <p class="color-zoom-hint" data-i18n="zoom.hint">Pinch together for colours. Spread fingers or select a colour to see its parts.</p>
+                <div id="colorOverview" class="color-overview" hidden></div>
+            </section>
 
             <section id="minifigSection" class="hide m-20">
                 <div class="section-header-row">
@@ -513,6 +513,8 @@
         var userCounts = {};
         var currentSetNumber = '';
         var activeColorFilters = [];
+        var colorOverviewOpen = false;
+        var colorDetailScroll = 0;
         var showCompleteParts = false;
 
         // Theme map for grouping
@@ -1642,7 +1644,7 @@
         // ─── End Backup/Restore ──────────────────────────────────────────
 
         function showSetHistory() {
-            hide('setInfo', 'statsSection', 'filterSection', 'tableContainer', 'resetButton');
+            hide('setInfo', 'statsSection', 'filterSection', 'tableContainer', 'resetButton', 'colorZoomSection');
             // Clear table content and inline styles
             var tableContainer = document.getElementById('tableContainer');
             if (tableContainer) {
@@ -1676,6 +1678,10 @@
             partsData = [];
             userCounts = {};
             activeColorFilters = [];
+
+            colorOverviewOpen = false;
+            document.body.classList.remove('color-overview-open');
+            hide('colorZoomSection');
 
             // Hide all set-related UI sections
             hide('setInfo', 'statsSection', 'filterSection', 'tableContainer', 'resetButton',
@@ -1951,37 +1957,6 @@
                         document.body.setAttribute('data-collapsed-header', '');
                     } else {
                         document.body.removeAttribute('data-collapsed-header');
-                    }
-                }
-
-                // Show/hide collapsed color filter when the whole color filter section is about to scroll out
-                var colorFilterSection = document.getElementById('colorFilterSection');
-                if (colorFilterSection && collapsedHeader) {
-                    var colorFilterRect = colorFilterSection.getBoundingClientRect();
-                    var colorFilterBottom = colorFilterRect.bottom;
-                    var collapsedHeaderRect = collapsedHeader.getBoundingClientRect();
-                    var collapsedHeaderBottom = collapsedHeaderRect.bottom;
-
-                    var colorFilterCollapsed = document.getElementById('colorFilterCollapsed');
-
-                    // Show collapsed color filter when bottom of color filter section scrolls under collapsed header
-                    if (document.body.hasAttribute('data-collapsed-header') && colorFilterBottom < collapsedHeaderBottom) {
-                        if (colorFilterCollapsed && !colorFilterCollapsed.classList.contains('visible')) {
-                            colorFilterCollapsed.classList.remove('hide');
-                            // Force reflow to ensure display:block is applied before transition
-                            colorFilterCollapsed.offsetHeight;
-                            requestAnimationFrame(function() {
-                                colorFilterCollapsed.classList.add('visible');
-                            });
-                        }
-                    } else {
-                        if (colorFilterCollapsed && colorFilterCollapsed.classList.contains('visible')) {
-                            colorFilterCollapsed.classList.remove('visible');
-                            // Delay adding hide class to allow animation to complete
-                            setTimeout(function() {
-                                colorFilterCollapsed.classList.add('hide');
-                            }, 500);
-                        }
                     }
                 }
 
@@ -2451,7 +2426,7 @@
 
         function loadSetDirect(setNumber) {
             show('loading');
-            hide('error', 'tableContainer', 'statsSection', 'setInfo', 'filterSection', 'resetButton');
+            hide('error', 'tableContainer', 'statsSection', 'setInfo', 'filterSection', 'resetButton', 'colorZoomSection');
             document.getElementById('tableContainer').innerHTML = '';
 
             continueLoadSet(setNumber);
@@ -2476,7 +2451,7 @@
             }
 
             show('loading');
-            hide('error', 'tableContainer', 'statsSection', 'setInfo', 'filterSection', 'resetButton');
+            hide('error', 'tableContainer', 'statsSection', 'setInfo', 'filterSection', 'resetButton', 'colorZoomSection');
             document.getElementById('tableContainer').innerHTML = '';
 
             var baseNumber = setNumber.split('-')[0];
@@ -2722,7 +2697,7 @@
             });
 
             loadState();
-            renderColorFilters();
+            renderColorOverview();
             renderMinifigures();
             renderTable();
             renderSparePartsTable();
@@ -2738,67 +2713,157 @@
             wasComplete = false;
         }
 
-        function renderColorFilters() {
-            var colorCounts = {};
-
+        function renderColorOverview() {
+            // Include spare-only colours, but prefer a regular part as the example.
+            var examples = new Map();
             partsData.forEach(function (part) {
-                // Skip minifigs and spare parts in filter counts
-                if (part.type === 'minifig' || part.isSpare) return;
-
-                if (!colorCounts[part.color]) {
-                    colorCounts[part.color] = 0;
+                if (part.type === 'minifig') return;
+                if (!examples.has(part.color) || (examples.get(part.color).isSpare && !part.isSpare)) {
+                    examples.set(part.color, part);
                 }
-                colorCounts[part.color] += part.quantity;
             });
-
-            var totalPieces = 0;
-            for (var color in colorCounts) {
-                totalPieces += colorCounts[color];
-            }
-
-            var htmlStr = '<button class="filter active" onclick="toggleColorFilter(\'all\', event)">' + t('filter.all', { count: totalPieces }) + '</button>';
-
-            Object.keys(colorCounts).sort().forEach(function (color) {
-                htmlStr += html`<button class="filter" data-color="${color}" onclick="toggleColorFilter(this.dataset.color, event)">${color} <span class="count">(${colorCounts[color]})</span></button>`;
+            var colors = Array.from(examples.keys()).sort(function (a, b) {
+                return colorLabel(a).localeCompare(colorLabel(b), i18next.language || 'en', { sensitivity: 'base' });
             });
-
-            // Render in both locations
-            document.getElementById('colorFilters').innerHTML = htmlStr;
-            document.getElementById('colorFiltersCollapsed').innerHTML = htmlStr;
+            document.getElementById('colorOverview').innerHTML = colors.map(function (color) {
+                var part = examples.get(color);
+                return html`<button type="button" class="color-tile" data-color="${color}" onclick="setColorZoom(false, this.dataset.color)"><img src="${part.imageUrl}" alt="" loading="lazy" onerror="handleImageError(this)"><span>${colorLabel(color)}</span></button>`;
+            }).join('');
             activeColorFilters = [];
+            colorOverviewOpen = false;
+            colorDetailScroll = 0;
+            document.body.classList.remove('color-overview-open');
+            document.getElementById('colorOverview').hidden = true;
+            show('colorZoomSection');
+            updateColorZoomControls();
         }
 
-        function toggleColorFilter(color, e) {
-            var buttons = document.querySelectorAll('.filter');
+        function updateColorZoomControls() {
+            document.getElementById('colorZoomOut').disabled = colorOverviewOpen;
+            document.getElementById('colorZoomIn').disabled = !colorOverviewOpen;
+            document.getElementById('colorZoomAll').hidden = !colorOverviewOpen && activeColorFilters.length === 0;
+            document.getElementById('colorZoomStatus').textContent = colorOverviewOpen
+                ? t('zoom.colours')
+                : (colorLabel(activeColorFilters[0]) || t('zoom.allParts'));
+        }
 
-            if (color === 'all') {
-                activeColorFilters = [];
-                buttons.forEach(function (btn) { btn.classList.remove('active'); });
-                buttons[0].classList.add('active');
+        function setColorZoom(overview, color) {
+            if (!document.body.classList.contains('has-set')) return;
+            if (overview === colorOverviewOpen && !color) return;
+            var previousFocus = document.activeElement;
+            if (overview) colorDetailScroll = window.scrollY;
+            if (color) activeColorFilters = [color];
+            colorOverviewOpen = overview;
+            document.body.classList.toggle('color-overview-open', overview);
+            document.getElementById('colorOverview').hidden = !overview;
+            updateTableVisibility();
+            updateColorZoomControls();
+            var hasRegularColor = partsData.some(function (part) {
+                return part.type !== 'minifig' && !part.isSpare && part.color === color;
+            });
+            var target = document.getElementById(overview ? 'colorZoomSection' :
+                (color ? (hasRegularColor ? 'partsSection' : 'sparePartsSection') : 'colorZoomSection'));
+            if (overview || color) {
+                target.scrollIntoView({ block: 'start' });
             } else {
-                buttons[0].classList.remove('active');
+                window.scrollTo(0, colorDetailScroll);
+            }
+            // Keep keyboard focus visible when its tile or toolbar button disappears.
+            if (previousFocus && (previousFocus.closest('.color-tile') || previousFocus.disabled || previousFocus.hidden)) {
+                document.getElementById(overview ? 'colorZoomIn' : 'colorZoomOut').focus({ preventScroll: true });
+            }
+        }
 
-                var btn = e ? e.target.closest('.filter') : null;
-                var index = activeColorFilters.indexOf(color);
-                if (index > -1) {
-                    activeColorFilters.splice(index, 1);
-                    if (btn) btn.classList.remove('active');
-                } else {
-                    activeColorFilters.push(color);
-                    if (btn) btn.classList.add('active');
-                }
+        function showAllColors() {
+            activeColorFilters = [];
+            if (colorOverviewOpen) setColorZoom(false);
+            updateTableVisibility();
+            updateColorZoomControls();
+            if (document.activeElement === document.getElementById('colorZoomAll') && document.activeElement.hidden) {
+                document.getElementById('colorZoomOut').focus({ preventScroll: true });
+            }
+        }
 
-                if (activeColorFilters.length === 0) {
-                    buttons[0].classList.add('active');
+        // Handle only editor pinches; leave page zoom and one-finger scrolling elsewhere alone.
+        (function setupColorZoomGestures() {
+            var editor = document.querySelector('.content-area');
+            var startDistance = 0;
+            var handled = false;
+            var wheelDelta = 0;
+            var wheelTimer;
+            var suppressClickUntil = 0;
+            function enabled(event) {
+                return document.body.classList.contains('has-set') &&
+                    !document.getElementById('colorZoomSection').classList.contains('hide') &&
+                    !event.target.closest('[role="dialog"], [class*="modal"], .lightbox');
+            }
+            function distance(touches) {
+                return Math.hypot(touches[0].clientX - touches[1].clientX, touches[0].clientY - touches[1].clientY);
+            }
+            function zoom(scale, x, y) {
+                if (handled) return;
+                var overview = scale < 0.84;
+                if (!overview && scale <= 1.16) return;
+                if (overview === colorOverviewOpen) return;
+                var tile = document.elementFromPoint(x, y);
+                tile = tile && tile.closest('.color-tile');
+                setColorZoom(overview, !overview && tile ? tile.dataset.color : undefined);
+                handled = true;
+                suppressClickUntil = Date.now() + 400;
+            }
+            editor.addEventListener('touchstart', function (event) {
+                if (!enabled(event) || event.touches.length !== 2) return;
+                event.preventDefault();
+                startDistance = distance(event.touches);
+                handled = false;
+            }, { passive: false });
+            editor.addEventListener('touchmove', function (event) {
+                if (!startDistance || event.touches.length !== 2) return;
+                event.preventDefault();
+                zoom(distance(event.touches) / startDistance,
+                    (event.touches[0].clientX + event.touches[1].clientX) / 2,
+                    (event.touches[0].clientY + event.touches[1].clientY) / 2);
+            }, { passive: false });
+            function endTouch(event) {
+                if (startDistance && event.touches.length < 2) {
+                    if (handled) suppressClickUntil = Date.now() + 400;
+                    startDistance = 0;
+                    handled = false;
                 }
             }
-
-            filterTable();
-        }
-
-        function filterTable() {
-            updateTableVisibility();
-        }
+            editor.addEventListener('touchend', endTouch);
+            editor.addEventListener('touchcancel', endTouch);
+            editor.addEventListener('wheel', function (event) {
+                if (!event.ctrlKey || !enabled(event)) return;
+                event.preventDefault();
+                clearTimeout(wheelTimer);
+                wheelTimer = setTimeout(function () { wheelDelta = 0; handled = false; }, 220);
+                wheelDelta += event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? window.innerHeight : 1);
+                if (Math.abs(wheelDelta) >= 24) zoom(wheelDelta > 0 ? 0.8 : 1.2, event.clientX, event.clientY);
+            }, { passive: false });
+            // Safari trackpads expose GestureEvents instead of ctrl+wheel.
+            editor.addEventListener('gesturestart', function (event) {
+                if (!enabled(event)) return;
+                event.preventDefault();
+                if (!startDistance) handled = false;
+            }, { passive: false });
+            editor.addEventListener('gesturechange', function (event) {
+                if (!enabled(event)) return;
+                event.preventDefault();
+                if (!startDistance) zoom(event.scale, event.clientX, event.clientY);
+            }, { passive: false });
+            editor.addEventListener('gestureend', function (event) {
+                if (!enabled(event)) return;
+                event.preventDefault();
+                if (!startDistance) handled = false;
+            }, { passive: false });
+            editor.addEventListener('click', function (event) {
+                if (Date.now() < suppressClickUntil) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+            }, true);
+        })();
 
         function renderTable() {
             var htmlStr = '<table><tbody>';
@@ -2815,7 +2880,7 @@
                 var infoContent = [];
 
                 if (visibleColumns.color) {
-                    infoContent.push(escapeHtml(part.color));
+                    infoContent.push(escapeHtml(colorLabel(part.color)));
                 }
 
                 if (visibleColumns.name) {
@@ -2898,7 +2963,7 @@
                 var infoContent = [];
 
                 if (visibleColumns.color) {
-                    infoContent.push(escapeHtml(part.color));
+                    infoContent.push(escapeHtml(colorLabel(part.color)));
                 }
 
                 if (visibleColumns.name) {
@@ -4157,6 +4222,7 @@
             </select>
         </div>
     </footer>
+    <script src="/js/ui.js"></script>
 </body>
 
 </html>

@@ -1,6 +1,6 @@
 // BrickTally Service Worker
 // Version: 1
-const CACHE_VERSION = 'v20261014-085354';
+const CACHE_VERSION = 'v20261015-color-zoom';
 const STATIC_CACHE = `bricktally-static-${CACHE_VERSION}`;
 const API_CACHE = `bricktally-api-${CACHE_VERSION}`;
 const IMAGE_CACHE = `bricktally-images-${CACHE_VERSION}`;
@@ -22,6 +22,7 @@ const STATIC_ASSETS = [
     '/js/lottie.min.js',
     '/js/pako.min.js',
     '/js/i18next.min.js',
+    '/js/ui.js',
     '/changelog',
     '/changelog.json',
     '/data/themes.json'

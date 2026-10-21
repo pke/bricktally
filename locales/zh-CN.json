@@ -1,4 +1,10 @@
 {
+  "zoom": {
+    "colours": "颜色概览",
+    "parts": "零件",
+    "allParts": "所有颜色",
+    "hint": "双指捏合查看颜色概览。双指张开或选择颜色以查看该颜色的零件。"
+  },
   "meta": {
     "title": "BrickTally - 每块积木都很重要",
     "description": "在出售或存放之前验证您的 LEGO\u00ae 套装是否完整。清点每个零件，使用 BrickTally 追踪多个套装。",

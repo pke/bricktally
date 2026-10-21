@@ -1,4 +1,10 @@
 {
+  "zoom": {
+    "colours": "Kleurenoverzicht",
+    "parts": "Onderdelen",
+    "allParts": "Alle kleuren",
+    "hint": "Knijp samen voor het kleurenoverzicht. Spreid je vingers of kies een kleur om de onderdelen te zien."
+  },
   "meta": {
     "title": "BrickTally - Elk Steentje Telt",
     "description": "Controleer of je LEGO\u00ae sets compleet zijn voor verkoop of opslag. Tel elk onderdeel en volg meerdere sets met BrickTally.",

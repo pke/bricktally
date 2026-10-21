@@ -357,19 +357,12 @@ export async function getSectionHeader(page, headerId) {
  * Apply color filter
  */
 export async function applyColorFilter(page, colorName) {
-  // First, ensure the Colours dropdown is expanded
-  const filterSection = page.locator('#colorFilterSection');
-  const isOpen = await filterSection.evaluate((el) => el.open);
-
-  if (!isOpen) {
-    // Click the header to expand
-    await page.click('.filter-header:has-text("Colours")');
-    // Wait for section to expand
-    await page.waitForTimeout(200);
+  if (colorName === 'All') {
+    await page.locator('#colorZoomAll').click();
+    return;
   }
-
-  // Now click the filter button inside the visible section
-  await page.click('#colorFilterSection button.filter:has-text("' + colorName + '")');
+  await page.locator('#colorZoomOut').click();
+  await page.locator('.color-tile').filter({ hasText: colorName }).click();
 }
 
 /**

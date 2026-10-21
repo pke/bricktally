@@ -1,4 +1,10 @@
 {
+  "zoom": {
+    "colours": "Vista de colores",
+    "parts": "Piezas",
+    "allParts": "Todos los colores",
+    "hint": "Junta los dedos para ver los colores. Sepáralos o selecciona un color para ver sus piezas."
+  },
   "meta": {
     "title": "BrickTally - Cada pieza cuenta",
     "description": "Verifica que tus sets de LEGO\u00ae est\u00e9n completos antes de venderlos o guardarlos. Cuenta cada pieza y gestiona m\u00faltiples sets con BrickTally.",
