@@ -76,8 +76,17 @@ SVG-Textebenen werden beim Export in Pfade umgewandelt; PNGs und fertige SVGs
 benötigen später keine installierte Schrift mehr. Bearbeitbare Texte bleiben
 in copy.json und den zugehörigen Layout-JSON-Dateien erhalten.
 
-Die Anwendungsdateien, Sprachdateien, der Set-Editor und das aktuell eingebundene
-OG-Bild wurden durch diese Arbeit nicht verändert. Keine automatische Einbindung
-in scripts/build-i18n.js und kein Commit. Der alte build-og-concepts.cjs-Einstieg
+Einbindung in die Anwendung (22.10.2026)
+---------------------------------------
+index.html verwendet Entwurf 04 für Open Graph, Twitter und strukturierte Daten.
+scripts/build-i18n.js übernimmt bei jedem Build die fertigen PNGs aus
+final/<locale>/04-sorting-table-og.png nach dist/assets/og/ und setzt die
+Bild-URLs passend zur jeweiligen Sprache. Die Standardseite verwendet Englisch.
+Fehlende Sprachbilder führen vor dem Löschen der bisherigen Ausgabe zum Fehler.
+Für aktualisierte Texte zuerst die gewünschten finalen PNGs rendern und danach
+im Projektstamm npm run build ausführen. Im Produktionsbuild sind keine
+Bildbibliotheken oder Schriftdateien erforderlich.
+
+Der alte build-og-concepts.cjs-Einstieg
 ruft nun denselben neuen Renderer auf; der Akzentstrich kann darüber nicht
 versehentlich wieder erscheinen.

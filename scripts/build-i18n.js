@@ -12,6 +12,15 @@ const __dirname = dirname(__filename);
 const LOCALES = ['en', 'de', 'fr', 'es', 'nl', 'da', 'ja', 'ko', 'ru', 'zh-CN', 'zh-TW'];
 const ROOT = pathResolve(__dirname, '..');
 const DIST = join(ROOT, 'dist');
+const OG_RENDERINGS = join(ROOT, 'design', 'og-image-concepts-2026-10-15', 'final');
+const OG_IMAGE_BASE = 'https://bricktally.app/assets/og/04-sorting-table-';
+
+// Publish the approved, pre-rendered images without image-generation dependencies.
+// Validate every locale before replacing the existing build output.
+LOCALES.forEach(locale => {
+    const source = join(OG_RENDERINGS, locale, '04-sorting-table-og.png');
+    if (!existsSync(source)) throw new Error('Missing approved Open Graph image: ' + source);
+});
 
 // Clean dist
 if (existsSync(DIST)) {
@@ -153,6 +162,7 @@ LOCALES.forEach(function(locale) {
 
     // 2. Translate meta tags
     output = translateMeta(output, translations);
+    output = output.replaceAll(OG_IMAGE_BASE + 'en.png', OG_IMAGE_BASE + locale + '.png');
 
     // 3. Translate static HTML via data-i18n attributes
     output = translateStaticHTML(output, translations);
@@ -212,6 +222,14 @@ dirsToCopy.forEach(function(dir) {
         cpSync(src, join(DIST, dir), { recursive: true });
     }
 });
+
+const ogOutput = join(DIST, 'assets', 'og');
+mkdirSync(ogOutput, { recursive: true });
+LOCALES.forEach(locale => {
+    copyFileSync(join(OG_RENDERINGS, locale, '04-sorting-table-og.png'),
+        join(ogOutput, '04-sorting-table-' + locale + '.png'));
+});
+
 const shareModule = readFileSync(join(ROOT, 'js', 'missing-share.js'), 'utf8')
     .replace("from './missing-codec.js'", "from './missing-codec.js?v=" + assetVersion + "'");
 writeFileSync(join(DIST, 'js', 'missing-share.js'), shareModule);
